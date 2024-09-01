@@ -1,2 +1,2 @@
-360 days until I have a girlfriend!
-Dates gone on: 1
+359 days
+Dates: 1
