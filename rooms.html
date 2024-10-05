@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <style>
+        body {
+            text-align: center;
+            background-color: lightblue;
+        }
+    </style>
+    <div id="add" style="text-align:center"></div>
+    <button onclick="left()">left</button><button onclick="up()">up</button><button onclick="down()">down</button><button onclick="right()">right</button>
+<script>
+let grid = [];
+let xAxis = 3;
+let yAxis = 6;
+let OG = true;
+let pattern = true;
+function createWorld(){
+let random = Math.floor(Math.random() * 11);
+for(let z = 0; z < 50; z++){
+let newYarr = [];
+let miniDiv = document.createElement('div');
+miniDiv.style = "display:inline-block"
+for(let i = 0; i < 13; i++){
+let tile = document.createElement('div');
+tile.style="height:20px;width:20px;background:gray;border:1px solid black;";
+if(i == 6 && z == 3 && OG == true){
+tile.style.background = "blue";
+}
+this.newObj = {};
+if(z == 49){
+alert
+this.newObj.block = tile;
+this.newObj.collision = "brick";
+tile.style.background = "black";
+this.newObj.color = "black";
+if(z == 49 && i == random){
+this.newObj.block = tile;
+this.newObj.collision = "door";
+tile.style.background = "brown";
+this.newObj.color = "brown";
+}
+}else{
+this.newObj.block = tile;
+this.newObj.collision = "none";
+this.newObj.color = "gray";
+if(pattern == true){
+tile.style.background = "darkgray";
+this.newObj.color = "darkgray";
+}
+}
+newYarr.push(this.newObj);
+miniDiv.appendChild(tile);
+pattern = !pattern;
+}
+grid.push(newYarr);
+document.getElementById('add').appendChild(miniDiv);
+}
+}
+createWorld();
+function right(){
+let num = grid.length - 1;
+if(xAxis < num){
+grid[xAxis][yAxis].block.style.background = grid[xAxis][yAxis].color;
+xAxis++;
+clsnCheck('right');
+}
+}
+function left(){
+if(xAxis !== 0){
+grid[xAxis][yAxis].block.style.background = grid[xAxis][yAxis].color;
+xAxis--;
+clsnCheck('left');
+}
+}
+function up(){
+if(yAxis !== 0){
+grid[xAxis][yAxis].block.style.background = grid[xAxis][yAxis].color;
+yAxis--;
+clsnCheck('up');
+}
+}
+function down(){
+let num = grid[xAxis].length - 1;
+if(yAxis !== num){
+grid[xAxis][yAxis].block.style.background = grid[xAxis][yAxis].color;
+yAxis++;
+clsnCheck('down');
+}
+}
+document.addEventListener("keydown", function(event) {
+  event.preventDefault();
+  const key = event.key;
+  switch (key) {
+    case "ArrowLeft":
+      left();
+      break;
+    case "ArrowRight":
+	  right();
+      break;
+    case "ArrowUp":
+      up();
+      break;
+    case "ArrowDown":
+      down();
+      break;
+  }
+});
+function clsnCheck(direction){
+if(grid[xAxis][yAxis].collision == "door"){
+document.getElementById('add').innerHTML = "";
+grid = [];
+xAxis = 0;
+OG = false;
+createWorld();
+grid[xAxis][yAxis].block.style.background = "blue";
+return;
+}
+if(grid[xAxis][yAxis].collision == 'brick'){
+if(direction == 'up'){
+yAxis++;
+return;
+}else if(direction == 'left'){
+xAxis++;
+return;
+}else if(direction == 'right'){
+xAxis--;
+}else if(direction == 'down'){
+yAxis--;
+return;
+}
+}
+grid[xAxis][yAxis].block.style.background = "blue";
+}
+</script>
+</body>
+</html>
