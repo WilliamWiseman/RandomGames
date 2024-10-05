@@ -1,1 +1,198 @@
+<!DOCTYPE html>
+<html>
 
+<body>
+    <style>
+        body {
+            text-align: center;
+            background-color: lightblue;
+        }
+    </style>
+    <div id="start">
+    <h1>WORM</h1>
+    <button onclick="start()">Begin</button>
+    </div>
+    <div id="game" style="display:none">
+    <div id="add" style="text-align:center;
+    height:440px;width:440px;border:5px solid gray"></div>
+    <br>
+    <button onclick="left()">left</button>
+    
+    <button onclick="up()">up</button>
+    
+    <button onclick="down()">down</button>
+    
+    <button onclick="right()">right</button>
+    </div>
+    <div id="end" style="display:none">
+    <h1>YOU LOSE</h1>
+    <p>Points: <span id="pointDisp">0</span></p>
+    </div>
+<script>
+let grid = [];
+let xAxis = 3;
+let yAxis = 6;
+let snake = [];
+let points = 0;
+let initial = false;
+let DIRECTION = 'right';
+function createWorld(){
+let random = Math.floor(Math.random() * 11);
+for(let z = 0; z < 20; z++){
+let newYarr = [];
+let miniDiv = document.createElement('div');
+miniDiv.style = "display:inline-block"
+for(let i = 0; i < 20; i++){
+let tile = document.createElement('div');
+tile.style="height:20px;width:20px;background:black;border:1px solid gray";
+if(i == 6 && z == 3){
+tile.style.background = "lime";
+initial = true;
+}
+this.newObj = {};
+this.newObj.block = tile;
+this.newObj.collision = "none";
+if(initial == true){
+this.newObj.collision = "brick";
+snake.push(this.newObj);
+initial = false;
+}
+if(i == 6 && z == 10){
+this.newObj.collision = "apple";
+tile.style.background = "red";
+}
+newYarr.push(this.newObj);
+miniDiv.appendChild(tile);
+}
+grid.push(newYarr);
+document.getElementById('add').appendChild(miniDiv);
+}
+}
+function right(){
+let num = grid.length - 1;
+if(xAxis < num){
+xAxis++;
+clsnCheck('right');
+}else{
+lose();
+}
+}
+function left(){
+if(xAxis !== 0){
+xAxis--;
+clsnCheck('left');
+}else{
+lose();
+}
+}
+function up(){
+if(yAxis !== 0){
+yAxis--;
+clsnCheck('up');
+}else{
+lose();
+}
+}
+function down(){
+let num = grid[xAxis].length - 1;
+if(yAxis !== num){
+yAxis++;
+clsnCheck('down');
+}else{
+lose();
+}
+}
+document.addEventListener("keydown", function(event) {
+  event.preventDefault();
+  const key = event.key;
+  switch (key) {
+    case "ArrowLeft":
+      left();
+      DIRECTION = 'left';
+      break;
+    case "ArrowRight":
+	  right();
+      DIRECTION = 'right';
+      break;
+    case "ArrowUp":
+      up();
+      DIRECTION = 'up';
+      break;
+    case "ArrowDown":
+      down();
+      DIRECTION = 'down';
+      break;
+  }
+});
+let z = 0;
+let num1;
+let num2;
+function momentum(){
+if(DIRECTION == 'up'){
+up();
+return;
+}else if(DIRECTION == 'left'){
+left();
+return;
+}else if(DIRECTION == 'right'){
+right();
+return;
+}else if(DIRECTION == 'down'){
+down();
+return;
+}
+}
+function clsnCheck(direction){
+let apple = false;
+if(grid[xAxis][yAxis].collision == 'apple'){
+apple = true;
+points++;
+}
+if(grid[xAxis][yAxis].collision == 'brick'){
+lose();
+return;
+}
+snake.push(grid[xAxis][yAxis]);
+if(z < 3){
+grid[xAxis][yAxis].block.style.background = "lime";
+grid[xAxis][yAxis].collision = "brick";
+z++;
+return;
+}
+if(snake[0].collision !== 'apple'){
+snake[0].collision = "none";
+snake[0].block.style.background = "black";
+}
+if(apple == false){
+snake.shift();
+}
+if(apple == true){
+while(true){
+num1 = Math.floor(Math.random() * 20);
+num2 = Math.floor(Math.random() * 20);
+if(grid[num1][num2].collision == 'none' && grid[num1][num2] !== grid[xAxis][yAxis]){
+grid[num1][num2].collision = 'apple';
+grid[num1][num2].block.style.background = "red";
+break;
+}
+}
+apple = false;
+}
+grid[xAxis][yAxis].block.style.background = "lime";
+grid[xAxis][yAxis].collision = "brick";
+}
+function lose(){
+document.getElementById('game').style.display = "none";
+document.getElementById('end').style.display = "block";
+document.getElementById('pointDisp').innerText = points;
+clearInterval(go);
+}
+function start(){
+document.getElementById('start').style.display = "none";
+document.getElementById('game').style.display = "block";
+createWorld();
+let go = setInterval(momentum, 250);
+}
+</script>
+</body>
+</html>
