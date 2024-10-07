@@ -8,12 +8,28 @@
             background-color: lightblue;
         }
     </style>
+    <div id="title">
+    <h1>DUNGEON</h1>
+    <br><br>
+    <button onclick="start()">ENTER</button>
+    </div>
+    <div id="game"style="display:none">
     <div id="add" style="text-align:center"></div>
-    <button onclick="left()">left</button><button onclick="up()">up</button><button onclick="down()">down</button><button onclick="right()">right</button>
+    <button onclick="left()">left</button>
+    <button onclick="up()">up</button>
+    <button onclick="down()">down</button>
+    <button onclick="right()">right</button>
+    </div>
+    <div style="display:none" id="end">
+        <h1>You died</h1>
+    </div>
 <script>
 let grid = [];
 let xAxis = 3;
 let yAxis = 6;
+let xAxis2 = 20;
+let yAxis2 = 6;
+let coins = 0;
 let OG = true;
 let pattern = true;
 function createWorld(){
@@ -21,16 +37,12 @@ let random = Math.floor(Math.random() * 11);
 for(let z = 0; z < 50; z++){
 let newYarr = [];
 let miniDiv = document.createElement('div');
-miniDiv.style = "display:inline-block"
+miniDiv.style = "display:inline-block";
 for(let i = 0; i < 13; i++){
 let tile = document.createElement('div');
 tile.style="height:20px;width:20px;background:gray;border:1px solid black;";
-if(i == 6 && z == 3 && OG == true){
-tile.style.background = "blue";
-}
 this.newObj = {};
 if(z == 49){
-alert
 this.newObj.block = tile;
 this.newObj.collision = "brick";
 tile.style.background = "black";
@@ -38,8 +50,8 @@ this.newObj.color = "black";
 if(z == 49 && i == random){
 this.newObj.block = tile;
 this.newObj.collision = "door";
-tile.style.background = "brown";
-this.newObj.color = "brown";
+tile.style.background = "green";
+this.newObj.color = "green";
 }
 }else{
 this.newObj.block = tile;
@@ -48,6 +60,13 @@ this.newObj.color = "gray";
 if(pattern == true){
 tile.style.background = "darkgray";
 this.newObj.color = "darkgray";
+}
+if(i == 6 && z == 3 && OG == true){
+tile.style.background = "blue";
+this.newObj.collision = "player"; 
+}else if(i==6 && z== 20){
+tile.style.background = "red";
+this.newObj.collision = "kill";
 }
 }
 newYarr.push(this.newObj);
@@ -58,7 +77,6 @@ grid.push(newYarr);
 document.getElementById('add').appendChild(miniDiv);
 }
 }
-createWorld();
 function right(){
 let num = grid.length - 1;
 if(xAxis < num){
@@ -77,6 +95,7 @@ clsnCheck('left');
 function up(){
 if(yAxis !== 0){
 grid[xAxis][yAxis].block.style.background = grid[xAxis][yAxis].color;
+grid[xAxis][yAxis].collision = "none";
 yAxis--;
 clsnCheck('up');
 }
@@ -108,6 +127,16 @@ document.addEventListener("keydown", function(event) {
   }
 });
 function clsnCheck(direction){
+if(grid[xAxis][yAxis].collision == 'kill'){
+lose();
+return;
+}
+if(grid[xAxis][yAxis].collision == 'coin'){
+coins++;
+grid[xAxis][yAxis].block.style.background = "blue";
+grid[xAxis][yAxis].collision = "player";
+return;
+}
 if(grid[xAxis][yAxis].collision == "door"){
 document.getElementById('add').innerHTML = "";
 grid = [];
@@ -115,23 +144,53 @@ xAxis = 0;
 OG = false;
 createWorld();
 grid[xAxis][yAxis].block.style.background = "blue";
+grid[xAxis][yAxis].collision = "player";
 return;
 }
 if(grid[xAxis][yAxis].collision == 'brick'){
 if(direction == 'up'){
 yAxis++;
+grid[xAxis][yAxis].collision = "player";
 return;
 }else if(direction == 'left'){
 xAxis++;
+grid[xAxis][yAxis].collision = "player";
 return;
 }else if(direction == 'right'){
 xAxis--;
+grid[xAxis][yAxis].collision = "player";
 }else if(direction == 'down'){
 yAxis--;
+grid[xAxis][yAxis].collision = "player";
 return;
 }
 }
 grid[xAxis][yAxis].block.style.background = "blue";
+}
+function lose(){
+document.getElementById('game').style.display="none";
+document.getElementById('end').style.display = "block";
+clearInterval(go);
+}
+function start(){
+createWorld();
+document.getElementById('title').style.display = "none";
+document.getElementById('game').style.display = "block";
+let go = setInterval(chase, 10000);
+}
+function chase(){
+let actions = 0;
+grid[xAxis2][yAxis2].block.style.background = grid[xAxis2][yAxis2].color;
+grid[xAxis2][yAxis2].collision = "none";
+if(xAxis2 > xAxis){
+    xAxis2--;
+    if(grid[xAxis2][yAxis2].collision = "player"){
+    lose();
+    }
+    grid[xAxis2][yAxis2].block.style.background = "blue";
+    grid[xAxis2][yAxis2].collision = "kill";
+    actions++;
+}
 }
 </script>
 </body>

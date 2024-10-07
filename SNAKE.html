@@ -12,9 +12,9 @@
     <h1>WORM</h1>
     <button onclick="start()">Begin</button>
     </div>
-    <div id="game" style="display:none">
+    <div id="game" style="display:none;text-align:center">
     <div id="add" style="text-align:center;
-    height:440px;width:440px;border:5px solid gray"></div>
+    height:440px;width:440px;border:5px solid gray;margin-left:auto;margin-right:auto"></div>
     <br>
     <button onclick="left()">left</button>
     
@@ -41,7 +41,7 @@ let random = Math.floor(Math.random() * 11);
 for(let z = 0; z < 20; z++){
 let newYarr = [];
 let miniDiv = document.createElement('div');
-miniDiv.style = "display:inline-block"
+miniDiv.style = "display:inline-block;text-align:center";
 for(let i = 0; i < 20; i++){
 let tile = document.createElement('div');
 tile.style="height:20px;width:20px;background:black;border:1px solid gray";
@@ -107,20 +107,28 @@ document.addEventListener("keydown", function(event) {
   const key = event.key;
   switch (key) {
     case "ArrowLeft":
+      if(DIRECTION !== 'right' && DIRECTION !== 'left'){
       left();
       DIRECTION = 'left';
+      }
       break;
     case "ArrowRight":
+    if(DIRECTION !== 'left' && DIRECTION !== 'right'){
 	  right();
       DIRECTION = 'right';
+    }
       break;
     case "ArrowUp":
+    if(DIRECTION !== 'down' && DIRECTION !== 'up'){
       up();
       DIRECTION = 'up';
+    }
       break;
     case "ArrowDown":
+    if(DIRECTION !== 'up' && DIRECTION !== 'down'){
       down();
       DIRECTION = 'down';
+    }
       break;
   }
 });
@@ -191,7 +199,7 @@ function start(){
 document.getElementById('start').style.display = "none";
 document.getElementById('game').style.display = "block";
 createWorld();
-let go = setInterval(momentum, 250);
+let go = setInterval(momentum, 200);
 }
 </script>
 </body>
