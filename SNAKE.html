@@ -5,28 +5,39 @@
     <style>
         body {
             text-align: center;
-            background-color: lightblue;
+            background-color: black;
+            color:white;
         }
     </style>
     <div id="start">
     <h1>WORM</h1>
-    <button onclick="start()">Begin</button>
+    <button onclick="start()">Begin</button><br><br>
+    <button onclick="cred()">Credits and Changelog</button><br><br>
+    <button onclick="mods()">Custom Game</button>
     </div>
     <div id="game" style="display:none;text-align:center">
     <div id="add" style="text-align:center;
     height:440px;width:440px;border:5px solid gray;margin-left:auto;margin-right:auto"></div>
-    <br>
-    <button onclick="left()">left</button>
-    
-    <button onclick="up()">up</button>
-    
-    <button onclick="down()">down</button>
-    
-    <button onclick="right()">right</button>
     </div>
     <div id="end" style="display:none">
     <h1>YOU LOSE</h1>
     <p>Points: <span id="pointDisp">0</span></p>
+    </div>
+    <div id="creds" style="display:none">
+    <button onclick="returnCred()">Return</button>
+    <h1>Developers</h1>
+    <p>William Wiseman</p>
+    <h1>Patrons:</h1>
+    <p>1. Kamdyn Wagner 1$</p>
+    <h1>Changelog</h1>
+    <p>Alright, so playcode screwed me over and I lost all my code. I had to restart. - Oct 22, 2024</p>
+    </div>
+    <div id="mods" style="display:none">
+    <button onclick="returnMods()">Return</button>
+    <p>Apples</p>
+    <button style="background-color:lime">1</button>
+    <button>2</button>
+    <button>3</button>
     </div>
 <script>
 let grid = [];
@@ -38,13 +49,13 @@ let initial = false;
 let DIRECTION = 'right';
 function createWorld(){
 let random = Math.floor(Math.random() * 11);
-for(let z = 0; z < 20; z++){
+for(let z = 0; z < 22; z++){
 let newYarr = [];
 let miniDiv = document.createElement('div');
 miniDiv.style = "display:inline-block;text-align:center";
-for(let i = 0; i < 20; i++){
+for(let i = 0; i < 22; i++){
 let tile = document.createElement('div');
-tile.style="height:20px;width:20px;background:black;border:1px solid gray";
+tile.style="height:20px;width:20px;background:black;";
 if(i == 6 && z == 3){
 tile.style.background = "lime";
 initial = true;
@@ -152,6 +163,10 @@ return;
 }
 function clsnCheck(direction){
 let apple = false;
+if(grid[xAxis][yAxis].collision == 'carrot'){
+apple = true;
+points+= 3;
+}
 if(grid[xAxis][yAxis].collision == 'apple'){
 apple = true;
 points++;
@@ -176,11 +191,16 @@ snake.shift();
 }
 if(apple == true){
 while(true){
-num1 = Math.floor(Math.random() * 20);
-num2 = Math.floor(Math.random() * 20);
+num1 = Math.floor(Math.random() * 22);
+num2 = Math.floor(Math.random() * 22);
 if(grid[num1][num2].collision == 'none' && grid[num1][num2] !== grid[xAxis][yAxis]){
+if(Math.floor(Math.random() * 10) == 4){
+grid[num1][num2].collision = 'carrot';
+grid[num1][num2].block.style.background = "orange";
+}else{
 grid[num1][num2].collision = 'apple';
 grid[num1][num2].block.style.background = "red";
+}
 break;
 }
 }
@@ -200,6 +220,22 @@ document.getElementById('start').style.display = "none";
 document.getElementById('game').style.display = "block";
 createWorld();
 let go = setInterval(momentum, 200);
+}
+function cred(){
+document.getElementById('start').style.display = "none";
+document.getElementById('creds').style.display = "block";
+}
+function returnCred(){
+document.getElementById('start').style.display = "block";
+document.getElementById('creds').style.display = "none";
+}
+function mods(){
+document.getElementById('start').style.display = "none";
+document.getElementById('mods').style.display = "block";
+}
+function returnMods(){
+document.getElementById('start').style.display = "block";
+document.getElementById('mods').style.display = "none";
 }
 </script>
 </body>
