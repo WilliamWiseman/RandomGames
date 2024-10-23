@@ -1,43 +1,69 @@
 <!DOCTYPE html>
 <html>
-
+<head>
+<title>WilliamSnake</title>
+</head>
 <body>
     <style>
         body {
             text-align: center;
             background-color: black;
-            color:white;
         }
     </style>
     <div id="start">
-    <h1>WORM</h1>
-    <button onclick="start()">Begin</button><br><br>
-    <button onclick="cred()">Credits and Changelog</button><br><br>
+    <br><br><br><br>
+    <h1 style="color:white">WORM</h1>
+    <button onclick="start()">Begin</button>
+    <br> <br>
     <button onclick="mods()">Custom Game</button>
+    <br> <br>
+    <button onclick="creds()">Credits + Changelog</button>
+    <br> <br>
+    <button onclick="daily()">DAILY CHALLENGE</button>
     </div>
     <div id="game" style="display:none;text-align:center">
+    <br><br><br><br>
     <div id="add" style="text-align:center;
     height:440px;width:440px;border:5px solid gray;margin-left:auto;margin-right:auto"></div>
     </div>
-    <div id="end" style="display:none">
+    <div id="end" style="display:none;color:white">
+    <br><br><br><br>
     <h1>YOU LOSE</h1>
     <p>Points: <span id="pointDisp">0</span></p>
+    <p>Mode: <span id="modeDisp">normal</span></p>
+    <button onclick="restart()">Play again</button>
     </div>
-    <div id="creds" style="display:none">
-    <button onclick="returnCred()">Return</button>
-    <h1>Developers</h1>
-    <p>William Wiseman</p>
-    <h1>Patrons:</h1>
-    <p>1. Kamdyn Wagner 1$</p>
-    <h1>Changelog</h1>
-    <p>Alright, so playcode screwed me over and I lost all my code. I had to restart. - Oct 22, 2024</p>
+    <div id="credits" style="display:none;color:white">
+    <button onclick="rtrnCreds()" style="color:black">Return</button>
+    <p>
+    Head Designer - William Wiseman <br><br>
+    Head Programmer - William Wiseman <br><br>
+    Graphic Designer - William Wiseman <br><br>
+    A special thanks to our patrons: <br><br>
+    Kamdyn Wagner - 1$
+    </p>
+    <h1>How to support creator</h1>
+    <p>Give william money and he will include you in the patrons list, along with your donation amount</p>
+    <h1>CHANGELOG</h1>
+    <p>Added this screen - Oct 17, 2024</p>
+    <p>Added Mods, with speed and apples - Oct 21, 2024</p>
+    <p>Added Carrots, triple points! - Oct 21, 2024</p>
+    <p>Added Daily Challenge! - Oct 21, 2024</p>
     </div>
-    <div id="mods" style="display:none">
-    <button onclick="returnMods()">Return</button>
-    <p>Apples</p>
-    <button style="background-color:lime">1</button>
-    <button>2</button>
-    <button>3</button>
+    <div id="Mods" style="display:none;color:white">
+    <button onclick="rtrnMods()">Return</button>
+    <h1>SETTINGS</h1>
+    <p>Speed</p>
+     <button style="width:20px" onclick="speed1()" id="b1">1</button>
+     <button style="width:20px;background-color:lime;" onclick="speed2()" id="b2">2</button>
+     <button style="width:20px" onclick="speed3()" id="b3">3</button>
+     <br>
+     <p>Apples</p>
+     <button style="width:20px;background-color:lime;" onclick="apple(1)" id="a1">1</button>
+     <button style="width:20px" onclick="apple(2)" id="a2">2</button>
+     <button style="width:20px" onclick="apple(3)" id="a3">3</button>
+     <br><br>
+     <button onclick="customStart()">Start Custom</button>
     </div>
 <script>
 let grid = [];
@@ -221,21 +247,96 @@ document.getElementById('game').style.display = "block";
 createWorld();
 let go = setInterval(momentum, 200);
 }
-function cred(){
+function creds(){
 document.getElementById('start').style.display = "none";
-document.getElementById('creds').style.display = "block";
+document.getElementById('credits').style.display = "block";
 }
-function returnCred(){
+function rtrnCreds(){
 document.getElementById('start').style.display = "block";
-document.getElementById('creds').style.display = "none";
+document.getElementById('credits').style.display = "none";
+}
+function restart() {
+window.location.reload();
 }
 function mods(){
 document.getElementById('start').style.display = "none";
-document.getElementById('mods').style.display = "block";
+document.getElementById('Mods').style.display = "block";
 }
-function returnMods(){
+function rtrnMods(){
 document.getElementById('start').style.display = "block";
-document.getElementById('mods').style.display = "none";
+document.getElementById('Mods').style.display = "none";
+}
+let speed = 200;
+function speed1(){
+speed = 300;
+document.getElementById('b1').style = "background-color:lime";
+document.getElementById('b2').style = "background-color:white";
+document.getElementById('b3').style = "background-color:white";
+}
+function speed2(){
+speed = 200;
+document.getElementById('b1').style = "background-color:white";
+document.getElementById('b2').style = "background-color:lime";
+document.getElementById('b3').style = "background-color:white";
+}
+function speed3(){
+speed = 150;
+document.getElementById('b1').style = "background-color:white";
+document.getElementById('b2').style = "background-color:white";
+document.getElementById('b3').style = "background-color:lime";
+}
+function customStart(){
+document.getElementById('Mods').style.display = "none";
+document.getElementById('start').style.display = "none";
+document.getElementById('game').style.display = "block";
+createWorld();
+let go = setInterval(momentum, speed);
+if(apples == 2 || apples == 3){
+while(true){
+num1 = Math.floor(Math.random() * 22);
+num2 = Math.floor(Math.random() * 22);
+if(grid[num1][num2].collision == 'none' && grid[num1][num2] !== grid[xAxis][yAxis]){
+grid[num1][num2].collision = 'apple';
+grid[num1][num2].block.style.background = "red";
+break;
+}
+}
+}
+if(apples == 3){
+while(true){
+num1 = Math.floor(Math.random() * 22);
+num2 = Math.floor(Math.random() * 22);
+if(grid[num1][num2].collision == 'none' && grid[num1][num2] !== grid[xAxis][yAxis]){
+grid[num1][num2].collision = 'apple';
+grid[num1][num2].block.style.background = "red";
+break;
+}
+}
+}
+document.getElementById('modeDisp').innerText = "custom";
+}
+let apples = 1;
+function apple(num){
+apples = num;
+document.getElementById('a1').style = "background-color:white";
+document.getElementById('a2').style = "background-color:white";
+document.getElementById('a3').style = "background-color:white";
+document.getElementById('a' + num).style = "background-color:lime";
+}
+function daily(){
+apples = 1;
+speed = 200;
+customStart();
+for(let i = 0; i < 22; i++){
+if(i !== 9){
+grid[10][i].block.style.background = "gray";
+grid[10][i].collision = "brick";
+}else{
+grid[10][i].block.style.background = "red";
+grid[10][i].collision = "apple";
+}
+}
+document.getElementById('modeDisp').innerText = "Daily Challenge";
 }
 </script>
 </body>
