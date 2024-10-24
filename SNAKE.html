@@ -40,7 +40,8 @@
     Head Programmer - William Wiseman <br><br>
     Graphic Designer - William Wiseman <br><br>
     A special thanks to our patrons: <br><br>
-    Kamdyn Wagner - 1$
+    Kamdyn Wagner - 1$<br><br>
+    Carter Hammon - 1$
     </p>
     <h1>How to support creator</h1>
     <p>Give william money and he will include you in the patrons list, along with your donation amount</p>
@@ -49,9 +50,10 @@
     <p>Added Mods, with speed and apples - Oct 21, 2024</p>
     <p>Added Carrots, triple points! - Oct 21, 2024</p>
     <p>Added Daily Challenge! - Oct 21, 2024</p>
+    <p>Added the elusive golden apple! Has a rare spawn chance and gives 10 points!</p>
     </div>
     <div id="Mods" style="display:none;color:white">
-    <button onclick="rtrnMods()">Return</button>
+    <button onclick="restart()">Return</button>
     <h1>SETTINGS</h1>
     <p>Speed</p>
      <button style="width:20px" onclick="speed1()" id="b1">1</button>
@@ -73,6 +75,12 @@ let snake = [];
 let points = 0;
 let initial = false;
 let DIRECTION = 'right';
+let customizations = {
+bgColor:"black",
+snakeColor:"lime",
+appleColor:"red"
+};
+let customizer = "bg";
 function createWorld(){
 let random = Math.floor(Math.random() * 11);
 for(let z = 0; z < 22; z++){
@@ -81,7 +89,7 @@ let miniDiv = document.createElement('div');
 miniDiv.style = "display:inline-block;text-align:center";
 for(let i = 0; i < 22; i++){
 let tile = document.createElement('div');
-tile.style="height:20px;width:20px;background:black;";
+tile.style="height:20px;width:20px;background:" + customizations.bgColor;
 if(i == 6 && z == 3){
 tile.style.background = "lime";
 initial = true;
@@ -189,6 +197,10 @@ return;
 }
 function clsnCheck(direction){
 let apple = false;
+if(grid[xAxis][yAxis].collision == 'gapple'){
+apple = true;
+points+= 10;
+}
 if(grid[xAxis][yAxis].collision == 'carrot'){
 apple = true;
 points+= 3;
@@ -220,7 +232,10 @@ while(true){
 num1 = Math.floor(Math.random() * 22);
 num2 = Math.floor(Math.random() * 22);
 if(grid[num1][num2].collision == 'none' && grid[num1][num2] !== grid[xAxis][yAxis]){
-if(Math.floor(Math.random() * 10) == 4){
+if(Math.floor(Math.random() * 50 === 23)){
+grid[num1][num2].collision = 'gapple';
+grid[num1][num2].block.style.background = "#ffd700";
+}else if(Math.floor(Math.random() * 10) == 4){
 grid[num1][num2].collision = 'carrot';
 grid[num1][num2].block.style.background = "orange";
 }else{
@@ -261,10 +276,6 @@ window.location.reload();
 function mods(){
 document.getElementById('start').style.display = "none";
 document.getElementById('Mods').style.display = "block";
-}
-function rtrnMods(){
-document.getElementById('start').style.display = "block";
-document.getElementById('Mods').style.display = "none";
 }
 let speed = 200;
 function speed1(){
@@ -337,6 +348,12 @@ grid[10][i].collision = "apple";
 }
 }
 document.getElementById('modeDisp').innerText = "Daily Challenge";
+}
+function clrChange(color){
+if(customizer == "bg"){
+
+}
+
 }
 </script>
 </body>
