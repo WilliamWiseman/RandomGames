@@ -12,6 +12,12 @@
       color: white;
       background-color: black
     }
+    .tiles {
+      height:30px;
+      width:30px;
+      background:black;
+      border:1px solid white;
+    }
   </style>
   <br><br><br><br>
   <h1>You are humanity's last hope...</h1>
@@ -26,7 +32,8 @@
         miniDiv.style = "display:inline-block";
         for (let i = 0; i < 13; i++) {
           let tile = document.createElement('div');
-          tile.style = "height:30px;width:30px;background:black;border:1px solid white;";
+          tile.innerHTML = "&nbsp;"; //prestock tiles with a space because of default css rendering hijinx.  
+          tile.classList = "tiles";
           this.newObj = {};
           this.newObj.tile = tile;
           newYarr.push(this.newObj);
