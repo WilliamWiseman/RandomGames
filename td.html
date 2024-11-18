@@ -17,6 +17,7 @@
       width:30px;
       background:black;
       border:1px solid white;
+      font-size:25px;
     }
   </style>
   <br><br><br><br>
@@ -30,7 +31,7 @@
         let newYarr = [];
         let miniDiv = document.createElement('div');
         miniDiv.style = "display:inline-block";
-        for (let i = 0; i < 13; i++) {
+        for (let i = 0; i < 15; i++) {
           let tile = document.createElement('div');
           tile.innerHTML = "&nbsp;"; //prestock tiles with a space because of default css rendering hijinx.  
           tile.classList = "tiles";
@@ -44,17 +45,45 @@
       }
     }
     createWorld();
+    function bullet(x){
+      this.y = 12;
+      this.x = x;
+      this.go = setInterval(move, 200);
+      function move(){
+        grid[this.x][this.y].tile.innerHTML = "&nbsp;";
+        this.y--;
+        if(this.y !== -1){
+        grid[this.x][this.y].tile.innerText = "|";
+        }else{
+        clearInterval(this.go);
+        }
+      }
+    bullet.prototype.create = function(){
+      grid[this.x][this.y].tile.innerHTML = "|";
+    }
+    }
     function spaceship() {
+      this.pos = 10;
       spaceship.prototype.left = function () {
-        alert('the player should move left');
+        grid[this.pos][13].tile.innerHTML = "&nbsp;"; 
+        this.pos--;
+        if(this.pos == -1){
+        this.pos = 19;
+        }
+        grid[this.pos][13].tile.innerText = playerSprite; 
       }
       spaceship.prototype.right = function () {
-        alert('the player should move right')
+        grid[this.pos][13].tile.innerHTML = "&nbsp;"; 
+        this.pos++;
+        if(this.pos == 20){
+        this.pos = 0;
+        }
+        grid[this.pos][13].tile.innerText = playerSprite;  
       }
       spaceship.prototype.shoot = function () {
-        alert('the player should shoot')
+      let shot = new bullet(this.pos);
+      shot.create();
       }
-      this.pos = 10;
     }
     let PLAYER = new spaceship();
     document.addEventListener("keydown", function (event) {
@@ -67,17 +96,12 @@
         case "ArrowRight":
           PLAYER.right();
           break;
-        case " ":
+        case "ArrowUp":
           PLAYER.shoot();
-          break;
-        case "d":
-          alert(PLAYER.pos);
-          break;
-          case "r":
-          grid[0][10].tile.innerText = playerSprite;
           break;
       }
     });
+    grid[PLAYER.pos][13].tile.innerText = playerSprite;
   </script>
 </body>
 
