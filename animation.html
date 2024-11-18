@@ -26,11 +26,11 @@ let spin;
 let image = document.getElementById('image');
 let num = 1;
 function spinny(){
-    num++;
+num++; 
 image.style.transform = 'rotate(' + num + 'deg)';
 }
 function loop(){
-spin = setInterval(spinny(), 10);
+spin = setInterval(spinny, 10);
 }
 function stop(){
 clearInterval(spin);
