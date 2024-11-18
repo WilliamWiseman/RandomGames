@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CSS shit</title>
+</head>
+<body>
+<style>
+body{
+text-align:center;
+vertical-align:center;
+}
+.bubbleIMG{
+    width:500px;
+    height:500px;
+    border-radius:25px;
+    border:5px solid black;
+}
+</style>
+<br><br><br><br><br>
+<img src="https://i.redd.it/ig5u8ke5qo421.png" class="bubbleIMG" id="image">
+<br><br><br>
+<button onclick="stop()">Stop animation</button>
+<script>
+let spin;
+let image = document.getElementById('image');
+function spinny(){
+image.style.transform = 'rotate(100deg)';
+}
+function loop(){
+spin = setInterval(spinny, 10);
+}
+function stop(){
+clearInterval(spin);
+}
+
+</script>
+</body>
+</html>
