@@ -19,7 +19,7 @@ vertical-align:center;
 <br><br><br><br><br>
 <img src="https://i.redd.it/ig5u8ke5qo421.png" class="bubbleIMG" id="image">
 <br><br><br>
-<button onclick="loop()">Start animation</button>
+
 <button onclick="stop()">Stop animation</button>
 <script>
 let spin;
@@ -30,12 +30,12 @@ num++;
 image.style.transform = 'rotate(' + num + 'deg)';
 }
 function loop(){
-spin = setInterval(spinny, 10);
+spin = setInterval(spinny, 30);
 }
 function stop(){
 clearInterval(spin);
 }
-
+document.onload = loop();
 </script>
 </body>
 </html>

@@ -50,7 +50,7 @@
       this.x = x;
       this.go = setInterval(move, 200);
       function move(){
-        grid[this.x][this.y].tile.innerHTML = "&nbsp;";
+        grid[this.x][this.y].tile.innerText = "&nbsp;";
         this.y--;
         if(this.y !== -1){
         grid[this.x][this.y].tile.innerText = "|";
