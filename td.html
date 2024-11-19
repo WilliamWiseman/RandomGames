@@ -16,18 +16,24 @@
       height:30px;
       width:30px;
       background:black;
-      border:1px solid white;
       font-size:25px;
+    }
+    .area {
+    border:5px solid white;
+    width:630px;
+    margin-left:auto;
+    margin-right:auto;
     }
   </style>
   <br><br><br><br>
   <h1>You are humanity's last hope...</h1>
-  <div id="gameArea"></div>
+  <div id="gameArea" class="area"></div>
   <script>
+    let timer = false;
     let grid = [];
     let playerSprite = "🛦";
     function createWorld() {
-      for (let z = 0; z < 20; z++) {
+      for (let z = 0; z < 21; z++) {
         let newYarr = [];
         let miniDiv = document.createElement('div');
         miniDiv.style = "display:inline-block";
@@ -37,6 +43,7 @@
           tile.classList = "tiles";
           this.newObj = {};
           this.newObj.tile = tile;
+          this.newObj.thing = "NONE";
           newYarr.push(this.newObj);
           miniDiv.appendChild(tile);
         }
@@ -45,17 +52,55 @@
       }
     }
     createWorld();
+    function collisionDetection(x, y){
+    if(grid[x][y] !== undefined && grid[x][y].thing == "NONE"){
+    }else if(grid[x][y] !== undefined && grid[x][y].thing.name === "ENEMY"){
+    grid[x][y].thing.die();
+    timer = false;
+    return false;
+    }
+    return true;
+    }
+    let eraseX;
+    let eraseY;
+    function erase(){
+    grid[eraseX][eraseY].tile.innerHTML = "&nbsp;";
+    }
+    function alien(x, y){
+    this.name = "ENEMY";
+    this.xPOS = x;
+    this.yPOS = y;
+    grid[this.xPOS][this.yPOS].tile.innerHTML = "👾";
+    grid[this.xPOS][this.yPOS].thing = this;
+    alien.prototype.die = function(){
+    grid[this.xPOS][this.yPOS].thing = "NONE";
+    grid[this.xPOS][this.yPOS].tile.innerHTML = "💀";
+    if(timer == true){
+    erase();
+    }
+    eraseX = this.xPOS;
+    eraseY = this.yPOS;
+    setTimeout(erase, 1000);
+    timer = true;
+    }
+    }
     function bullet(x){
       this.y = 12;
       this.x = x;
-      this.go = setInterval(move, 200);
+      this.name = "playerShot";
+      let yAXIS = this.y;
+      let xAXIS = this.x;
+      let go = setInterval(move, 15);
+
       function move(){
-        grid[this.x][this.y].tile.innerText = "&nbsp;";
-        this.y--;
-        if(this.y !== -1){
-        grid[this.x][this.y].tile.innerText = "|";
+        grid[xAXIS][yAXIS].tile.innerHTML = "&nbsp;";
+        yAXIS--;
+        if(yAXIS !== -1 && collisionDetection(xAXIS, yAXIS - 1) !== false){
+        if(collisionDetection(xAXIS, yAXIS) !== false){
+        grid[xAXIS][yAXIS].tile.innerText = "|";
+        }
         }else{
-        clearInterval(this.go);
+        clearInterval(go);
         }
       }
     bullet.prototype.create = function(){
@@ -64,21 +109,23 @@
     }
     function spaceship() {
       this.pos = 10;
+      this.name = "Player Space Ship";
       spaceship.prototype.left = function () {
         grid[this.pos][13].tile.innerHTML = "&nbsp;"; 
         this.pos--;
         if(this.pos == -1){
-        this.pos = 19;
+        this.pos = 20;
         }
         grid[this.pos][13].tile.innerText = playerSprite; 
       }
       spaceship.prototype.right = function () {
         grid[this.pos][13].tile.innerHTML = "&nbsp;"; 
         this.pos++;
-        if(this.pos == 20){
+        if(this.pos == 21){
         this.pos = 0;
         }
-        grid[this.pos][13].tile.innerText = playerSprite;  
+        grid[this.pos][13].tile.innerText = playerSprite;
+        grid[this.pos][13].thing = this; 
       }
       spaceship.prototype.shoot = function () {
       let shot = new bullet(this.pos);
@@ -86,6 +133,9 @@
       }
     }
     let PLAYER = new spaceship();
+    for(let i = 1; i< 20; i+= 2){
+      new alien(i, 2);
+    }
     document.addEventListener("keydown", function (event) {
       event.preventDefault();
       const key = event.key;
