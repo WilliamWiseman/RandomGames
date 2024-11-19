@@ -26,10 +26,9 @@
     }
   </style>
   <br><br><br><br>
-  <h1>You are humanity's last hope...</h1>
+  <h1>WILLAGA</h1>
   <div id="gameArea" class="area"></div>
   <script>
-    let timer = false;
     let grid = [];
     let playerSprite = "🛦";
     function createWorld() {
@@ -61,10 +60,8 @@
     }
     return true;
     }
-    let eraseX;
-    let eraseY;
-    function erase(){
-    grid[eraseX][eraseY].tile.innerHTML = "&nbsp;";
+    function erase(X, Y){
+    grid[X][Y].tile.innerHTML = "&nbsp;";
     }
     function alien(x, y){
     this.name = "ENEMY";
@@ -75,13 +72,33 @@
     alien.prototype.die = function(){
     grid[this.xPOS][this.yPOS].thing = "NONE";
     grid[this.xPOS][this.yPOS].tile.innerHTML = "💀";
-    if(timer == true){
-    erase();
+    setTimeout(erase, 500, this.xPOS, this.yPOS);
     }
-    eraseX = this.xPOS;
-    eraseY = this.yPOS;
-    setTimeout(erase, 1000);
-    timer = true;
+    alien.prototype.shoot = function () {
+      let shot = new AlienBullet(this.xPOS, this.yPOS);
+      shot.create();
+      }
+    }
+    function AlienBullet(x, y){
+      this.y = y + 1;
+      this.x = x;
+      this.name = "enemyShot";
+      let yAXIS = this.y;
+      let xAXIS = this.x;
+      let go = setInterval(move, 100);
+      function move(){
+        grid[xAXIS][yAXIS].tile.innerHTML = "&nbsp;";
+        yAXIS++;
+        if(yAXIS !== 21 && collisionDetection(xAXIS, yAXIS + 1) !== false){
+        if(collisionDetection(xAXIS, yAXIS) !== false){
+        grid[xAXIS][yAXIS].tile.innerText = "▫️";
+        }
+        }else{
+        clearInterval(go);
+        }
+      }
+    bullet.prototype.create = function(){
+      grid[this.x][this.y].tile.innerHTML = "▫️";
     }
     }
     function bullet(x){
@@ -109,6 +126,7 @@
     }
     function spaceship() {
       this.pos = 10;
+      grid[this.pos][13].tile.innerText = playerSprite;
       this.name = "Player Space Ship";
       spaceship.prototype.left = function () {
         grid[this.pos][13].tile.innerHTML = "&nbsp;"; 
@@ -135,7 +153,8 @@
     let PLAYER = new spaceship();
     for(let i = 1; i< 20; i+= 2){
       new alien(i, 2);
-    }
+    };
+    let test = new alien(10, 7);
     document.addEventListener("keydown", function (event) {
       event.preventDefault();
       const key = event.key;
@@ -149,9 +168,11 @@
         case "ArrowUp":
           PLAYER.shoot();
           break;
+        case "s":
+        test.shoot();
+		break;
       }
     });
-    grid[PLAYER.pos][13].tile.innerText = playerSprite;
   </script>
 </body>
 
