@@ -25,12 +25,31 @@
     margin-right:auto;
     }
   </style>
+  <div id="gameScreen">
   <br><br><br><br>
   <h1>WILLAGA</h1>
   <div id="gameArea" class="area"></div>
+  </div>
+  <div id="winScreen" style="display:none">
+     <br><br><br><br>
+    <h1>YOU WIN</h1>
+  </div>
+  <div id="loseScreen" style="display:none">
+    <h1>You lose....</h1>
+  </div>
   <script>
+    function win(){
+    document.getElementById('gameScreen').style.display = "none";
+    document.getElementById('winScreen').style.display = "block";
+    }
+    function lose(){
+    document.getElementById('gameScreen').style.display = "none";
+    document.getElementById('loseScreen').style.display = "block";
+    }
     let grid = [];
     let playerSprite = "🛦";
+    let enemies = [];
+    let lost = false;
     function createWorld() {
       for (let z = 0; z < 21; z++) {
         let newYarr = [];
@@ -55,8 +74,9 @@
     if(grid[x][y] !== undefined && grid[x][y].thing == "NONE"){
     }else if(grid[x][y] !== undefined && grid[x][y].thing.name === "ENEMY"){
     grid[x][y].thing.die();
-    timer = false;
     return false;
+    }else if(grid[x][y] !== undefined && grid[x][y].thing.name === "Player Space Ship"){
+    grid[x][y].thing.die();
     }
     return true;
     }
@@ -73,10 +93,14 @@
     grid[this.xPOS][this.yPOS].thing = "NONE";
     grid[this.xPOS][this.yPOS].tile.innerHTML = "💀";
     setTimeout(erase, 500, this.xPOS, this.yPOS);
+    enemies.shift();
+    if(enemies.length == 0){
+    lost = true;
+    setTimeout(win, 600);
+    }
     }
     alien.prototype.shoot = function () {
       let shot = new AlienBullet(this.xPOS, this.yPOS);
-      shot.create();
       }
     }
     function AlienBullet(x, y){
@@ -89,7 +113,7 @@
       function move(){
         grid[xAXIS][yAXIS].tile.innerHTML = "&nbsp;";
         yAXIS++;
-        if(yAXIS !== 21 && collisionDetection(xAXIS, yAXIS + 1) !== false){
+        if(yAXIS !== 14 && collisionDetection(xAXIS, yAXIS + 1) !== false){
         if(collisionDetection(xAXIS, yAXIS) !== false){
         grid[xAXIS][yAXIS].tile.innerText = "▫️";
         }
@@ -111,10 +135,12 @@
 
       function move(){
         grid[xAXIS][yAXIS].tile.innerHTML = "&nbsp;";
+        grid[xAXIS][yAXIS].thing = "NONE";
         yAXIS--;
         if(yAXIS !== -1 && collisionDetection(xAXIS, yAXIS - 1) !== false){
         if(collisionDetection(xAXIS, yAXIS) !== false){
         grid[xAXIS][yAXIS].tile.innerText = "|";
+        grid[xAXIS][yAXIS].thing = this;
         }
         }else{
         clearInterval(go);
@@ -130,11 +156,13 @@
       this.name = "Player Space Ship";
       spaceship.prototype.left = function () {
         grid[this.pos][13].tile.innerHTML = "&nbsp;"; 
+        grid[this.pos][13].thing = "NONE";
         this.pos--;
         if(this.pos == -1){
         this.pos = 20;
         }
         grid[this.pos][13].tile.innerText = playerSprite; 
+        grid[this.pos][13].thing = this;
       }
       spaceship.prototype.right = function () {
         grid[this.pos][13].tile.innerHTML = "&nbsp;"; 
@@ -149,28 +177,38 @@
       let shot = new bullet(this.pos);
       shot.create();
       }
+      spaceship.prototype.die = function(){
+      grid[this.xPOS][this.yPOS].thing = "NONE";
+      grid[this.xPOS][this.yPOS].tile.innerHTML = "💥";
+      setTimeout(erase, 500, this.xPOS, this.yPOS);
+      lost = true;
+      setTimeout(lose, 600);
+    }
     }
     let PLAYER = new spaceship();
     for(let i = 1; i< 20; i+= 2){
-      new alien(i, 2);
+      let bob = new alien(i, 2);
+      enemies.push(bob);
     };
-    let test = new alien(10, 7);
     document.addEventListener("keydown", function (event) {
       event.preventDefault();
       const key = event.key;
       switch (key) {
         case "ArrowLeft":
+        if(lost == false){
           PLAYER.left();
+        }
           break;
         case "ArrowRight":
+          if(lost == false){
           PLAYER.right();
+          }
           break;
         case "ArrowUp":
+        if(lost == false){
           PLAYER.shoot();
+        }
           break;
-        case "s":
-        test.shoot();
-		break;
       }
     });
   </script>
