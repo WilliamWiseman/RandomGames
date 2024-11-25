@@ -10,7 +10,7 @@
     body {
       text-align: center;
       color: white;
-      background-color: black
+      background-color: black;
     }
     .tiles {
       height:30px;
@@ -50,6 +50,7 @@
     let playerSprite = "🛦";
     let enemies = [];
     let lost = false;
+    let loopArr = [];
     function createWorld() {
       for (let z = 0; z < 21; z++) {
         let newYarr = [];
@@ -83,7 +84,7 @@
     function erase(X, Y){
     grid[X][Y].tile.innerHTML = "&nbsp;";
     }
-    function alien(x, y){
+    function alien(x, y, test){
     this.name = "ENEMY";
     this.xPOS = x;
     this.yPOS = y;
@@ -94,6 +95,7 @@
     grid[this.xPOS][this.yPOS].tile.innerHTML = "💀";
     setTimeout(erase, 500, this.xPOS, this.yPOS);
     enemies.shift();
+    clearInterval(loopArr[test]);
     if(enemies.length == 0){
     lost = true;
     setTimeout(win, 600);
@@ -187,7 +189,13 @@
     }
     let PLAYER = new spaceship();
     for(let i = 1; i< 20; i+= 2){
-      let bob = new alien(i, 2);
+      if(loopArr[0] == undefined){
+      let bob = new alien(i, 2, 0);
+      }else{
+      let bob = new alien(i, 2, loopArr.length);
+      }
+      let obj = setInterval(bob.shoot, 1000);
+      loopArr.push(obj);
       enemies.push(bob);
     };
     document.addEventListener("keydown", function (event) {
