@@ -177,6 +177,7 @@
         };
         spaceship.prototype.right = function () {
           grid[this.pos][13].tile.innerHTML = "&nbsp;";
+          grid[this.pos][13].thing = "NONE";
           this.pos++;
           if (this.pos == 21) {
             this.pos = 0;
