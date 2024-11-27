@@ -35,11 +35,18 @@
     <div id="winScreen" style="display: none">
       <br /><br /><br /><br />
       <h1>YOU WIN</h1>
+      <button onclick="newgame()">New Game?</button>
     </div>
     <div id="loseScreen" style="display: none">
       <h1>You lose....</h1>
+      <button onclick="newgame()">New Game?</button>
     </div>
     <script>
+      function newgame() {
+        console.log('New Game');
+        window.location.reload(true)
+        return false;
+      }
       function win() {
         document.getElementById("gameScreen").style.display = "none";
         document.getElementById("winScreen").style.display = "block";
