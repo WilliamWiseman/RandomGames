@@ -92,14 +92,14 @@
         this.name = "ENEMY";
         this.xPOS = x;
         this.yPOS = y;
-        let george = setInterval(this.shoot, 1000, this.xPOS, this.yPOS);
+        this.george = setInterval(this.shoot, 1000, this.xPOS, this.yPOS);
         grid[this.xPOS][this.yPOS].tile.innerHTML = "👾";
         grid[this.xPOS][this.yPOS].thing = this;
         alien.prototype.die = function () {
           grid[this.xPOS][this.yPOS].thing = "NONE";
           grid[this.xPOS][this.yPOS].tile.innerHTML = "💀";
           setTimeout(erase, 500, this.xPOS, this.yPOS);
-          clearInterval(george);
+          clearInterval(this.george);
           enemies.shift();
           if (enemies.length == 0) {
             lost = true;
