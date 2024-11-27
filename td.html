@@ -89,10 +89,11 @@
         grid[X][Y].tile.innerHTML = "&nbsp;";
       }
       function alien(x, y) {
+        console.log('new alien ' + x);
         this.name = "ENEMY";
         this.xPOS = x;
         this.yPOS = y;
-        let george = setInterval(this.shoot, 1000);
+        let george = setInterval(this.shoot, 10000);
         grid[this.xPOS][this.yPOS].tile.innerHTML = "👾";
         grid[this.xPOS][this.yPOS].thing = this;
         alien.prototype.die = function () {
@@ -108,19 +109,22 @@
         };
         alien.prototype.shoot = function () {
           let shot = new AlienBullet(this.xPOS, this.yPOS);
+          console.log('firing laser');
         };
       }
       function AlienBullet(x, y) {
         this.y = y + 1;
         this.x = x;
+        console.log('Alien number ' + x + " fires");
         this.name = "enemyShot";
         let yAXIS = this.y;
         let xAXIS = this.x;
         let go = setInterval(move, 100);
         function move() {
-          grid[xAXIS][yAXIS].tile.innerHTML = "&nbsp;";
+          console.log(yAXIS);
+          //grid[xAXIS][yAXIS].tile.innerHTML = "&nbsp;";
           yAXIS++;
-          if (yAXIS !== 14 && collisionDetection(xAXIS, yAXIS + 1) !== false) {
+          if (yAXIS !== 14 && collisionDetection(xAXIS, yAXIS) !== false) {
             if (collisionDetection(xAXIS, yAXIS) !== false) {
               grid[xAXIS][yAXIS].tile.innerText = "▫️";
             }
