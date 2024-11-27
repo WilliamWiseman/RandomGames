@@ -75,13 +75,13 @@
           grid[x][y] !== undefined &&
           grid[x][y].thing.name === "ENEMY"
         ) {
-          grid[x][y].thing.die();
+          grid[x][y].thing.die(x,y);
           return false;
         } else if (
           grid[x][y] !== undefined &&
           grid[x][y].thing.name === "Player Space Ship"
         ) {
-          grid[x][y].thing.die();
+          grid[x][y].thing.die(x,y);
         }
         return true;
       }
@@ -188,10 +188,11 @@
           let shot = new bullet(this.pos);
           shot.create();
         };
-        spaceship.prototype.die = function () {
-          grid[this.xPOS][this.yPOS].thing = "NONE";
-          grid[this.xPOS][this.yPOS].tile.innerHTML = "💥";
-          setTimeout(erase, 500, this.xPOS, this.yPOS);
+        this.die = function (x,y) {
+          console.log([x,y]);
+          grid[x][y].thing = "NONE";
+          grid[x][y].tile.innerHTML = "💥";
+          setTimeout(erase, 500, x, y);
           lost = true;
           setTimeout(lose, 600);
         };
