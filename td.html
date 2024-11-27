@@ -89,7 +89,6 @@
         grid[X][Y].tile.innerHTML = "&nbsp;";
       }
       function alien(x, y) {
-        console.log('new alien ' + x);
         this.name = "ENEMY";
         this.xPOS = x;
         this.yPOS = y;
@@ -108,15 +107,12 @@
           }
         };
         alien.prototype.shoot = function (x, y) {
-          console.log([x, y]);
           let shot = new AlienBullet(x, y);
-          console.log('firing laser');
         };
       }
       function AlienBullet(x, y) {
         this.y = y + 1;
-        this.x = x;
-        console.log('Alien number ' + x + " fires");
+        this.x = x; 
         this.name = "enemyShot";
         let yAXIS = this.y;
         let xAXIS = this.x;
@@ -188,8 +184,7 @@
           let shot = new bullet(this.pos);
           shot.create();
         };
-        this.die = function (x,y) {
-          console.log([x,y]);
+        this.die = function (x,y) { 
           grid[x][y].thing = "NONE";
           grid[x][y].tile.innerHTML = "💥";
           setTimeout(erase, 500, x, y);
