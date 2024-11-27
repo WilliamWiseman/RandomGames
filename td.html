@@ -93,7 +93,7 @@
         this.name = "ENEMY";
         this.xPOS = x;
         this.yPOS = y;
-        let george = setInterval(this.shoot, 10000);
+        let george = setInterval(this.shoot, 1000, this.xPOS, this.yPOS);
         grid[this.xPOS][this.yPOS].tile.innerHTML = "👾";
         grid[this.xPOS][this.yPOS].thing = this;
         alien.prototype.die = function () {
@@ -107,8 +107,9 @@
             setTimeout(win, 600);
           }
         };
-        alien.prototype.shoot = function () {
-          let shot = new AlienBullet(this.xPOS, this.yPOS);
+        alien.prototype.shoot = function (x, y) {
+          console.log([x, y]);
+          let shot = new AlienBullet(x, y);
           console.log('firing laser');
         };
       }
@@ -120,9 +121,8 @@
         let yAXIS = this.y;
         let xAXIS = this.x;
         let go = setInterval(move, 100);
-        function move() {
-          console.log(yAXIS);
-          //grid[xAXIS][yAXIS].tile.innerHTML = "&nbsp;";
+        function move() { 
+          grid[xAXIS][yAXIS].tile.innerHTML = "&nbsp;";
           yAXIS++;
           if (yAXIS !== 14 && collisionDetection(xAXIS, yAXIS) !== false) {
             if (collisionDetection(xAXIS, yAXIS) !== false) {
