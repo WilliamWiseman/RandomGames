@@ -26,7 +26,7 @@
     </style>
     <div id="gameScreen">
       <br /><br /><br /><br />
-      <h1 style="display: block; vertical-align: middle; height: 2em; ">
+      <h1 style="display: block; height: 2em; ">
         <span style="display: inline-block; height: 2em; font-size: 2em;  "> W</span>
         <span style="position:relative; top: -10px; margin-left: -12px;  padding-top: -10px">ILLAG</span>
         <span style="display: inline-block; height: 2em; font-size: 2em; margin-left: -12px;  ">A</span></h1>
@@ -66,7 +66,7 @@
           miniDiv.style = "display:inline-block";
           for (let i = 0; i < 15; i++) {
             let tile = document.createElement("div");
-            tile.innerHTML = "&nbsp;"; //prestock tiles with a space because of default css rendering hijinx.
+            tile.innerHTML = "&nbsp;";
             tile.classList = "tiles";
             this.newObj = {};
             this.newObj.tile = tile;
@@ -91,14 +91,34 @@
           grid[x][y] !== undefined &&
           grid[x][y].thing.name === "Player Space Ship"
         ) {
+          if(lost == false){ 
+            grid[x][y].thing.die(x,y);
+            return false;
+          }
+        }else if(
+        grid[x][y] !== undefined &&
+        grid[x][y].thing.name === "playerShot"){
           grid[x][y].thing.die(x,y);
+          grid[x][y].thing = "NONE";
+          grid[x][y].tile.innerHTML = "-";
+          setTimeout(erase, 200, x, y);
+          return false;
+        }else if(
+        grid[x][y] !== undefined &&
+        grid[x][y].thing.name === "enemyShot"){
+          grid[x][y].thing.die(x,y);
+          grid[x][y].thing = "NONE";
+          grid[x][y].tile.innerHTML = "-";
+          setTimeout(erase, 200, x, y);
+          return false;
         }
         return true;
       }
       function erase(X, Y) {
         grid[X][Y].tile.innerHTML = "&nbsp;";
+        grid[X][Y].thing = "NONE";
       }
-      function alien(x, y) {
+      function alien(x, y) { 
         this.name = "ENEMY";
         this.xPOS = x;
         this.yPOS = y;
@@ -126,20 +146,26 @@
         this.name = "enemyShot";
         let yAXIS = this.y;
         let xAXIS = this.x;
+        let obj = this;
         let go = setInterval(move, 100);
         function move() { 
-          grid[xAXIS][yAXIS].tile.innerHTML = "&nbsp;";
+          erase(xAXIS, yAXIS);
           yAXIS++;
           if (yAXIS !== 14 && collisionDetection(xAXIS, yAXIS) !== false) {
             if (collisionDetection(xAXIS, yAXIS) !== false) {
               grid[xAXIS][yAXIS].tile.innerText = "▫️";
+              grid[xAXIS][yAXIS].thing = obj;
             }
           } else {
+            erase(xAXIS, yAXIS);
             clearInterval(go);
           }
         }
-        bullet.prototype.create = function () {
+        AlienBullet.prototype.create = function () {
           grid[this.x][this.y].tile.innerHTML = "▫️";
+        };
+        AlienBullet.prototype.die = function () { 
+        clearInterval(go);
         };
       }
       function bullet(x) {
@@ -149,15 +175,14 @@
         let yAXIS = this.y;
         let xAXIS = this.x;
         let go = setInterval(move, 15);
-
+        let obj = this;
         function move() {
-          grid[xAXIS][yAXIS].tile.innerHTML = "&nbsp;";
-          grid[xAXIS][yAXIS].thing = "NONE";
+          erase(xAXIS, yAXIS);
           yAXIS--;
           if (yAXIS !== -1 && collisionDetection(xAXIS, yAXIS - 1) !== false) {
             if (collisionDetection(xAXIS, yAXIS) !== false) {
               grid[xAXIS][yAXIS].tile.innerText = "|";
-              grid[xAXIS][yAXIS].thing = this;
+              grid[xAXIS][yAXIS].thing = obj;
             }
           } else {
             clearInterval(go);
@@ -166,6 +191,10 @@
         bullet.prototype.create = function () {
           grid[this.x][this.y].tile.innerHTML = "|";
         };
+        bullet.prototype.die = function () { 
+        clearInterval(go);
+        erase(this.x, this.y);
+        };
       }
       function spaceship() {
         this.pos = 10;
@@ -173,7 +202,7 @@
         this.name = "Player Space Ship";
         spaceship.prototype.left = function () {
           grid[this.pos][13].tile.innerHTML = "&nbsp;"; 
-          grid[this.pos][13].thing = "NONE"; //no
+          grid[this.pos][13].thing = "NONE";
           this.pos--;
           if (this.pos == -1) {
             this.pos = 20;
@@ -207,7 +236,7 @@
       for (let i = 1; i < 20; i += 2) {
         let bob = new alien(i, 2);
         enemies.push(bob);
-      }
+      } 
       document.addEventListener("keydown", function (event) {
         event.preventDefault();
         const key = event.key;
