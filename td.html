@@ -25,8 +25,8 @@
       }
     </style>
     <div id="gameScreen">
-      <br /><br /><br /><br />
-      <h1 style="display: block; height: 2em; vertical-align: middle;;">
+      <br /><br /><br /><br/>
+      <h1 style="display: block; vertical-align: middle; height: 2em; ">
         <span style="display: inline-block; height: 2em; font-size: 2em;  "> W</span>
         <span style="position:relative; top: -10px; margin-left: -12px;  padding-top: -10px">ILLAG</span>
         <span style="display: inline-block; height: 2em; font-size: 2em; margin-left: -12px;  ">A</span></h1>
@@ -46,22 +46,26 @@
         console.log('New Game');
         window.location.reload(true)
         return false;
-      }
+      };
       function win() {
         document.getElementById("gameScreen").style.display = "none";
         document.getElementById("winScreen").style.display = "block";
-      }
+      };
       function lose() {
         document.getElementById("gameScreen").style.display = "none";
         document.getElementById("loseScreen").style.display = "block";
-      }
+      };
       let grid = [];
+      let enemyGrid = [];
+      let playerGrid = [];
       let playerSprite = "🛦";
       let enemies = [];
       let lost = false;
       function createWorld() {
         for (let z = 0; z < 21; z++) {
           let newYarr = [];
+          let enemyYarr = [];
+          let playerYarr = [];
           let miniDiv = document.createElement("div");
           miniDiv.style = "display:inline-block";
           for (let i = 0; i < 15; i++) {
@@ -71,10 +75,15 @@
             this.newObj = {};
             this.newObj.tile = tile;
             this.newObj.thing = "NONE";
+            let boolean = false;
             newYarr.push(this.newObj);
+            enemyYarr.push(boolean);
+            playerYarr.push(boolean);
             miniDiv.appendChild(tile);
           }
           grid.push(newYarr);
+          enemyGrid.push(enemyYarr);
+          playerGrid.push(playerYarr);
           document.getElementById("gameArea").appendChild(miniDiv);
         }
       }
@@ -237,7 +246,7 @@
       for (let i = 1; i < 20; i += 2) {
         let bob = new alien(i, 2);
         enemies.push(bob);
-      } 
+      }
       document.addEventListener("keydown", function (event) {
         event.preventDefault();
         const key = event.key;
