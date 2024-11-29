@@ -97,7 +97,7 @@
           }
         }else if(
         grid[x][y] !== undefined &&
-        grid[x][y].thing.name === "playerShot"){
+        grid[x][y].thing.name === "enemyShot"){
           grid[x][y].thing.die(x,y);
           grid[x][y].thing = "NONE";
           grid[x][y].tile.innerHTML = "-";
@@ -105,7 +105,7 @@
           return false;
         }else if(
         grid[x][y] !== undefined &&
-        grid[x][y].thing.name === "enemyShot"){
+        grid[x][y].thing.name === "playerShot"){
           grid[x][y].thing.die(x,y);
           grid[x][y].thing = "NONE";
           grid[x][y].tile.innerHTML = "-";
@@ -166,6 +166,7 @@
         };
         AlienBullet.prototype.die = function () { 
         clearInterval(go);
+        erase(this.x, this.y);
         };
       }
       function bullet(x) {
