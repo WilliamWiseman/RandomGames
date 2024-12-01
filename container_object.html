@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Container Object</title>
+  </head>
+  <style>
+    div {
+      display: block;
+    }
+  </style>
+  <body>
+    <fieldset>
+      <legend>Input</legend>
+      <div>
+        <label for="input1"
+          >Input 1
+          <input id="input1" name="input1" />
+        </label>
+      </div>
+      <div>
+        <label for="input2"
+          >Input 2
+          <input id="input2" name="input2" />
+        </label>
+      </div>
+      <button id="save_action" onclick="Container.load()">save</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Add</legend>
+
+      <div>
+        <label for="add_answer"
+          >Answer
+          <input id="add_answer" name="add_answer" />
+        </label>
+      </div>
+      <div>
+        <button id="add_action" onclick="Add.compute();">Compute</button>
+        <button id="add_input1" onclick="Add.savetoOne();">Copy to Input1</button>
+        <button id="add_input2" onclick="Add.savetoTwo();">Copy to Input2</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Subtract</legend>
+
+      <div>
+        <label for="subtract_answer"
+          >Answer
+          <input id="subtract_answer" name="subtract_answer" />
+        </label>
+      </div>
+      <div>
+        <button id="subtract_action" onclick="Subtract.compute();">Compute</button>
+        <button id="subtract_input1" onclick="Subtract.savetoOne();">Copy to Input1</button>
+        <button id="subtract_input2" onclick="Subtract.savetoTwo();">Copy to Input2</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Multiply</legend>
+
+      <div>
+        <label for="multiply_answer"
+          >Answer
+          <input id="multiply_answer" name="multiply_answer" />
+        </label>
+      </div>
+      <div>
+        <button id="multiply_action" onclick="Multiply.compute();">Compute</button>
+        <button id="multiply_input1" onclick="Multiply.savetoOne();">Copy to Input1</button>
+        <button id="multiply_input2" onclick="Multiply.savetoTwo();">Copy to Input2</button>
+      </div>
+    </fieldset>
+    <script lang="js">
+        //This is a dumb object you've seen before.
+        function ContainerObj () {
+            this.input1 = 0;
+            this.input2 = 0;
+            this.load = () => {
+                this.input1 = Number(document.getElementById('input1').value);
+                this.input2 = Number(document.getElementById('input2').value);
+            }
+            this.set = (name, value) => {
+                if(name == 1){
+                    this.input1 = value; 
+                } else if (name == 2) {
+                    this.input2 = value; 
+                }
+                document.getElementById('input1').value = this.input1;
+                document.getElementById('input2').value = this.input2;
+            }
+        }
+
+        // This may be something NEW for you and this design pattern may be a game changer 
+        // for you.  Since I'm dealing with a lot of similar objects, I declare a base object here
+        class mathmatics  {
+            constructor() {
+                //this is an object CONSTRUCTOR.  Whenever you type new foo(), it runs the constructor
+                //in fact if we had new foo(bar) and we had constructor(foobar) the new foo(bar) would 
+                //call constructor AND pass bar in as foobar
+            }
+            savetoOne() {
+                //note how this.answer is NOT defined in mathmatics, that is ok because
+                //it is defined in all the child classes
+                Container.set(1, this.answer);
+            }
+            savetoTwo() {
+                Container.set(2, this.answer);
+            }
+        }
+        //then I EXTEND the object, an extended object inherets all the properties of the parent
+        //object, so even though I don't have "savetoOne" defined as part of AddObj, it still has
+        //those functions because it inherets them from mathmatics.
+        class AddObj extends mathmatics {
+            answer = 0;
+            compute = () => {
+                //see how I'm just referencing Container.input1 here? Because contianer
+                //is instantiated in the global scope, I can just call it this way
+                //and it's properties and methods are accessable everywhere.
+                this.answer = Container.input1 + Container.input2;
+                document.getElementById('add_answer').value = this.answer;
+            }
+        };
+        class SubtractObj extends mathmatics {
+            answer = 0;
+            compute = () => {
+                this.answer = Container.input1 - Container.input2;
+                document.getElementById('subtract_answer').value = this.answer;
+            }
+        };
+        class MultiplyObj extends mathmatics {
+            answer = 0;
+            compute = () => {
+                this.answer = Container.input1 * Container.input2;
+                document.getElementById('multiply_answer').value = this.answer;
+            }
+        }; 
+
+        const Container     = new ContainerObj();
+        const Add           = new AddObj();
+        const Subtract      = new SubtractObj();
+        const Multiply      = new MultiplyObj();
+
+        Container.load();
+    </script>
+  </body>
+</html>
