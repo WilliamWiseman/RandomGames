@@ -25,8 +25,8 @@
       }
     </style>
     <div id="gameScreen">
-      <br /><br /><br /><br />
-      <h1 style="display: block; height: 2em; vertical-align: middle;;">
+      <br /><br /><br /><br/>
+      <h1 style="display: block; vertical-align: middle; height: 2em; ">
         <span style="display: inline-block; height: 2em; font-size: 2em;  "> W</span>
         <span style="position:relative; top: -10px; margin-left: -12px;  padding-top: -10px">ILLAG</span>
         <span style="display: inline-block; height: 2em; font-size: 2em; margin-left: -12px;  ">A</span></h1>
@@ -46,22 +46,26 @@
         console.log('New Game');
         window.location.reload(true)
         return false;
-      }
+      };
       function win() {
         document.getElementById("gameScreen").style.display = "none";
         document.getElementById("winScreen").style.display = "block";
-      }
+      };
       function lose() {
         document.getElementById("gameScreen").style.display = "none";
         document.getElementById("loseScreen").style.display = "block";
-      }
+      };
       let grid = [];
+      let enemyGrid = [];
+      let playerGrid = [];
       let playerSprite = "🛦";
       let enemies = [];
       let lost = false;
       function createWorld() {
         for (let z = 0; z < 21; z++) {
           let newYarr = [];
+          let enemyYarr = [];
+          let playerYarr = [];
           let miniDiv = document.createElement("div");
           miniDiv.style = "display:inline-block";
           for (let i = 0; i < 15; i++) {
@@ -71,10 +75,15 @@
             this.newObj = {};
             this.newObj.tile = tile;
             this.newObj.thing = "NONE";
+            let boolean = false;
             newYarr.push(this.newObj);
+            enemyYarr.push(boolean);
+            playerYarr.push(boolean);
             miniDiv.appendChild(tile);
           }
           grid.push(newYarr);
+          enemyGrid.push(enemyYarr);
+          playerGrid.push(playerYarr);
           document.getElementById("gameArea").appendChild(miniDiv);
         }
       }
@@ -122,14 +131,17 @@
         this.name = "ENEMY";
         this.xPOS = x;
         this.yPOS = y;
-        this.george = setInterval(this.shoot, 1000, this.xPOS, this.yPOS);
+        enemyGrid[x][y] = true;
+        //this.george = setInterval(this.shoot, 1000, this.xPOS, this.yPOS);
+        let chikn = setTimeout(this.left, 1000);
         grid[this.xPOS][this.yPOS].tile.innerHTML = "👾";
         grid[this.xPOS][this.yPOS].thing = this;
         alien.prototype.die = function () {
           grid[this.xPOS][this.yPOS].thing = "NONE";
           grid[this.xPOS][this.yPOS].tile.innerHTML = "💀";
+          enemyGrid[this.xPOS][this.yPOS] = false;
           setTimeout(erase, 500, this.xPOS, this.yPOS);
-          clearInterval(this.george);
+          //clearInterval(this.george);
           enemies.shift();
           if (enemies.length == 0) {
             lost = true;
@@ -138,6 +150,18 @@
         };
         alien.prototype.shoot = function (x, y) {
           let shot = new AlienBullet(x, y);
+        };
+        alien.prototype.left = function () {
+          //erase(this.xPOS, this.yPOS);
+          console.log(this.xPOS + ", " + this.yPOS);
+          enemyGrid[this.xPOS][this.yPOS] = false;
+          this.xPOS--;
+          if (this.xPOS == -1) {
+            this.xPOS = 20;
+          }
+          grid[this.xPOS][this.yPOS].tile.innerText = "👾";
+          grid[this.xPOS][this.yPOS].thing = this;
+          enemyGrid[this.xPOS][this.yPOS] = true;
         };
       }
       function AlienBullet(x, y) {
@@ -150,15 +174,22 @@
         let go = setInterval(move, 100);
         function move() { 
           erase(xAXIS, yAXIS);
+          enemyGrid[xAXIS][yAXIS] = false;
           yAXIS++;
-          if (yAXIS !== 14 && collisionDetection(xAXIS, yAXIS) !== false) {
-            if (collisionDetection(xAXIS, yAXIS) !== false) {
+          if (yAXIS !== 14) {
+            if (playerGrid[xAXIS][yAXIS] === false) {
               grid[xAXIS][yAXIS].tile.innerText = "▫️";
               grid[xAXIS][yAXIS].thing = obj;
+              enemyGrid[xAXIS][yAXIS] = true;
+            }else{
+            grid[xAXIS][yAXIS].thing.die(xAXIS, yAXIS);
+            clearInterval(go);
+            enemyGrid[xAXIS][yAXIS] = false;
+            return;
             }
           } else {
-            erase(xAXIS, yAXIS);
             clearInterval(go);
+            enemyGrid[xAXIS][yAXIS] = false;
           }
         }
         AlienBullet.prototype.create = function () {
@@ -167,6 +198,7 @@
         AlienBullet.prototype.die = function () { 
         clearInterval(go);
         erase(this.x, this.y);
+        enemyGrid[this.x][this.y] = false;
         };
       }
       function bullet(x) {
@@ -179,14 +211,22 @@
         let obj = this;
         function move() {
           erase(xAXIS, yAXIS);
+          playerGrid[xAXIS][yAXIS] = false;
           yAXIS--;
-          if (yAXIS !== -1 && collisionDetection(xAXIS, yAXIS - 1) !== false) {
-            if (collisionDetection(xAXIS, yAXIS) !== false) {
+          if (yAXIS !== -1) {
+            if (enemyGrid[xAXIS][yAXIS] === false) {
               grid[xAXIS][yAXIS].tile.innerText = "|";
               grid[xAXIS][yAXIS].thing = obj;
+              playerGrid[xAXIS][yAXIS] = true;
+            }else{
+            grid[xAXIS][yAXIS].thing.die(xAXIS, yAXIS);
+            clearInterval(go);
+            playerGrid[xAXIS][yAXIS] = false;
+            return;
             }
           } else {
             clearInterval(go);
+            playerGrid[xAXIS][yAXIS] = false;
           }
         }
         bullet.prototype.create = function () {
@@ -195,31 +235,35 @@
         bullet.prototype.die = function () { 
         clearInterval(go);
         erase(this.x, this.y);
+        playerGrid[this.x][this.y] = false;
         };
       }
       function spaceship() {
         this.pos = 10;
         grid[this.pos][13].tile.innerText = playerSprite;
         this.name = "Player Space Ship";
+        playerGrid[this.pos][13] = true;
         spaceship.prototype.left = function () {
-          grid[this.pos][13].tile.innerHTML = "&nbsp;"; 
-          grid[this.pos][13].thing = "NONE";
+          erase(this.pos, 13);
+          playerGrid[this.pos][13] = false;
           this.pos--;
           if (this.pos == -1) {
             this.pos = 20;
           }
           grid[this.pos][13].tile.innerText = playerSprite;
           grid[this.pos][13].thing = this;
+          playerGrid[this.pos][13] = true;
         };
         spaceship.prototype.right = function () {
-          grid[this.pos][13].tile.innerHTML = "&nbsp;";
-          grid[this.pos][13].thing = "NONE";
+          erase(this.pos, 13);
+          playerGrid[this.pos][13] = false;
           this.pos++;
           if (this.pos == 21) {
             this.pos = 0;
           }
           grid[this.pos][13].tile.innerText = playerSprite;
           grid[this.pos][13].thing = this;
+          playerGrid[this.pos][13] = true;
         };
         spaceship.prototype.shoot = function () {
           let shot = new bullet(this.pos);
@@ -228,6 +272,7 @@
         this.die = function (x,y) { 
           grid[x][y].thing = "NONE";
           grid[x][y].tile.innerHTML = "💥";
+          playerGrid[x][y] = false;
           setTimeout(erase, 500, x, y);
           lost = true;
           setTimeout(lose, 600);
@@ -237,7 +282,8 @@
       for (let i = 1; i < 20; i += 2) {
         let bob = new alien(i, 2);
         enemies.push(bob);
-      } 
+      };
+      console.log(enemyGrid);
       document.addEventListener("keydown", function (event) {
         event.preventDefault();
         const key = event.key;
