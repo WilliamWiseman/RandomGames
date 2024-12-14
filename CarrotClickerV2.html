@@ -8,12 +8,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<button>carrot</button>
+    <style>
+    body{
+    text-align:center;
+    }
+    </style>
+    <h1>Carrot clicker</h1>
+    <p>You have <span id="demo">no</span> carrots</p>
+<button onclick="click()">carrot</button>
 
 
 
 
 
-    <script></script>
+    <script>
+    let data = {
+    carrots:0,
+    cpc:1,
+    cps:0
+    };
+    let crtDISP = document.getElementById('demo');
+    function updateStorage(){
+    localStorage.carrotDATA = JSON.stringify(data);
+    }
+    function retrieveFromStorage(){
+    data = JSON.parse(localStorage.carrotDATA)
+    }
+    function initial(){
+    if(localStorage.carrotDATA){
+    retrieveFromStorage();
+    }else{
+    updateStorage();
+    }
+    }
+    function click() {
+ // if (localStorage.clickcount) {
+  //  localStorage.clickcount = Number(localStorage.clickcount)+1;
+  //} else {
+  //  localStorage.clickcount = 0;
+ // }
+ // document.getElementById("demo").innerHTML = localStorage.clickcount;
+
+    }
+    document.onload = initial();
+    </script>
 </body>
 </html>
