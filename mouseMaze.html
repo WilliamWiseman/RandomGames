@@ -26,7 +26,7 @@
         }
     </style>
     <h1>MAZE</h1>
-    <div class="gameArea">
+    <div class="gameArea" id="gameAREA">
         <div id="add"></div>
     </div>
     <script>
@@ -98,9 +98,24 @@
         }
         }
         }
-
+        let maze = document.getElementById('gameAREA');
+        let num = 1;
+		function spinny(){
+		num++; 
+		maze.style.transform = 'rotate(' + num + 'deg)';
+		}
+		function loop(){
+		spin = setInterval(spinny, 30);
+		}
+		function stop(){
+		clearInterval(spin);
+		}
+		//document.onload = loop();
+        function sussyAmogus(){
+        let x = new level('KillYourSelf');
+        let idk = new line(10, 50, 60, false);
+        x.newLine(idk);
+        buildLevel(x);
+        }
+        sussyAmogus();
     </script>
-
-</body>
-
-</html>
