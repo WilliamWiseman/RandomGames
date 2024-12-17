@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <style>
+        body {
+            text-align: center;
+            background-color: black;
+            color: lime;
+        }
+
+        .gameArea {
+            text-align: center;
+            height: 400px;
+            width: 400px;
+            border: 5px solid lime;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tiles {
+            height: 5px;
+            width: 5px;
+            background-color: black;
+        }
+    </style>
+    <h1>MAZE</h1>
+    <div class="gameArea">
+        <div id="add"></div>
+    </div>
+    <script>
+        let grid = [];
+        function createWorld() { // creates physical DOM grid
+            for (let z = 0; z < 80; z++) {
+                let newYarr = [];
+                let miniDiv = document.createElement('div');
+                miniDiv.style = "display:inline-block";
+                for (let i = 0; i < 80; i++) {
+                    let tile = document.createElement('div');
+                    tile.classList = "tiles";
+                    this.newObj = {};
+                    this.newObj.block = tile;
+                    newYarr.push(this.newObj);
+                    miniDiv.appendChild(tile);
+                }
+                grid.push(newYarr);
+                document.getElementById('add').appendChild(miniDiv);
+            }
+        }
+        createWorld();
+        
+        function lose() {
+            //not much here yet
+            alert('you lost screw you');
+        }
+
+        function wall(x, y) { // Creates a wall at the designated square
+            grid[x][y].block.style.background = "lime";
+            grid[x][y].block.onmouseover = function () { lose() };
+        }
+
+        function horLine(start, finish, Y) { //Builds a horizontal line based on input coords
+            for (let i = start; i < finish; i++) {
+                wall(i, Y);
+            }
+
+        };
+        function vertLine(start, finish, X) { //Builds a vertical line based on input coords
+            for (let i = start; i < finish; i++) {
+                wall(X, i);
+            }
+        
+            function level(name) { // Create a line object for storage in level catalog later! Easily add line objects to build the level
+                this.lineArr = [];
+                this.name = name;
+                level.prototype.newLine = function (LINE) {
+                    this.lineArr.push(LINE);
+                }
+
+            }
+
+        };
+        function line(start, end, xORy, isVert){
+        this.start = start;
+        this.finish = end;
+        this.vertical = isVert;
+        this.extra = xORy;
+        };
+        
+        function buildLevel(InputLevel){
+        for(let i = 0; i < inputLevel.lineArr.length; i++){
+        let theLine = inputLevel.lineArr[i];
+        if(theLine.isVert == true){
+        vertLine(theLine.start, theLine.finish, theLine.extra);
+        }else{
+        horLine(theLine.start, theLine.finish, theLine.extra); 
+        }
+        }
+        }
+
+    </script>
+
+</body>
+
+</html>
