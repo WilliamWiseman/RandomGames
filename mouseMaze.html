@@ -71,7 +71,7 @@
                 wall(X, i);
             }
         
-            function level(name) { // Create a line object for storage in level catalog later! Easily add line objects to build the level
+            function level(name) { // Create a level object for storage in level catalog later! Easily add line objects to build the level
                 this.lineArr = [];
                 this.name = name;
                 level.prototype.newLine = function (LINE) {
@@ -81,14 +81,14 @@
             }
 
         };
-        function line(start, end, xORy, isVert){
+        function line(start, end, xORy, isVert){ //creates a new line object to be shoved in a level object!
         this.start = start;
         this.finish = end;
         this.vertical = isVert;
         this.extra = xORy;
         };
         
-        function buildLevel(InputLevel){
+        function buildLevel(InputLevel){ //Turns the info from the level() object into the physical DOM maze
         for(let i = 0; i < inputLevel.lineArr.length; i++){
         let theLine = inputLevel.lineArr[i];
         if(theLine.isVert == true){
