@@ -24,10 +24,20 @@
             width: 5px;
             background-color: black;
         }
+        
+        .startBTN {
+        font-family:mono;
+        text-align:center;
+        font-weight:bolder;
+        margin-top:320px;
+        }
     </style>
     <h1>MAZE</h1>
-    <div class="gameArea" id="gameAREA">
-        <div id="add"></div>
+    <div class="gameArea" id="gameAREA" onmouseleave="lose()">
+        <div id="add"  style="display:none"></div>
+        <div id="startScreen">
+        <button class="startBTN" onclick="start()"> \Start\ </button>
+        </div>
     </div>
     <script>
         let grid = [];
@@ -49,15 +59,17 @@
             }
         }
         createWorld();
+		function nothing(){
+        };
         
-        function lose() {
-            //not much here yet
-            alert('you lost screw you');
-        }
-
         function wall(x, y) { // Creates a wall at the designated square
             grid[x][y].block.style.background = "lime";
             grid[x][y].block.onmouseover = function () { lose() };
+        }
+        
+        function fakewall(x, y) { // Creates a wall at the designated square
+            grid[x][y].block.style.background = "greenyellow";
+            grid[x][y].block.onmouseover = function () { nothing() };
         }
 
         function horLine(start, finish, Y) { //Builds a horizontal line based on input coords
@@ -70,6 +82,25 @@
             for (let i = start; i < finish; i++) {
                 wall(X, i);
             }
+        }
+        
+        function fakeHorLine(start, finish, Y) { //Builds a FAKE horizontal line based on input coords
+            for (let i = start; i < finish; i++) {
+                fakewall(i, Y);
+            }
+
+        };
+        function fakeVertLine(start, finish, X) { //Builds a FAKE vertical line based on input coords
+            for (let i = start; i < finish; i++) {
+                fakewall(X, i);
+            }
+        }
+        
+        function cube(startX, startY, endX, endY){
+        for (let z = startX; z < endX; z++) {
+        for (let i = startY; i < endY; i++) {
+              wall(z, i);
+                }}};
         
             function level(name) { // Create a level object for storage in level catalog later! Easily add line objects to build the level
                 this.lineArr = [];
@@ -79,8 +110,6 @@
                 }
 
             }
-
-        };
         function line(start, end, xORy, isVert){ //creates a new line object to be shoved in a level object!
         this.start = start;
         this.finish = end;
@@ -100,6 +129,7 @@
         }
         let maze = document.getElementById('gameAREA');
         let num = 1;
+        let spin;
 		function spinny(){
 		num++; 
 		maze.style.transform = 'rotate(' + num + 'deg)';
@@ -109,18 +139,44 @@
 		}
 		function stop(){
 		clearInterval(spin);
+        num = 0;
+        maze.style.transform = 'rotate(' + num + 'deg)';
 		}
-		//document.onload = loop();
-        function level1(){
-        horLine(28, 53, 70);
-        vertLine(59, 70, 28);
-        vertLine(59, 70, 52);
-        horLine(28, 37, 59);
-        horLine(44, 53, 59);
-        vertLine(30, 59, 44);
-        vertLine(38, 59, 36);
-        horLine(28, 37, 38);
-        horLine(28, 45, 30);
+        function start() {
+        document.getElementById('add').style.display = "block";
+        document.getElementById('startScreen').style.display = "none";
+        loop();
         }
+        function lose() {
+            stop();
+            document.getElementById('add').style.display = "none";
+        document.getElementById('startScreen').style.display = "block";
+        }
+        function win(){
+        alert('you win!')
+        }
+        function level1(){
+        horLine(28, 53, 70); // start: 28, 70 finish: 53, 70
+        vertLine(59, 70, 28); // start 28, 59 finish 28, 70
+        vertLine(59, 70, 52);  // start 52, 59 finish 52, 70
+        horLine(28, 37, 59);
+        horLine(44, 64, 59);
+        vertLine(30, 59, 44);
+        vertLine(37, 59, 36);
+        horLine(28, 37, 36);
+        horLine(20, 45, 30); // start: 28, 30 finish: 45, 30
+        vertLine(30, 50, 20);
+        vertLine(37, 60, 28);
+        horLine(10, 28, 58);
+        horLine(2, 21, 50);
+        vertLine(50, 79, 2);
+        vertLine(59, 71, 10);
+        fakeVertLine(35, 43, 44);
+        horLine(2, 50, 78);
+        horLine(10, 50, 71);
+        vertLine(71, 79, 50);
+        horLine(45, 55, 34);
+        vertLine(34, 50, 55);
+        };
         level1();
     </script>
