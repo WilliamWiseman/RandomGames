@@ -105,17 +105,22 @@
 		maze.style.transform = 'rotate(' + num + 'deg)';
 		}
 		function loop(){
-		spin = setInterval(spinny, 30);
+		spin = setInterval(spinny, 80);
 		}
 		function stop(){
 		clearInterval(spin);
 		}
 		//document.onload = loop();
-        function sussyAmogus(){
-        let x = new level('KillYourSelf');
-        let idk = new line(10, 50, 60, false);
-        x.newLine(idk);
-        buildLevel(x);
+        function level1(){
+        horLine(28, 53, 70);
+        vertLine(59, 70, 28);
+        vertLine(59, 70, 52);
+        horLine(28, 37, 59);
+        horLine(44, 53, 59);
+        vertLine(30, 59, 44);
+        vertLine(38, 59, 36);
+        horLine(28, 37, 38);
+        horLine(28, 45, 30);
         }
-        sussyAmogus();
+        level1();
     </script>
