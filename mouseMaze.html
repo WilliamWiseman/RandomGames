@@ -32,15 +32,18 @@
         margin-top:320px;
         }
     </style>
-    <h1>MAZE</h1>
+    <h1>MAZE</h1><p>Deaths: <span id="dC">0</span></p><br><br>
     <div class="gameArea" id="gameAREA" onmouseleave="lose()">
         <div id="add"  style="display:none"></div>
         <div id="startScreen">
-        <button class="startBTN" onclick="start()"> \Start\ </button>
+        <button class="startBTN" onclick="start()"> /:start:/ </button>
         </div>
     </div>
     <script>
         let grid = [];
+        let deaths = 0;
+        let active = false;
+        let rock = false;
         function createWorld() { // creates physical DOM grid
             for (let z = 0; z < 80; z++) {
                 let newYarr = [];
@@ -131,11 +134,18 @@
         let num = 1;
         let spin;
 		function spinny(){
-		num++; 
+        if(rock == false){
+        num += 0.5; 
+        }else{
+        num -= 0.5;
+        }
+        if(num == 5 || num == -5){
+        rock = !rock;
+        }
 		maze.style.transform = 'rotate(' + num + 'deg)';
 		}
 		function loop(){
-		spin = setInterval(spinny, 80);
+		spin = setInterval(spinny, 100);
 		}
 		function stop(){
 		clearInterval(spin);
@@ -145,15 +155,21 @@
         function start() {
         document.getElementById('add').style.display = "block";
         document.getElementById('startScreen').style.display = "none";
+        active = true;
         loop();
         }
         function lose() {
+            if(active == true){
+            deaths++;
+            active = false;
+            }
+            document.getElementById('dC').innerText = deaths;
             stop();
             document.getElementById('add').style.display = "none";
         document.getElementById('startScreen').style.display = "block";
         }
         function win(){
-        alert('you win!')
+        alert('you win!');
         }
         function level1(){
         horLine(28, 53, 70); // start: 28, 70 finish: 53, 70
@@ -164,19 +180,19 @@
         vertLine(30, 59, 44);
         vertLine(37, 59, 36);
         horLine(28, 37, 36);
-        horLine(20, 45, 30); // start: 28, 30 finish: 45, 30
+        horLine(20, 65, 30); // start: 28, 30 finish: 45, 30
         vertLine(30, 50, 20);
         vertLine(37, 60, 28);
         horLine(10, 28, 58);
         horLine(2, 21, 50);
-        vertLine(50, 79, 2);
+        vertLine(30, 79, 2);
         vertLine(59, 71, 10);
         fakeVertLine(35, 43, 44);
-        horLine(2, 50, 78);
-        horLine(10, 50, 71);
-        vertLine(71, 79, 50);
-        horLine(45, 55, 34);
-        vertLine(34, 50, 55);
+        horLine(2, 64, 78);
+        horLine(10, 53, 71);
+        vertLine(60, 79, 64);
+        vertLine(40, 60, 64);
+        cube(48, 30, 61, 56);
         };
         level1();
     </script>
