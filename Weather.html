@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<head>
+
+<title>Idk</title>
+
+</head>
+
+<body>
+
+
+</body>
+
+<script>
+let url = "https://api.weatherapi.com/v1/current.json?q=43512&lang=en&key=5c990cf18f0748d9915185442242712"
+fetch(url) // api for the get request
+    .then(response => response.json())
+    .then(data => {
+        document.write(JSON.stringify(data));
+        
+        console.log(data);
+        });
+</script>
