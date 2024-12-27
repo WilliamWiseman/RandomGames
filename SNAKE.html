@@ -1,54 +1,58 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>WilliamSnake</title>
-</head>
+  <title>WilliamSnake</title>
+
 <body>
-    <style>
-        body {
-            text-align: center;
-            background-color: black;
-        }
-    </style>
-    <div id="start">
-    <br><br><br><br>
-    <h1 style="color:white">Bird?</h1>
-    <button onclick="start()">Begin</button>
+  <style>
+    body {
+      text-align: center;
+      background-color: black;
+    }
+  </style>
+  <div id="start">
+    <br><br><br>
+    <h1 style="color:white">WORM</h1>
+    <br><br><button onclick="start()">Begin</button>
     <br> <br>
     <button onclick="mods()">Custom Game</button>
     <br> <br>
     <button onclick="creds()">Credits + Changelog</button>
     <br> <br>
-    <button onclick="daily()">DAILY CHALLENGE</button><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <button onclick="daily()">DAILY CHALLENGE</button><br><br>
+    <a href="https://docs.google.com/presentation/d/19muvHUGyTgZJyqCsc7469KxFj97QFWjeuokW7LGCQVU/edit?usp=sharing">
+      <button>Leaderboards</button><br><br><br><br><br>
+    </a>
     <button onclick="XTRA()">Extras</button>
-    </div>
-    <div id="EXTRAS" style="display:none;color:white">
+  </div>
+  <div id="EXTRAS" style="display:none;color:white">
     <button onclick="restart()">Return</button>
     <h1>More Modes</h1>
     <button onclick="quickStart()">Quick Normal</button>
     <p>You can submit scores from this mode to normal leaderboards ~^</p>
-    </div>
-    <div id="game" style="display:none;text-align:center">
+  </div>
+  <div id="game" style="display:none;text-align:center">
     <br><br><br><br>
-    <div id="add" style="text-align:center;
-    height:440px;width:440px;border:5px solid gray;margin-left:auto;margin-right:auto"></div>
-    </div>
-    <div id="end" style="display:none;color:white">
+    <div id="add" style="text-align:center;height:440px;width:440px;border:5px solid gray;margin:auto"></div>
+  </div>
+  <div id="end" style="display:none;color:white">
     <br><br><br><br>
     <h1>YOU LOSE</h1>
     <p>Points: <span id="pointDisp">0</span></p>
     <p>Mode: <span id="modeDisp">normal</span></p>
     <button onclick="restart()">Play again</button>
-    </div>
-    <div id="credits" style="display:none;color:white">
+  </div>
+  <div id="credits" style="display:none;color:white">
     <button onclick="rtrnCreds()" style="color:black">Return</button>
     <p>
-    Head Designer - William Wiseman <br><br>
-    Head Programmer - William Wiseman <br><br>
-    Graphic Designer - William Wiseman <br><br>
-    A special thanks to our patrons: <br><br>
-    Kamdyn Wagner - 1$<br><br>
-    Carter Hammon - 1$
+      Head Designer - William Wiseman <br><br>
+      Head Programmer - William Wiseman <br><br>
+      Graphic Designer - William Wiseman <br><br>
+      A special thanks to our patrons: <br><br>
+      Ayden choi nickell - 3$<br><br>
+      Kamdyn Wagner - 1$<br><br>
+      Carter Hammon - 1$
     </p>
     <h1>How to support creator</h1>
     <p>Give william money and he will include you in the patrons list, along with your donation amount</p>
@@ -59,334 +63,321 @@
     <p>Added Daily Challenge! - Oct 21, 2024</p>
     <p>Added the elusive golden apple! Has a rare spawn chance and gives 10 points! - Oct 24, 2024</p>
     <p>Added extra gamemodes! First one is quick normal</p>
-    </div>
-    <div id="Mods" style="display:none;color:white">
+  </div>
+  <div id="Mods" style="display:none;color:white">
     <button onclick="restart()">Return</button>
     <h1>SETTINGS</h1>
     <p>Speed</p>
-     <button onclick="speed1()" id="b1">1</button>
-     <button style="background-color:lime;" onclick="speed2()" id="b2">2</button>
-     <button onclick="speed3()" id="b3">3</button>
-     <br>
-     <p>Apples</p>
-     <button style="background-color:lime;" onclick="apple(1)" id="a1">1</button>
-     <button onclick="apple(2)" id="a2">2</button>
-     <button onclick="apple(3)" id="a3">3</button>
-     <br><br>
-     <button onclick="customStart()">Start Custom</button>
-    </div>
-<script>
-let grid = [];
-let xAxis = 3;
-let yAxis = 6;
-let snake = [];
-let points = 0;
-let initial = false;
-let DIRECTION = 'right';
-let customizations = {
-bgColor:"#87CEEB",
-snakeColor:"yellow"
-};
-function createWorld(){
-let random = Math.floor(Math.random() * 11);
-for(let z = 0; z < 22; z++){
-let newYarr = [];
-let miniDiv = document.createElement('div');
-miniDiv.style = "display:inline-block;text-align:center";
-for(let i = 0; i < 22; i++){
-let tile = document.createElement('div');
-tile.style="height:20px;width:20px;background:" + customizations.bgColor;
-if(i == 6 && z == 3){
-tile.style.background = customizations.snakeColor;
-initial = true;
-}
-this.newObj = {};
-this.newObj.block = tile;
-this.newObj.collision = "none";
-this.newObj.color = customizations.bgColor;
-if(initial == true){
-this.newObj.collision = "brick";
-snake.push(this.newObj);
-initial = false;
-}
-if(i == 6 && z == 10){
-this.newObj.collision = "apple";
-tile.style.background = "red";
-}
-newYarr.push(this.newObj);
-miniDiv.appendChild(tile);
-}
-grid.push(newYarr);
-document.getElementById('add').appendChild(miniDiv);
-}
-}
-function right(){
-let num = grid.length - 1;
-if(xAxis < num){
-xAxis++;
-clsnCheck('right');
-}else{
-lose();
-}
-}
-function left(){
-if(xAxis !== 0){
-xAxis--;
-clsnCheck('left');
-}else{
-lose();
-}
-}
-function up(){
-if(yAxis !== 0){
-yAxis--;
-clsnCheck('up');
-}else{
-lose();
-}
-}
-function down(){
-let num = grid[xAxis].length - 1;
-if(yAxis !== num){
-yAxis++;
-clsnCheck('down');
-}else{
-lose();
-}
-}
-document.addEventListener("keydown", function(event) {
-  event.preventDefault();
-  const key = event.key;
-  switch (key) {
-    case "ArrowLeft":
-      if(DIRECTION !== 'right' && DIRECTION !== 'left'){
-      left();
-      DIRECTION = 'left';
+    <button onclick="speed1()" id="b1">1</button>
+    <button style="background-color:lime;" onclick="speed2()" id="b2">2</button>
+    <button onclick="speed3()" id="b3">3</button>
+    <br>
+    <p>Apples</p>
+    <button style="background-color:lime;" onclick="apple(1)" id="a1">1</button>
+    <button onclick="apple(2)" id="a2">2</button>
+    <button onclick="apple(3)" id="a3">3</button>
+    <br><br>
+    <button onclick="customStart()">Start Custom</button>
+  </div>
+  <script>
+    let grid = [];
+    let xAxis = 3;
+    let yAxis = 6;
+    let snake = [];
+    let points = 0;
+    let initial = false;
+    let DIRECTION = 'right';
+    let customizations = {
+      bgColor: "black",
+      snakeColor: "lime"
+    };
+    function createWorld() {
+      let random = Math.floor(Math.random() * 11);
+      for (let z = 0; z < 22; z++) {
+        let newYarr = [];
+        let miniDiv = document.createElement('div');
+        miniDiv.style = "display:inline-block;text-align:center";
+        for (let i = 0; i < 22; i++) {
+          let tile = document.createElement('div');
+          tile.style = "height:20px;width:20px;background:" + customizations.bgColor;
+          if (i == 6 && z == 3) {
+            tile.style.background = customizations.snakeColor;
+            initial = true;
+          }
+          this.newObj = {};
+          this.newObj.block = tile;
+          this.newObj.collision = "none";
+          this.newObj.color = customizations.bgColor;
+          if (initial == true) {
+            this.newObj.collision = "brick";
+            snake.push(this.newObj);
+            initial = false;
+          }
+          if (i == 6 && z == 10) {
+            this.newObj.collision = "apple";
+            tile.style.background = "red";
+          }
+          newYarr.push(this.newObj);
+          miniDiv.appendChild(tile);
+        }
+        grid.push(newYarr);
+        document.getElementById('add').appendChild(miniDiv);
       }
-      break;
-    case "ArrowRight":
-    if(DIRECTION !== 'left' && DIRECTION !== 'right'){
-	  right();
-      DIRECTION = 'right';
     }
-      break;
-    case "ArrowUp":
-    if(DIRECTION !== 'down' && DIRECTION !== 'up'){
-      up();
-      DIRECTION = 'up';
+    function right() {
+      let num = grid.length - 1;
+      if (xAxis < num) {
+        xAxis++;
+        clsnCheck('right');
+      } else {
+        lose();
+      }
     }
-      break;
-    case "ArrowDown":
-    if(DIRECTION !== 'up' && DIRECTION !== 'down'){
-      down();
-      DIRECTION = 'down';
+    function left() {
+      if (xAxis !== 0) {
+        xAxis--;
+        clsnCheck('left');
+      } else {
+        lose();
+      }
     }
-      break;
-  }
-});
-let z = 0;
-let num1;
-let num2;
-function momentum(){
-if(DIRECTION == 'up'){
-up();
-return;
-}else if(DIRECTION == 'left'){
-left();
-return;
-}else if(DIRECTION == 'right'){
-right();
-return;
-}else if(DIRECTION == 'down'){
-down();
-return;
-}
-}
-function clsnCheck(direction){
-let apple = false;
-if(grid[xAxis][yAxis].collision == 'gapple'){
-apple = true;
-points+= 10;
-}
-if(grid[xAxis][yAxis].collision == 'carrot'){
-apple = true;
-points+= 3;
-}
-if(grid[xAxis][yAxis].collision == 'apple'){
-apple = true;
-points++;
-}
-if(grid[xAxis][yAxis].collision == 'brick'){
-lose();
-return;
-}
-snake.push(grid[xAxis][yAxis]);
-if(z < 3){
-grid[xAxis][yAxis].block.style.background = customizations.snakeColor;
-grid[xAxis][yAxis].collision = "brick";
-z++;
-return;
-}
-if(snake[0].collision !== 'apple'){
-snake[0].collision = "none";
-snake[0].block.style.background = customizations.bgColor;
-}
-if(apple == false){
-snake.shift();
-}
-if(apple == true){
-while(true){
-num1 = Math.floor(Math.random() * 22);
-num2 = Math.floor(Math.random() * 22);
-if(grid[num1][num2].collision == 'none' && grid[num1][num2] !== grid[xAxis][yAxis]){
-if(Math.floor(Math.random() * 10) == 4){
-grid[num1][num2].collision = 'carrot';
-grid[num1][num2].block.style.background = "#f58905";
-}else if(Math.floor(Math.random() * 50 === 23)){
-grid[num1][num2].collision = 'gapple';
-grid[num1][num2].block.style.background = "#ffd700";
-}else{
-grid[num1][num2].collision = 'apple';
-grid[num1][num2].block.style.background = "red";
-}
-break;
-}
-}
-apple = false;
-}
-grid[xAxis][yAxis].block.style.background = customizations.snakeColor;
-grid[xAxis][yAxis].collision = "brick";
-}
-function lose(){
-document.getElementById('game').style.display = "none";
-document.getElementById('end').style.display = "block";
-document.getElementById('pointDisp').innerText = points;
-clearInterval(go);
-}
-function start(){
-document.getElementById('start').style.display = "none";
-document.getElementById('game').style.display = "block";
-createWorld();
-let go = setInterval(momentum, 200);
-}
-function creds(){
-document.getElementById('start').style.display = "none";
-document.getElementById('credits').style.display = "block";
-}
-function rtrnCreds(){
-document.getElementById('start').style.display = "block";
-document.getElementById('credits').style.display = "none";
-}
-function restart() {
-window.location.reload();
-}
-function mods(){
-document.getElementById('start').style.display = "none";
-document.getElementById('Mods').style.display = "block";
-}
-let speed = 200;
-function speed1(){
-speed = 300;
-document.getElementById('b1').style = "background-color:lime";
-document.getElementById('b2').style = "background-color:white";
-document.getElementById('b3').style = "background-color:white";
-}
-function speed2(){
-speed = 200;
-document.getElementById('b1').style = "background-color:white";
-document.getElementById('b2').style = "background-color:lime";
-document.getElementById('b3').style = "background-color:white";
-}
-function speed3(){
-speed = 150;
-document.getElementById('b1').style = "background-color:white";
-document.getElementById('b2').style = "background-color:white";
-document.getElementById('b3').style = "background-color:lime";
-}
-function customStart(){
-document.getElementById('Mods').style.display = "none";
-document.getElementById('start').style.display = "none";
-document.getElementById('EXTRAS').style.display = "none";
-document.getElementById('game').style.display = "block";
-createWorld();
-let go = setInterval(momentum, speed);
-if(apples == 2 || apples == 3){
-while(true){
-num1 = Math.floor(Math.random() * 22);
-num2 = Math.floor(Math.random() * 22);
-if(grid[num1][num2].collision == 'none' && grid[num1][num2] !== grid[xAxis][yAxis]){
-grid[num1][num2].collision = 'apple';
-grid[num1][num2].block.style.background = "red";
-break;
-}
-}
-}
-if(apples == 3){
-while(true){
-num1 = Math.floor(Math.random() * 22);
-num2 = Math.floor(Math.random() * 22);
-if(grid[num1][num2].collision == 'none' && grid[num1][num2] !== grid[xAxis][yAxis]){
-grid[num1][num2].collision = 'apple';
-grid[num1][num2].block.style.background = "red";
-break;
-}
-}
-}
-document.getElementById('modeDisp').innerText = "custom";
-}
-let apples = 1;
-function apple(num){
-apples = num;
-document.getElementById('a1').style = "background-color:white";
-document.getElementById('a2').style = "background-color:white";
-document.getElementById('a3').style = "background-color:white";
-document.getElementById('a' + num).style = "background-color:lime";
-}
-function daily(){
-apples = 1;
-speed = 150;
-customStart();
-for(let i = 0; i < 22; i++){
-if(i < 5 || i > 7){
-grid[5][i].block.style.background = "lime";
-grid[5][i].collision = "brick";
-grid[6][i].block.style.background = "lime";
-grid[6][i].collision = "brick";
-}
-if(i < 17 || i > 19){
-grid[14][i].block.style.background = "lime";
-grid[14][i].collision = "brick";
-grid[13][i].block.style.background = "lime";
-grid[13][i].collision = "brick";
-}
-if(i < 9 || i > 11){
-grid[21][i].block.style.background = "lime";
-grid[21][i].collision = "brick";
-grid[20][i].block.style.background = "lime";
-grid[20][i].collision = "brick";
-}
-}
-document.getElementById('modeDisp').innerText = "Daily Challenge";
-}
-function theme(style){
-if(color == "classic"){
+    function up() {
+      if (yAxis !== 0) {
+        yAxis--;
+        clsnCheck('up');
+      } else {
+        lose();
+      }
+    }
+    function down() {
+      let num = grid[xAxis].length - 1;
+      if (yAxis !== num) {
+        yAxis++;
+        clsnCheck('down');
+      } else {
+        lose();
+      }
+    }
+    document.addEventListener("keydown", function (event) {
+      event.preventDefault();
+      const key = event.key;
+      switch (key) {
+        case "ArrowLeft":
+          if (DIRECTION !== 'right' && DIRECTION !== 'left') {
+            left();
+            DIRECTION = 'left';
+          }
+          break;
+        case "ArrowRight":
+          if (DIRECTION !== 'left' && DIRECTION !== 'right') {
+            right();
+            DIRECTION = 'right';
+          }
+          break;
+        case "ArrowUp":
+          if (DIRECTION !== 'down' && DIRECTION !== 'up') {
+            up();
+            DIRECTION = 'up';
+          }
+          break;
+        case "ArrowDown":
+          if (DIRECTION !== 'up' && DIRECTION !== 'down') {
+            down();
+            DIRECTION = 'down';
+          }
+          break;
+      }
+    });
+    let z = 0;
+    let num1;
+    let num2;
+    function momentum() {
+      if (DIRECTION == 'up') {
+        up();
+        return;
+      } else if (DIRECTION == 'left') {
+        left();
+        return;
+      } else if (DIRECTION == 'right') {
+        right();
+        return;
+      } else if (DIRECTION == 'down') {
+        down();
+        return;
+      }
+    }
+    function clsnCheck(direction) {
+      let apple = false;
+      if (grid[xAxis][yAxis].collision == 'gapple') {
+        apple = true;
+        points += 10;
+      }
+      if (grid[xAxis][yAxis].collision == 'carrot') {
+        apple = true;
+        points += 3;
+      }
+      if (grid[xAxis][yAxis].collision == 'apple') {
+        apple = true;
+        points++;
+      }
+      if (grid[xAxis][yAxis].collision == 'brick') {
+        lose();
+        return;
+      }
+      snake.push(grid[xAxis][yAxis]);
+      if (z < 3) {
+        grid[xAxis][yAxis].block.style.background = customizations.snakeColor;
+        grid[xAxis][yAxis].collision = "brick";
+        z++;
+        return;
+      }
+      if (snake[0].collision !== 'apple') {
+        snake[0].collision = "none";
+        snake[0].block.style.background = customizations.bgColor;
+      }
+      if (apple == false) {
+        snake.shift();
+      }
+      if (apple == true) {
+        while (true) {
+          num1 = Math.floor(Math.random() * 22);
+          num2 = Math.floor(Math.random() * 22);
+          if (grid[num1][num2].collision == 'none' && grid[num1][num2] !== grid[xAxis][yAxis]) {
+            if (Math.floor(Math.random() * 10) == 4) {
+              grid[num1][num2].collision = 'carrot';
+              grid[num1][num2].block.style.background = "orange";
+            } else if (Math.floor(Math.random() * 50 == 23)) {
+              grid[num1][num2].collision = 'gapple';
+              grid[num1][num2].block.style.background = "#ffd700";
+            } else {
+              grid[num1][num2].collision = 'apple';
+              grid[num1][num2].block.style.background = "red";
+            }
+            break;
+          }
+        }
+        apple = false;
+      }
+      grid[xAxis][yAxis].block.style.background = customizations.snakeColor;
+      grid[xAxis][yAxis].collision = "brick";
+    }
+    function lose() {
+      document.getElementById('game').style.display = "none";
+      document.getElementById('end').style.display = "block";
+      document.getElementById('pointDisp').innerText = points;
+      clearInterval(go);
+    }
+    function start() {
+      document.getElementById('start').style.display = "none";
+      document.getElementById('game').style.display = "block";
+      createWorld();
+      let go = setInterval(momentum, 200);
+    }
+    function creds() {
+      document.getElementById('start').style.display = "none";
+      document.getElementById('credits').style.display = "block";
+    }
+    function rtrnCreds() {
+      document.getElementById('start').style.display = "block";
+      document.getElementById('credits').style.display = "none";
+    }
+    function restart() {
+      window.location.reload();
+    }
+    function mods() {
+      document.getElementById('start').style.display = "none";
+      document.getElementById('Mods').style.display = "block";
+    }
+    let speed = 200;
+    function speed1() {
+      speed = 300;
+      document.getElementById('b1').style = "background-color:lime";
+      document.getElementById('b2').style = "background-color:white";
+      document.getElementById('b3').style = "background-color:white";
+    }
+    function speed2() {
+      speed = 200;
+      document.getElementById('b1').style = "background-color:white";
+      document.getElementById('b2').style = "background-color:lime";
+      document.getElementById('b3').style = "background-color:white";
+    }
+    function speed3() {
+      speed = 150;
+      document.getElementById('b1').style = "background-color:white";
+      document.getElementById('b2').style = "background-color:white";
+      document.getElementById('b3').style = "background-color:lime";
+    }
+    function customStart() {
+      document.getElementById('Mods').style.display = "none";
+      document.getElementById('start').style.display = "none";
+      document.getElementById('EXTRAS').style.display = "none";
+      document.getElementById('game').style.display = "block";
+      createWorld();
+      let go = setInterval(momentum, speed);
+      if (apples == 2 || apples == 3) {
+        while (true) {
+          num1 = Math.floor(Math.random() * 22);
+          num2 = Math.floor(Math.random() * 22);
+          if (grid[num1][num2].collision == 'none' && grid[num1][num2] !== grid[xAxis][yAxis]) {
+            grid[num1][num2].collision = 'apple';
+            grid[num1][num2].block.style.background = "red";
+            break;
+          }
+        }
+      }
+      if (apples == 3) {
+        while (true) {
+          num1 = Math.floor(Math.random() * 22);
+          num2 = Math.floor(Math.random() * 22);
+          if (grid[num1][num2].collision == 'none' && grid[num1][num2] !== grid[xAxis][yAxis]) {
+            grid[num1][num2].collision = 'apple';
+            grid[num1][num2].block.style.background = "red";
+            break;
+          }
+        }
+      }
+      document.getElementById('modeDisp').innerText = "custom";
+    }
+    let apples = 1;
+    function apple(num) {
+      apples = num;
+      document.getElementById('a1').style = "background-color:white";
+      document.getElementById('a2').style = "background-color:white";
+      document.getElementById('a3').style = "background-color:white";
+      document.getElementById('a' + num).style = "background-color:lime";
+    }
+    function daily() {
+      apples = 2;
+      speed = 100;
+      customizations = {
+        bgColor: "#38c433",
+        snakeColor: "blue"
+      };
+      document.getElementById('add').style.border = "5px solid green";
+      customStart();
+      document.getElementById('modeDisp').innerText = "Daily Challenge";
+    }
+    function theme(style) {
+      if (color == "classic") {
 
-}else if(color == "google"){
+      } else if (color == "google") {
 
-}else{
-alert('Theme Error!');
-}
-}
-function XTRA(){
-document.getElementById('start').style.display = "none";
-document.getElementById('EXTRAS').style.display = "block";
-}
-function quickStart(){
-apples = 1;
-speed = 150;
-customStart();
-document.getElementById('modeDisp').innerText = "Normal";
-}
-</script>
+      } else {
+        alert('Theme Error!');
+      }
+    }
+    function XTRA() {
+      document.getElementById('start').style.display = "none";
+      document.getElementById('EXTRAS').style.display = "block";
+    }
+    function quickStart() {
+      apples = 1;
+      speed = 100;
+      customStart();
+      document.getElementById('modeDisp').innerText = "Normal";
+    }
+  </script>
+  <script></script>
 </body>
+
 </html>
