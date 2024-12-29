@@ -4,6 +4,8 @@ services:
   node-application:
     build: .
     container_name: node-application
+    volumes:
+      - ./:/app
     ports:
       - "9000:3000"
     restart: always
@@ -15,6 +17,7 @@ services:
       POSTGRES_PASSWORD: example
     volumes:
       - pgdata:/var/lib/postgresql/data 
+      - ./scripts:/var/lib/postgresql/scripts
  
   adminer:
     image: adminer

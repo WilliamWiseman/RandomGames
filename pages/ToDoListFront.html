@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<head>
+
+    <title>Do the crap!</title>
+
+</head>
+
+<body>
+
+    <style>
+        body {
+            color: white;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            padding: 2%;
+        }
+
+        .listBG {
+            background-color: white;
+            border: 3px solid black;
+            width: 80%;
+            color: black;
+            border-radius: 10px;
+            margin: auto;
+        }
+
+        input.add {
+            border: 2px solid black;
+            border-radius: 10px;
+            width: 300px;
+        }
+
+        button.confirm {
+            border-radius: 1000px;
+            border: 2px solid black;
+            background-color: lime;
+            color: white;
+            font-weight: bolder;
+        }
+
+        .done {
+            text-decoration: line-through;
+            color: grey;
+        }
+
+        .notDone {
+            text-decoration: none;
+        }
+
+        .clickable {
+            cursor: pointer;
+        }
+    </style>
+
+    <fieldset class="listBG">
+
+        <legend>
+            <h1>TO DO LIST</h1>
+        </legend>
+
+        <div id="add">
+
+        </div>
+        <div id="addTask">
+            <p>New task?</p>
+            <input class="add" id="addINP">
+            <button class="confirm" onclick="addToList()">✓</button>
+
+        </div>
+
+    </fieldset>
+
+    <script>
+        /**
+         * 
+         * NOW YOU FIGURE OUT DELETES
+         * 
+         */
+
+        //support hitting enter instead of the check button
+        const $myInput = document.getElementById('addINP');
+        $myInput.onkeydown = function (event) {
+            if (event.key === 'Enter') {
+                addToList();
+            }
+        }
+
+        //wipe the task list
+        function empty(element) {
+            while (element.firstElementChild) {
+                element.firstElementChild.remove();
+            }
+            tasks = [];
+        }
+
+
+        let tasks = [];
+        function taskBuilder(id, taskname, isDone) {
+            let foo = {};
+            foo.num = id;
+            foo.taskname = taskname;
+            let is_done = false;
+            if (isDone == 1) {
+                is_done = true;
+            }
+            foo.isDone = is_done;
+            foo.phys = document.createElement('p');
+            foo.phys.innerText = foo.taskname;
+            foo.phys.classList.add("clickable");
+            if (foo.isDone == false) {
+                foo.phys.classList.remove("done");
+            } else {
+                foo.phys.classList.add("done");
+            }
+            foo.phys.onmouseup = function () { sweech(foo.num) };
+            document.getElementById('add').appendChild(foo.phys);
+            tasks[id] = foo;
+        }
+        function sweech(numbor) {
+            tasks[numbor].isDone = !tasks[numbor].isDone;
+            updateList(numbor, tasks[numbor].isDone);
+
+        }
+
+
+        function getList() {
+            empty(document.getElementById('add'));
+            //nothin   
+            fetch('/toDo/API')
+                .then(response => response.json())
+                .then(data => data.forEach(element => {
+                    console.log(element)
+                    taskBuilder(element.id, element.taskname, element.isdone)
+                }))
+                .catch(error => { console.error('Error:', error) });
+
+        };
+
+        function addToList() {
+            fetch('/toDo/API', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ taskName: document.getElementById('addINP').value, isDone: false }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(newUserData => {
+                    // Process the newly created user data
+                    console.log('New User Data:', newUserData);
+                    getList();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function deleteFromList() {
+
+        }
+
+        function updateList(id, isdone) {
+            fetch('/toDo/API/' + id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify( {isDone: isdone }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(newUserData => {
+                    // Process the newly created user data
+                    console.log('New User Data:', newUserData);
+                    getList();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+        getList();
+
+    </script>
+
+</body>
