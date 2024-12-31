@@ -5,13 +5,6 @@
 </head>
 
 <body>
-
-    <div id="norm">
-        <h1 id="countdown" class="countdownTITLE">error</h1>
-        <div id="add" style="text-align:center">
-
-        </div>
-    </div>
     <style>
         body {
             background-color: black;
@@ -29,9 +22,16 @@
         }
     </style>
 
+    <div id="norm">
+        <h1 id="countdown" class="countdownTITLE">error</h1>
+        <div class ="loading">
+        <div class ="NY">
+        </div>
+    </div>
+
     <script>
         let object = document.getElementById("countdown");
-
+        let change = true;
         function countdownToMidnight() {
             const now = new Date();
             const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
@@ -39,16 +39,16 @@
             const hours = Math.floor(timeLeft / (1000 * 60 * 60));
             const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-            //if (hours == 0 && minutes == 0 && seconds == 10) {
-                if (hours == 2 && minutes == 45 && seconds == 0) {
-                document.getElementById('norm').style.display = "none";
-                document.body.style.backgroundImage = "url('https://www.google.com/url?sa=i&url=https%3A%2F%2Ftenor.com%2Fsearch%2Floading-gifs&psig=AOvVaw3tI1nci2Kl0FZZwJSiyS4a&ust=1735695273011000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCKDy7_Hu0IoDFQAAAAAdAAAAABBu.gif')";
-            //} else if (hours == 0 && minutes == 0 && seconds == 0) {
-            } else if (hours == 2 && minutes == 44 && seconds == 0) {
-                document.body.style.backgroundImage = "url('https://www.google.com/url?sa=i&url=https%3A%2F%2Ftenor.com%2Fsearch%2Floading-gifs&psig=AOvVaw3tI1nci2Kl0FZZwJSiyS4a&ust=1735695273011000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCKDy7_Hu0IoDFQAAAAAdAAAAABBu.gif')";
-                clearInterval(bob);
+            if (hours == 0 && minutes == 0 && seconds == 5) {
+            object.innerHTML = "Error: {TimeObj} & {DateObj} not found";
+            change = false;
+            } else if (hours == 0 && minutes == 0 && seconds == 0) {
+            object.innerHTML = "Happy new year stinkers😉😝";
+            clearInterval(bob);
             }
+            if(change == true){
             object.innerHTML = `${hours} HOURS, ${minutes} MINUTES, AND ${seconds} SECONDS TO GO`;
+            };
         }
         countdownToMidnight();
         let bob = setInterval(countdownToMidnight, 1000);
