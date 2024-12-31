@@ -53,12 +53,8 @@ app.get("/container_object", function (req, res) {
     res.sendFile(path.join(__dirname, 'pages', './container_object.html'));
 });
 
-app.get("/rooms", function (req, res) {
-    res.sendFile(path.join(__dirname, 'pages', './rooms.html'));
-});
-
 /**
- * Advanced section for th4e TODO app
+ * Advanced section for the TODO app
  */
 
 //Todo UI
