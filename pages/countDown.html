@@ -39,10 +39,10 @@
             const hours = Math.floor(timeLeft / (1000 * 60 * 60));
             const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-            if (hours == 0 && minutes == 0 && seconds == 5) {
-            object.innerHTML = "Error: {TimeObj} & {DateObj} not found";
+            if (hours == 4 && minutes == 58 && seconds == 5) {
+            object.innerHTML = "Error: {TimeObj} = undefined";
             change = false;
-            } else if (hours == 0 && minutes == 0 && seconds == 0) {
+            } else if (hours == 4 && minutes == 58 && seconds == 0) {
             object.innerHTML = "Happy new year stinkers😉😝";
             clearInterval(bob);
             }
