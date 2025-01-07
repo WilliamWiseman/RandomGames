@@ -1,28 +1,80 @@
 <!DOCTYPE html>
+
 <html>
+
 <head>
-<title>Carrot Clicker 2!</title>
-<meta name="description" content="Carrot Clicker!">
+
+  <title>Carrot Clicker 2!</title>
+
+  <meta name="description" content="Carrot Clicker!">
+
   <meta name="keywords" content="Carrot clicker, william clicker, CarrotClicker">
+
   <meta name="author" content="William Wiseman">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 </head>
+
 <body>
-    <style>
-    body{
-    text-align:center;
+  <style>
+    html {
+      height: 100%;
     }
-    </style>
-    <h1>Carrot clicker</h1>
-    <p>You have <span id="demo">no</span> carrots</p>
-<button onclick="click()">carrot</button>
+
+    body {
+      text-align: center;
+      height: 100%;
+      background-color: rgb(31, 16, 16);
+      color: white;
+      font-weight: bolder;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      font-size: 150%
+    }
+
+    .crt {
+      border-radius: 20px;
+      padding:3px;
+      border:3px solid white;
+    };
+
+  </style>
+
+  <h1>CARROT CLICKER 2</h1>
+
+  <p>You have <span id="crtDISP">no</span> carrots</p>
+
+  <button onclick="CLICK()" class="crt">
+
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm
+  B-984G7a_lXf4VleBn84IO9luJIwH8zHhcMSFz6ZcnkHLqa5XCLzf77o:https://u
+  xwing.com/wp-content/themes/uxwing/download/fruits-vegetables/carr
+  ot-icon.svg&amp;s">
+
+  </button>
 
 
 
 
 
-    <script>
-    //<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmB-984G7a_lXf4VleBn84IO9luJIwH8zHhcMSFz6ZcnkHLqa5XCLzf77o:https://uxwing.com/wp-content/themes/uxwing/download/fruits-vegetables/carrot-icon.svg&amp;s" alt="Carrot icon PNG and SVG Vector Free Download" />
-    </script>
+  <script>
+
+    let data = { // all of the basic player data; carrots, carrots per click, carrots per second
+      crts: 0,
+      cpc: 1,
+      cps: 0
+    };
+
+    let displays = { // the displays for these pieces of data so I don't have a trillion getElementByIds
+      crt: document.getElementById('crtDISP')
+    }
+
+    function CLICK() {
+      data.crts += data.cpc;
+      displays.crt.innerText = data.crts;
+    };
+
+  </script>
 </body>
+
 </html>
