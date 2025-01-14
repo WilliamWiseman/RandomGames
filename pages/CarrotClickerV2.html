@@ -29,61 +29,100 @@
       color: white;
       font-weight: bolder;
       font-family: 'Franklin Gothic Medium';
-      font-size: 100%
+      font-size: 100%;
     }
 	
     .stink {
-      width:24%;
-      height:10%;
-	  border:2px solid black;
-      border-radius:10%;
+      width: 23.5%;
+      height: 10%;
+	  border: 1px solid black;
+      border-radius: 15px;
+      background-color: light-gray;
+      transition: background-color 0.5s, width 0.5s, height 0.5s;
+      display:inline-block;
+      margin:0px;
+    }
+    
+    .stink:hover {
+      width: 25%;
+      height: 11%;
+      background-color: white;
+    }
+    
+    .upgrade {
+      width: 98%;
+      height: 15%;
+      font-size: 350%;
+      border-radius: 30px;
+      text-align:left;
+      
+    }
+    
+    .crt {
+      border-radius:10px;
     }
     
   </style>
   
-  <button class="stink">HOME</button>
+  <button class="stink" onclick="MENUS('home')">HOME</button>
   
-  <button class="stink">SHOP</button>
+  <button class="stink" onclick="MENUS('shop')">SHOP</button>
   
-  <button class="stink">STATS</button>
+  <button class="stink">COMING</button>
   
-  <button class="stink">EXTRA</button>
+  <button class="stink">SOON</button>
 
   <h1>CARROT CLICKER 2</h1>
 
-  <p>You have <span id="crtDISP">no</span> carrots</p>
-
-  <button onmouseup="CLICK()" style="border-radius:20px;padding:3px;border:3px solid white;">
+  <p>You have <span id="crtDISP">0</span> carrots</p>
+  
+  <div id="HOME">
+  
+  <button onmouseup="CLICK()" class="crt">
 
   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm
   B-984G7a_lXf4VleBn84IO9luJIwH8zHhcMSFz6ZcnkHLqa5XCLzf77o:https://u
   xwing.com/wp-content/themes/uxwing/download/fruits-vegetables/carr
   ot-icon.svg&amp;s">
 
-  </button><br><br>
+  </button>
   
-  <button onclick="upgrades[0].do();">TEST</button>
-
+  <p>Carrots per click: <span id="cpcDISP">1</span> Carrots per second: <span id="cpsDISP">0</span></p>
+  
+	</div>
+    
+    <div id="SHOP" style="display:none;height:100%;">
+    
+    <button class="upgrade">
+    
+    </button>
+    
+    </div>
+    
   <script>
 
-    let data = { // all of the basic player data; carrots, carrots per click, carrots per second
+    let data = {//all of the basic player data; carrots, carrots per click, carrots per second
       crts: 0,
       cpc: 1,
       cps: 0
     };
 
-    let displays = { // the displays for these pieces of data so I don't have a trillion getElementByIds
-      crt: document.getElementById('crtDISP')
-    }
+    let displays = {//the displays for these pieces of data so I don't have a trillion getElementByIds
+      crt: document.getElementById('crtDISP'),
+      cpc: document.getElementById('cpcDISP'),
+      cps: document.getElementById('cpsDISP'),
+      home: document.getElementById('HOME'),
+      shop: document.getElementById('SHOP')
+    };
 
-    function CLICK() {
+    function CLICK() { //obviously, this happens when you click
       data.crts += data.cpc;
       displays.crt.innerText = data.crts;
     };
     
     let upgrades = [];
     
-    function CPCupgrade(name, cost, benefit){
+    function CPCupgrade(name, cost, benefit){//builder for upgrade objects and the DOM for em'
     
     this.name = name;
     this.cost = cost;
@@ -98,9 +137,23 @@
     };
     };
     
+    
     };
     
-    upgrades.push(new CPCupgrade('Stronger Finger', 15, 1));
+    upgrades.push(new CPCupgrade('Orange Thumb', 15, 1));
+    
+    function second(){
+    data.crts += data.cps;
+    displays.crt.innerText = data.crts;
+    };
+    
+    document.onload = setInterval(second, 1000);
+    
+    function MENUS(menu){
+    displays.home.style.display = "none";
+    displays.shop.style.display = "none";
+    displays[menu].style.display = "block";
+    }
     
   </script>
 </body>
