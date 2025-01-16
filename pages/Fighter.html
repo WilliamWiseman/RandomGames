@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+body {
+text-align:center;
+}
+
+.player {
+width:125px;
+height:220px;
+border:1px solid red;
+z-index:2;
+position:abolute;
+margin-left:60px;
+margin-top:40px;
+}
+
+.torso {
+width:60px;
+height:100px;
+border:2px solid black;
+background-color:darkgreen;
+margin-left:30px;
+margin-top:75px;
+position:absolute;
+z-index:3;
+border-radius:20%;
+}
+
+.head {
+width:60px;
+height:60px;
+border-radius:50%;
+border:2px solid black;
+background-color:tan;
+z-index:4;
+position:absolute;
+margin-left:30px;
+margin-top:5px;
+padding:0px;
+animation-duration:0.8s;
+animation-name:headIdle;
+animation-iteration-count:infinite;
+animation-direction: alternate;
+}
+
+.eye {
+width:7px;
+height:7px;
+border-radius:0% 0% 50% 50%;
+border:5px solid white;
+border-top:2px solid white;
+background-color:black;
+z-index:6;
+position:absolute;
+margin-left:16px;
+margin-top:18px;
+}
+
+.headband {
+width:57px;
+height:20px;
+border:2px solid black;
+border-radius:6px 20% 0% 0%;
+background-color:brown;
+z-index:5;
+position:absolute;
+margin-left:0px;
+margin-top:11px;
+}
+
+.eye:nth-child(2) {
+margin-left:39px;
+}
+
+.mouth {
+height:3px;
+width:20px;
+background-color:black;
+margin-top:45px;
+margin-left:27px;
+z-index:6;
+position:absolute;
+}
+
+.hand {
+width:20px;
+height:20px;
+border-radius:50%;
+border:2px solid black;
+background-color:tan;
+z-index:5;
+position:absolute;
+margin-left:55px;
+margin-top:90px;
+animation-duration:2s;
+animation-name:handIdle;
+animation-iteration-count:infinite;
+animation-direction: linear;
+}
+
+.hand:nth-child(4) {
+margin-left:95px;
+}
+
+@keyframes handIdle {
+  0% {top:20px;}
+  50% {top:35px;}
+  100% {top:20px;}
+}
+
+@keyframes headIdle {
+  from {top:42px;}
+  to {top:45px;}
+}
+
+@keyframes punch {
+ 0% {left:70px;}
+ 10% {left: 150px;}
+ 30% {left: 70px;}
+}
+
+</style>
+
+<div class="player">
+
+<div class="head"> 
+<div class="eye"> </div>
+<div class="eye"> </div>
+<div class="headband"> </div>
+<div class="mouth"> </div>
+</div>
+<div class="torso"></div>
+<div class="hand" id="right"> </div>
+<div class="hand" id="left"> </div>
+</div>
+
+<button onclick="punch()">punch</button>
+
+<script>
+let rightHand = document.getElementById('right');
+let leftHand = document.getElementById('left');
+let HAND = false;
+let delay;
+let punching;
+
+
+function punch(){
+if(HAND == true){
+Rpunch();
+}else{
+Lpunch();
+}
+HAND = !HAND;
+};
+
+function Lpunch(){
+clearTimeout(delay);
+leftHand.style.animationName = 'punch';
+delay = setTimeout(resetHand, 500);
+};
+
+function Rpunch(){
+clearTimeout(delay);
+rightHand.style.animationName = 'punch';
+delay = setTimeout(resetHand, 500);
+};
+
+function resetHand(){
+rightHand.style.animationName = 'handIdle';
+leftHand.style.animationName = 'handIdle';
+};
+
+</script>
+
+</body>
+</html>
