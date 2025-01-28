@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <style>
+        body {
+            text-align: center;
+            background-color: lightblue;
+        }
+        
+        .gameArea {
+            text-align: center;
+            border:3px solid black;
+            width:420px;
+            height:420px;
+            margin:auto;
+       		position: fixed;
+			top: 50%;
+			left: 50%;
+			margin-top: -210px;
+			margin-left: -210px;
+        }
+
+        .tiles {
+            height: 18px;
+            width: 18px;
+            border:1px solid black;
+            background-color: white;
+        }
+        
+        .turret {
+        	z-index:99;
+        	border-radius:50%;
+        	border:2px solid black;
+        	background-color:gray;
+        	width:50px;
+        	height:50px;
+        	position: fixed;
+			top: 50%;
+			left: 50%;
+			margin-top: -25px;
+			margin-left: -25px;
+        }
+        
+        .cannon {
+        width:150px;
+        height:150px;
+        z-index:999;
+        position:fixed;
+        top: 50%;
+		left: 50%;
+		margin-top: -75px;
+		margin-left: -75px;
+        }
+        
+        .gun {
+        margin-left:20px;
+        transform:rotate(270deg);
+        width:50px;
+        height:50px;
+        }
+        
+    </style>
+    <h1>Test!</h1>
+    <div id="add" class="gameArea"></div>
+    <div id="turret" class="turret"></div>
+    <div class="cannon" id="wpnArea">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Gun.gif" class="gun" id="wpn">
+    </div>
+    <script>
+        const wpn = document.getElementById('wpnArea');
+        const gun = document.getElementById('wpn');
+        let grid = [];
+        function createWorld() {
+            for (let z = 0; z < 21; z++) {
+                let newYarr = [];
+                let miniDiv = document.createElement('div');
+                miniDiv.style = "display:inline-block";
+                for (let i = 0; i < 21; i++) {
+                    let tile = document.createElement('div');
+                    tile.classList = "tiles";
+                    tile.onmouseover = function () { slopeToAngle(z - 10, i - 10); };
+                    this.newObj = {};
+                    this.newObj.block = tile;
+                    newYarr.push(this.newObj);
+                    miniDiv.appendChild(tile);
+                }
+                grid.push(newYarr);
+                document.getElementById('add').appendChild(miniDiv);
+            }
+        }
+        
+        createWorld();
+		 function slopeToAngle(x, y) {
+         const slope = x / y;
+ 		 const angleInRadians = Math.atan(slope);
+  		 const angleInDegrees = angleInRadians * (180 / Math.PI);
+         let angle = Math.floor(angleInDegrees) - 2 * Math.floor(angleInDegrees);
+         if(y >= 0){
+         angle = angle + 180;
+         };
+         wpn.style = "transform:rotate(" + angle + "deg)";
+		};
+    </script>
+
+</body>
+
+</html>
