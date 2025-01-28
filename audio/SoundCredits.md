@@ -1,2 +1,5 @@
 Isabell Nally - PEW
-Colin Stein - enemyDeathSound1
+
+Colin Stein - enemyDeath1 highEnemyDeath1 enemyDeath2
+
+Jordan Geiger - highEnemyDeath2
