@@ -1,5 +1,7 @@
-Isabell Nally - PEW
+Isabell Nally - 1 thing
 
-Colin Stein - enemyDeath1 highEnemyDeath1 enemyDeath2
+Colin Stein - 3 things
 
-Jordan Geiger - highEnemyDeath2
+Jordan Geiger - 1 thing
+
+Jaxten Deweese - 1 thing
