@@ -51,22 +51,22 @@
         };
         
         function createWorld() {
-            for (let z = 0; z < 10; z++) {
-                let newYarr = [];
-                let miniDiv = document.createElement('div');
-                miniDiv.style = "display:inline-block";
-                for (let i = 0; i < 7; i++) {
-                    let tile = document.createElement('div');
-                    tile.classList = "tiles";
-                    this.newObj = {};
-                    this.newObj.block = tile;
-                    newYarr.push(this.newObj);
-                    miniDiv.appendChild(tile);
-                }
-                grid.push(newYarr);
-                document.getElementById('add').appendChild(miniDiv);
-            }
+    for (let z = 0; z < 10; z++) {
+        let newYarr = [];
+        let miniDiv = document.createElement('div');
+        miniDiv.style = "display:inline-block";
+        for (let i = 0; i < 7; i++) {
+            let tile = document.createElement('div');
+            tile.classList = "tiles";
+            let newObj = {};  // Changed `this.newObj` to `let newObj`
+            newObj.block = tile;
+            newYarr.push(newObj);
+            miniDiv.appendChild(tile);
         }
+        grid.push(newYarr);
+        document.getElementById('add').appendChild(miniDiv);
+    }
+}
         createWorld();
         grid[0][0].block.appendChild(player.model);
         
