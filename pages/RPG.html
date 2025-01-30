@@ -5,71 +5,104 @@
 <body>
     <style>
         body {
-            background-color: lightblue;
-            overflow:hidden;
-        	width:1vw;
-        	height:100vh;
-            margin:0;
-            padding:0;
+            background-color: black;
+            overflow: hidden;
+            width: 1vp;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
         }
 
-        
+
 
         .gameArea {
             text-align: center;
-            width:650px;
-            height:455px;
-            overflow:hidden;
-            border:5px solid gray;
-            position:fixed;
-            
-            
+            width: 650px;
+            height: 455px;
+            overflow: hidden;
+            border: 5px solid gray;
+            position: fixed;
+            top: 50%;
+            margin-top: -227.5px;
+
+
         }
 
         .tiles {
             height: 65px;
             width: 65px;
- 			background-image: url("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Grass.gif");
+            background-image: url("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Grass.gif");
             background-size: 100% 100%;
         }
-        
+
         .player {
-        width:65px;
-        height:65px;
+            width: 65px;
+            height: 65px;
+            position: absolute;
+        }
+
+        .heart {
+            width: 50px;
+            height: 50px;
+            position: fixed;
+            top: 2%;
+            left: 3px;
+        }
+
+        .heart:nth-child(2) {
+            left: 54px;
+        }
+
+        .heart:nth-child(3) {
+            left: 105px;
         }
     </style>
+
+    <img class="heart" id="h1" src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif">
+
+    <img class="heart" id="h2" src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif">
+
+    <img class="heart" id="h3" src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif">
+
     <div class="gameArea">
-    <div id="add"> </div>
+
+        <div id="add"> </div>
+
     </div>
-    <img class="player" id="player" src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/frontMC.gif">
+
+    <img class="player" id="player"
+        src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/frontMC.gif">
+
     <script>
         let grid = [];
         let player = {
-        model:document.getElementById('player'),
-        x:0,
-        y:0
+            model: document.getElementById('player'),
+            x: 0,
+            y: 0
         };
-        
+
         function createWorld() {
-    for (let z = 0; z < 10; z++) {
-        let newYarr = [];
-        let miniDiv = document.createElement('div');
-        miniDiv.style = "display:inline-block";
-        for (let i = 0; i < 7; i++) {
-            let tile = document.createElement('div');
-            tile.classList = "tiles";
-            let newObj = {};  // Changed `this.newObj` to `let newObj`
-            newObj.block = tile;
-            newYarr.push(newObj);
-            miniDiv.appendChild(tile);
+            for (let z = 0; z < 10; z++) {
+                let newYarr = [];
+                let miniDiv = document.createElement('div');
+                miniDiv.style = "display:inline-block";
+                for (let i = 0; i < 7; i++) {
+                    let tile = document.createElement('div');
+                    tile.classList = "tiles";
+                    let newObj = {};  // Changed `this.newObj` to `let newObj`
+                    newObj.block = tile;
+                    newYarr.push(newObj);
+                    miniDiv.appendChild(tile);
+                }
+                grid.push(newYarr);
+                document.getElementById('add').appendChild(miniDiv);
+            }
         }
-        grid.push(newYarr);
-        document.getElementById('add').appendChild(miniDiv);
-    }
-}
         createWorld();
         grid[0][0].block.appendChild(player.model);
-        
+        player.model.style.left = "0px"; //yeah yeah, I'll fix this part
+        player.model.style.top = "0px";
+
 
     </script>
 
