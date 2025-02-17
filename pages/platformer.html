@@ -44,6 +44,16 @@
                 player.top = screenHeight - player.height;
             }
 
+            // Check if player walks off the left edge
+            if (player.left + player.width < 0) {
+                player.left = screenWidth;
+            }
+
+            // Check if player walks off the right edge
+            if (player.left > screenWidth) {
+                player.left = -player.width;
+            }
+
             player.model.style.top = `${player.top}px`;
             player.model.style.left = `${player.left}px`;
 
