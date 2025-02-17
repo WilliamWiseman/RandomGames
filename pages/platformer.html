@@ -31,8 +31,11 @@
             left: 0,
             top: 0,
             model: document.getElementById('player'),
-            jump: false
+            jump: false,
+            decelerating: false
         }
+
+        const decelerationFactor = 0.9;
 
         function frame() {
             player.velY++;  // gravity
@@ -54,6 +57,15 @@
                 player.left = -player.width;
             }
 
+            // Apply deceleration when not pressing arrow keys
+            if (player.decelerating) {
+                player.velX *= decelerationFactor;
+                if (Math.abs(player.velX) < 0.1) {
+                    player.velX = 0;
+                    player.decelerating = false;
+                }
+            }
+
             player.model.style.top = `${player.top}px`;
             player.model.style.left = `${player.left}px`;
 
@@ -68,9 +80,11 @@
             switch (key) {
                 case "ArrowLeft":
                     player.velX = -8;
+                    player.decelerating = false;
                     break;
                 case "ArrowRight":
                     player.velX = 8;
+                    player.decelerating = false;
                     break;
                 case "ArrowUp":
                     if (player.top + player.height >= screenHeight) {
@@ -89,7 +103,7 @@
             switch (key) {
                 case "ArrowLeft":
                 case "ArrowRight":
-                    player.velX = 0;
+                    player.decelerating = true;
                     break;
                 case "ArrowUp":
                     //...
