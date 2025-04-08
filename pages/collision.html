@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script>
+
+let hitbox = {
+	x:10,
+	y:20,
+	width:40,
+	height:40,
+    type:2
+}
+
+function scatter(x, y, momentumX, momentumY){
+this.x = x;
+this.y = y;
+this.momentumX = momentumX;
+this.momentumY = momentumY;
+
+scatter.prototype.move = function(){
+this.x+= this.momentumX;
+this.y+= this.momentumY;
+clsnDetect(this.x, this.y, hitbox, 1);
+}
+
+}
+
+let movingArr = [];
+
+function clsnDetect(x, y, object, type) {
+
+if(x > object.x && x < object.x + object.width){
+
+if(y > object.y && y < object.y + object.height){
+
+if(type !== object.type){
+alert("it collides");
+}
+
+}
+
+}
+
+return;
+
+}
+
+function time(){
+for(let i = 0; i < movingArr.length; i++){
+movingArr[i].move();
+}
+requestAnimationFrame(time);
+}
+
+movingArr.push( new scatter(0, 10, 2, 0) );
+
+requestAnimationFrame(time);
+
+</script>
+
+</body>
+</html>
