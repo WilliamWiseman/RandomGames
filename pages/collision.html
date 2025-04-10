@@ -2,26 +2,48 @@
 <html>
 <body>
 
+<canvas id="myCanvas" style="position:absolute;left:0;top:0;"> </canvas>
+
 <script>
+const c = document.getElementById("myCanvas");
+c.width = window.innerWidth;
+c.height = window.innerHeight;
+const ctx = c.getContext("2d");
 
 let hitbox = {
-	x:10,
-	y:20,
-	width:40,
-	height:40,
+	x:70,
+	y:120,
+	width:80,
+	height:80,
     type:2
 }
+
+ctx.fillStyle = "red";
+ctx.fillRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
 
 function scatter(x, y, momentumX, momentumY){
 this.x = x;
 this.y = y;
 this.momentumX = momentumX;
 this.momentumY = momentumY;
+this.limit = 0;
+this.stop = false;
 
 scatter.prototype.move = function(){
+if(this.stop === false){
 this.x+= this.momentumX;
 this.y+= this.momentumY;
-clsnDetect(this.x, this.y, hitbox, 1);
+ctx.fillStyle = "black";
+ctx.fillRect(this.x-1, this.y-1, 3, 3);
+this.limit++;
+if(clsnDetect(this.x, this.y, hitbox, 1) ){
+alert('HIT');
+this.stop = true;
+}
+if(this.limit > 100){
+movingArr = [];
+}
+}
 }
 
 }
@@ -35,14 +57,14 @@ if(x > object.x && x < object.x + object.width){
 if(y > object.y && y < object.y + object.height){
 
 if(type !== object.type){
-alert("it collides");
+return true;
 }
 
 }
 
 }
 
-return;
+return false;
 
 }
 
@@ -53,7 +75,11 @@ movingArr[i].move();
 requestAnimationFrame(time);
 }
 
-movingArr.push( new scatter(0, 10, 2, 0) );
+movingArr.push( new scatter(0, 50, 2, 1) );
+movingArr.push( new scatter(0, 50, 2, 2) );
+movingArr.push( new scatter(0, 50, 1, 2) );
+movingArr.push( new scatter(0, 50, 1.5, 2) );
+movingArr.push( new scatter(0, 50, 2, 1.5) );
 
 requestAnimationFrame(time);
 
