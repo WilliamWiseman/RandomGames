@@ -11,8 +11,8 @@ c.height = window.innerHeight;
 const ctx = c.getContext("2d");
 
 let hitbox = {
-	x:70,
-	y:120,
+	x:90,
+	y:160,
 	width:80,
 	height:80,
     type:2
@@ -37,7 +37,7 @@ ctx.fillStyle = "black";
 ctx.fillRect(this.x-1, this.y-1, 3, 3);
 this.limit++;
 if(clsnDetect(this.x, this.y, hitbox, 1) ){
-alert('HIT');
+//alert('HIT');
 this.stop = true;
 }
 if(this.limit > 100){
@@ -75,11 +75,11 @@ movingArr[i].move();
 requestAnimationFrame(time);
 }
 
-movingArr.push( new scatter(0, 50, 2, 1) );
-movingArr.push( new scatter(0, 50, 2, 2) );
-movingArr.push( new scatter(0, 50, 1, 2) );
-movingArr.push( new scatter(0, 50, 1.5, 2) );
-movingArr.push( new scatter(0, 50, 2, 1.5) );
+for(let i = 0; i < 10; i++){
+let x = Math.random() * 2 + 1;
+let y = Math.random() * 2 + 1;
+movingArr.push( new scatter(0, 50, x, y) );
+}
 
 requestAnimationFrame(time);
 
