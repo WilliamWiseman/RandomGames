@@ -10,16 +10,14 @@ c.width = window.innerWidth;
 c.height = window.innerHeight;
 const ctx = c.getContext("2d");
 
-let hitbox = {
-	x:90,
-	y:160,
-	width:80,
-	height:80,
-    type:2
+function hitboxFactory(X, Y, WIDTH, HEIGHT){
+this.x = X;
+this.y = Y;
+this.width = WIDTH;
+this.height = HEIGHT;
 }
 
-ctx.fillStyle = "red";
-ctx.fillRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+let hitbox = new hitboxFactory(100, 160, 80, 80);
 
 function scatter(x, y, momentumX, momentumY){
 this.x = x;
@@ -33,8 +31,6 @@ scatter.prototype.move = function(){
 if(this.stop === false){
 this.x+= this.momentumX;
 this.y+= this.momentumY;
-ctx.fillStyle = "black";
-ctx.fillRect(this.x-1, this.y-1, 3, 3);
 this.limit++;
 if(clsnDetect(this.x, this.y, hitbox, 1) ){
 //alert('HIT');
@@ -44,6 +40,8 @@ if(this.limit > 100){
 movingArr = [];
 }
 }
+ctx.fillStyle = "black";
+ctx.fillRect(this.x-1, this.y-1, 3, 3);
 }
 
 }
@@ -56,9 +54,7 @@ if(x > object.x && x < object.x + object.width){
 
 if(y > object.y && y < object.y + object.height){
 
-if(type !== object.type){
 return true;
-}
 
 }
 
@@ -69,6 +65,10 @@ return false;
 }
 
 function time(){
+ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+ctx.beginPath();
+ctx.fillStyle = "red";
+ctx.fillRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
 for(let i = 0; i < movingArr.length; i++){
 movingArr[i].move();
 }
@@ -76,9 +76,9 @@ requestAnimationFrame(time);
 }
 
 for(let i = 0; i < 10; i++){
-let x = Math.random() * 2 + 1;
-let y = Math.random() * 2 + 1;
-movingArr.push( new scatter(0, 50, x, y) );
+let x = Math.random() * 2 + 1 *3;
+let y = Math.random() * 2 + 1 *3;
+movingArr.push( new scatter(0, 40, x, y) );
 }
 
 requestAnimationFrame(time);
