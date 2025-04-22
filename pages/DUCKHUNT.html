@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="300" height="150" style=position:absolute;left:0;top:0;></canvas>
+
+<script>
+const para = document.getElementById("demo");
+const c = document.getElementById("myCanvas");
+c.width = window.innerWidth;
+c.height = window.innerHeight;
+const ctx = c.getContext("2d");
+let x = 0;
+let y = 0;
+
+function DUCK(X, Y, WIDTH, HEIGHT, MOVEX, MOVEY){
+this.x = X;
+this.y = Y;
+this.width = WIDTH;
+this.height = HEIGHT;
+}
+
+function clsnDetect(x, y, object) {
+
+if(x > object.x && x < object.x + object.width){
+
+if(y > object.y && y < object.y + object.height){
+return true;
+}
+}
+return false;
+}
+
+function shoot(){
+for(let i = 0; i < 10; i++){
+let X = Math.random() * 80 - 40 + x;
+let Y = Math.random() * 80 - 40 + y;
+ctx.beginPath();
+ctx.fillRect(X-1, Y-1, 3, 3);
+}
+}
+
+function mouseTrace(event) {
+  x = event.offsetX;
+  y = event.offsetY;
+}
+
+document.addEventListener("mousemove", function(){
+  mouseTrace(event);
+});
+
+document.addEventListener("click", function(){
+  shoot();
+});
+
+</script>
+
+</body>
+</html>
