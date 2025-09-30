@@ -21,9 +21,6 @@
         }
         canvas {
             z-index: 1;
-            position: absolute;
-            left: 50%;
-            top: 50%;
             background-color:white;
             border:2px solid black;
         }
@@ -37,12 +34,12 @@
     <script>
     	const fps = 60;
         let canMove = true;
-        const pixelSize = window.innerHeight / 400;
+        const pixelSize = window.innerHeight / 1000;
         const canvas = document.getElementById("game");
-        canvas.style.height = `${pixelSize * 15}px`;
-        canvas.style.width = `${pixelSize * 15}px`;
-        canvas.style.marginTop = `${pixelSize * 7.5}px`; //margins not working
-        canvas.style.marginLeft = `${pixelSize * 7.5}px`;
+        //canvas.style.height = `${pixelSize * 10}px`;
+        //canvas.style.width = `${pixelSize * 10}px`;
+        //canvas.style.marginTop = `${pixelSize * -5}px`;
+        canvas.style = `z-index: 1;background-color:white;border:2px solid black;position:absolute;width:${pixelSize * 500}px;height:${pixelSize * 500}px;`;
         const ctx = canvas.getContext("2d", { willReadFrequently: true });
         
         function hitbox(x, y, width, height) {
