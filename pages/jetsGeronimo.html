@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <style>
+    	html {
+        	height:100%;
+        }
+        
+        body {
+            text-align: center;
+            background-color: lightblue;
+            height:100%;
+        }
+
+        ;
+
+        .gameArea {
+            text-align: center;
+        }
+        canvas {
+            z-index: 1;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            background-color:white;
+            border:2px solid black;
+        }
+    </style>
+    <h1>Jets Geronimo</h1>
+    
+    <div id="add" class="gameArea"></div>
+    
+    <canvas id="game" width="1024" height="448"></canvas>
+    
+    <script>
+    	const fps = 60;
+        let canMove = true;
+        const pixelSize = window.innerHeight / 400;
+        const canvas = document.getElementById("game");
+        canvas.style.height = `${pixelSize * 15}px`;
+        canvas.style.width = `${pixelSize * 15}px`;
+        canvas.style.marginTop = `${pixelSize * 7.5}px`; //margins not working
+        canvas.style.marginLeft = `${pixelSize * 7.5}px`;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        
+        function hitbox(x, y, width, height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            return this;
+        }
+        
+        document.addEventListener("keydown", function (event) {
+            event.preventDefault();
+            let key = event.key;
+            key = key.toLowerCase();
+            switch (key) {
+                case "a":
+                    creatureArr[0].momX = -1;
+                    break;
+            }
+        });
+        
+        document.addEventListener("keyup", function (event) {
+            event.preventDefault();
+            let key = event.key;
+            key = key.toLowerCase();
+            switch (key) {
+                case "a":
+                    if (creatureArr[0].momX < 0) {
+                        creatureArr[0].momX = 0;
+                    }
+                    break;
+            }
+        });
+        
+        function collision(a, b) {
+            return !(
+                ((a.y + a.height) < (b.y)) || //checks if a is higher than b's y
+                (a.y > (b.y + b.height)) || // checks if b is lower  than a's y
+                ((a.x + a.width) < b.x) || // checks if a is more left than b 
+                (a.x > (b.x + b.width))// checks if a is more right than b
+            );
+        };
+        
+        function getColor(x, y) {
+            const imgdata = ctx.getImageData(x, y, 1, 1);
+            const red = imgdata.data[0];
+            return red;
+        };
+        
+        function startGameLoop(){
+        
+        }
+        
+        function gameLoop(){
+        
+        if (canMove) {
+                //make the dude move now okay?
+                canMove = false;
+                setTimeout(() => {
+                    canMove = true;
+                }, 1000 / fps);
+            }
+
+        };
+
+        }
+        
+    </script>
+
+</body>
+
+</html>
