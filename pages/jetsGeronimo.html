@@ -35,6 +35,8 @@
     <canvas id="game" width="500" height="500"></canvas>
     
     <script>
+        const pixelSize = window.innerHeight / 1000;
+        const widthSize = window.innerWidth / 1000;
         const canvas = document.getElementById("game");
         let boss = document.getElementById('boss');
         boss.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:0;`
@@ -45,13 +47,11 @@
         let attackArr = [];
     	let fps = 60; //how many times things move a second, not render
         let canMove = true;
-        const pixelSize = window.innerHeight / 1000;
-        const widthSize = window.innerWidth / 1000;
         let player = {
             x:240,
             y:240,
-            width:20,
-            height:20,
+            width:50,
+            height:50,
             momX:0,
             momY:0,
             leftJet:false,
@@ -60,12 +60,12 @@
         };
         player.img = document.createElement('img');
         player.img.className = "entity";
-        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif";
+        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif";
         player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
         player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
         player.img.style.width = `${player.width * pixelSize}px`;
         player.img.style.height = `${player.height * pixelSize}px`;
-        document.body.appendChild(player.img); //Somewhere, this blob glitches out. I assume it's the top/bottom. I need a break.
+        document.body.appendChild(player.img);
         
         function hitbox(x, y, width, height) {
             this.x = x;
@@ -148,14 +148,27 @@
             player.momY++;//Gravity exists, no?
 
             if(player.leftJet){
-                player.momX+=2;
-                player.momY-=2;
+                player.momX+=1;
+                player.momY-=1.5;
             }
             if(player.rightJet){
-                player.momX-=2;
-                player.momY-=2;
+                player.momX-=1;
+                player.momY-=1.5;
             }
-            player.momX = Math.floor(player.momX - (player.momx / 5)); //Air resistance? I don't know, might change
+            player.momX = Math.floor(player.momX);
+            if(player.momX > 15){//We NEED a speed limit
+                player.momX = 15;
+            }else if(player.momX < -15){
+                player.momX = -15;
+            }
+            player.momY = Math.floor(player.momY);
+            if(player.momY > 15){//We NEED a speed limit
+                player.momY = 15;
+            }else if(player.momY < -15){
+                player.momY = -15;
+            }
+
+            //player.momX = Math.floor(player.momX - (player.momX / 5)); //Air resistance? quite choppy atm
 
                 player.x += player.momX;
                 if (
@@ -193,14 +206,9 @@
             }
             requestAnimationFrame(gameLoop);
         };
+            
+        requestAnimationFrame(gameLoop);
 
-        function hitbox(x, y, width, height) {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            return this;
-        }
         
     </script>
 
