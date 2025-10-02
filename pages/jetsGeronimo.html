@@ -35,6 +35,18 @@
     <canvas id="game" width="500" height="500"></canvas>
     
     <script>
+        const canvas = document.getElementById("game");
+        let boss = document.getElementById('boss');
+        boss.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:0;`
+        canvas.style = `z-index: 1;background-color:white;border:3px solid black;position:absolute;width:${pixelSize * 500}px;height:${pixelSize * 500}px;`;
+        canvas.style.left = ((window.innerWidth / 2) - (250 * pixelSize)) + "px";
+        canvas.style.top = 300 * pixelSize + "px";
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        let attackArr = [];
+    	let fps = 60; //how many times things move a second, not render
+        let canMove = true;
+        const pixelSize = window.innerHeight / 1000;
+        const widthSize = window.innerWidth / 1000;
         let player = {
             x:240,
             y:240,
@@ -45,28 +57,15 @@
             leftJet:false,
             rightJet:false,
             img:false
-        }
+        };
         player.img = document.createElement('img');
-        player.img.class = "entity";
+        player.img.className = "entity";
         player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif";
-        player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * tileSize)}px`;
-        player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * tileSize)}px`;
-        player.img.style.width = `${player.width * tileSize}px`;
-        player.img.style.height = `${player.height * tileSize}px`;
+        player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
+        player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
+        player.img.style.width = `${player.width * pixelSize}px`;
+        player.img.style.height = `${player.height * pixelSize}px`;
         document.body.appendChild(player.img); //Somewhere, this blob glitches out. I assume it's the top/bottom. I need a break.
-
-        let attackArr = [];
-    	let fps = 60; //how many times things move a second, not render
-        let canMove = true;
-        const pixelSize = window.innerHeight / 1000;
-        const widthSize = window.innerWidth / 1000;
-        const canvas = document.getElementById("game");
-        let boss = document.getElementById('boss');
-        boss.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:0;`
-        canvas.style = `z-index: 1;background-color:white;border:3px solid black;position:absolute;width:${pixelSize * 500}px;height:${pixelSize * 500}px;`;
-        canvas.style.left = ((window.innerWidth / 2) - (250 * pixelSize)) + "px";
-        canvas.style.top = 300 * pixelSize + "px";
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
         
         function hitbox(x, y, width, height) {
             this.x = x;
@@ -180,8 +179,8 @@
                 ) {
                     //death function
                 }
-        player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * tileSize)}px`;
-        player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * tileSize)}px`;
+        player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
+        player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
 
                 //attacks to deal with
                 for(let i = 0; i < attackArr.length; i++){
