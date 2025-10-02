@@ -22,6 +22,12 @@
             background-color:white;
             border:2px solid black;
         }
+        .entity {
+            z-index: 3;
+            position:absolute;
+            left:0;
+            top:0;
+        }
     </style>
     
     <div id="add" class="gameArea"></div>
@@ -29,7 +35,28 @@
     <canvas id="game" width="500" height="500"></canvas>
     
     <script>
-    	const fps = 60;
+        let player = {
+            x:240,
+            y:240,
+            width:20,
+            height:20,
+            momX:0,
+            momY:0,
+            leftJet:false,
+            rightJet:false,
+            img:false
+        }
+        // player.img = document.createElement('img');
+        // player.img.class = "entity";
+        // player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif";
+        // player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * tileSize)}px`;
+        // player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * tileSize)}px`;
+        // player.img.style.width = `${player.width * tileSize}px`;
+        // player.img.style.height = `${player.height * tileSize}px`;
+        // document.body.appendChild(player.img); Somewhere, this blob glitches out. I assume it's the top/bottom. I need a break.
+
+        let attackArr = [];
+    	let fps = 60; //how many times things move a second, not render
         let canMove = true;
         const pixelSize = window.innerHeight / 1000;
         const widthSize = window.innerWidth / 1000;
@@ -55,7 +82,20 @@
             key = key.toLowerCase();
             switch (key) {
                 case "a":
-                    creatureArr[0].momX = -1;
+                    player.leftJet = true;
+                    //check/change sprite
+                    break;
+                case "d":
+                    player.rightJet = true;
+                    //check/change sprite
+                    break;
+                case "arrowleft":
+                    player.leftJet = true;
+                    //check/change sprite
+                    break;
+                case "arrowright":
+                    player.rightJet = true;
+                    //check/change sprite
                     break;
             }
         });
@@ -66,9 +106,20 @@
             key = key.toLowerCase();
             switch (key) {
                 case "a":
-                    if (creatureArr[0].momX < 0) {
-                        creatureArr[0].momX = 0;
-                    }
+                    player.leftJet = false;
+                    //check/change sprite
+                    break;
+                case "d":
+                    player.rightJet = false;
+                    //check/change sprite
+                    break;
+                case "arrowleft":
+                    player.leftJet = false;
+                    //check/change sprite
+                    break;
+                case "arrowright":
+                    player.rightJet = false;
+                    //check/change sprite
                     break;
             }
         });
@@ -89,20 +140,68 @@
         };
         
         function startGameLoop(){
-        
+        requestAnimationFrame(gameLoop);
         }
         
         function gameLoop(){
         
         if (canMove) {
-                //make the dude move now okay?
+            player.momY++;//Gravity exists, no?
+
+            if(player.leftJet){
+                player.momX+=2;
+                player.momY-=2;
+            }
+            if(player.rightJet){
+                player.momX-=2;
+                player.momY-=2;
+            }
+            player.momX = Math.floor(player.momX - (player.momx / 5)); //Air resistance? I don't know, might change
+
+                player.x += player.momX;
+                if (
+                    getColor(player.x, player.y) !== 0 ||
+                    getColor(player.x + player.width -1, player.y) !== 0 ||
+                    getColor(player.x, player.y + player.height -1) !== 0 ||
+                    getColor(player.x + player.width -1, player.y + player.height -1) !== 0 ||
+                    player.x < 0 ||
+                    player.x + player.width > canvas.width
+                ) {
+                    //death function
+                }
+                player.y += player.momY;
+                if (
+                    getColor(player.x, player.y) !== 0 ||
+                    getColor(player.x + player.width -1, player.y) !== 0 ||
+                    getColor(player.x, player.y + player.height -1) !== 0 ||
+                    getColor(player.x + player.width -1, player.y + player.height -1) !== 0 ||
+                    player.y < 0 ||
+                    player.y + player.height > canvas.height
+                ) {
+                    //death function
+                }
+        player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * tileSize)}px`;
+        player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * tileSize)}px`;
+
+                //attacks to deal with
+                for(let i = 0; i < attackArr.length; i++){
+                    //cycle through to subtract frames from attacks
+                }
                 canMove = false;
                 setTimeout(() => {
                     canMove = true;
                 }, 1000 / fps);
             }
-
+            requestAnimationFrame(gameLoop);
         };
+
+        function hitbox(x, y, width, height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            return this;
+        }
         
     </script>
 
