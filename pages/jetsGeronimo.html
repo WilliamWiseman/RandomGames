@@ -46,14 +46,14 @@
             rightJet:false,
             img:false
         }
-        // player.img = document.createElement('img');
-        // player.img.class = "entity";
-        // player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif";
-        // player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * tileSize)}px`;
-        // player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * tileSize)}px`;
-        // player.img.style.width = `${player.width * tileSize}px`;
-        // player.img.style.height = `${player.height * tileSize}px`;
-        // document.body.appendChild(player.img); Somewhere, this blob glitches out. I assume it's the top/bottom. I need a break.
+        player.img = document.createElement('img');
+        player.img.class = "entity";
+        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif";
+        player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * tileSize)}px`;
+        player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * tileSize)}px`;
+        player.img.style.width = `${player.width * tileSize}px`;
+        player.img.style.height = `${player.height * tileSize}px`;
+        document.body.appendChild(player.img); //Somewhere, this blob glitches out. I assume it's the top/bottom. I need a break.
 
         let attackArr = [];
     	let fps = 60; //how many times things move a second, not render
