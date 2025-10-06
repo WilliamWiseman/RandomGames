@@ -38,10 +38,11 @@
         const pixelSize = window.innerHeight / 1000;
         const widthSize = window.innerWidth / 1000;
         let timer;
+        let timer2;
         let isDead = false;
         const canvas = document.getElementById("game");
         let boss = document.getElementById('boss');
-        boss.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:0;`
+        boss.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:0;filter: brightness(1.2);`
         canvas.style = `z-index: 1;background-color:white;border:3px solid black;position:absolute;width:${pixelSize * 500}px;height:${pixelSize * 500}px;`;
         canvas.style.left = ((window.innerWidth / 2) - (250 * pixelSize)) + "px";
         canvas.style.top = 300 * pixelSize + "px";
@@ -143,19 +144,51 @@
         function startGameLoop(){
         requestAnimationFrame(gameLoop);
         }
+        function attack(frames, x, y, width, height, momX, momY, framesTill){
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.momX = momX;
+            this.momY = momY;
+            this.framesTill = framesTill;
+            this.exist = true;
+            attack.prototype.put = function(){
+                if(this.framesTill > 0){
+                    this.framesTill--;
+                    ctx.fillStyle = "rgb(0, 255, 0)";
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }else if(this.exist){
+                    ctx.fillStyle = "rgb(255, 0, 0)";
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                    this.x += this.momX;
+                    this.y += this.momY;
+                    frames--;
+                    if(frames == 0){
+                        this.exist = false;
+                    }
+                }
+                }
+            }
+        
         function die(){
         player.momX = 0;
         player.momY = 0;
         player.x = 225;
         player.y = 225;
+        player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
+        player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
         isDead = true;
-        if(timer){
-        clearTimeout(timer);
+        document.body.style.backgroundColor = "darkred";
+        if(timer2){
+        clearTimeout(timer2);
         }
-        timer = setTimeout(() => {
+        timer2 = setTimeout(() => {
         isDead = false;
+        document.body.style.backgroundColor = "rgb(99, 186, 99)";
         }, 1000);
         }
+
         function gameLoop(){
         
         if (canMove && !isDead) {
@@ -170,13 +203,13 @@
                 player.momY-=1.5;
             }
             player.momX = Math.floor(player.momX);
-            if(player.momX > 15){//We NEED a speed limit
+            if(player.momX > 15){  //We NEED a speed limit
                 player.momX = 15;
             }else if(player.momX < -15){
                 player.momX = -15;
             }
             player.momY = Math.floor(player.momY);
-            if(player.momY > 15){//We NEED a speed limit
+            if(player.momY > 15){  //We NEED a speed limit
                 player.momY = 15;
             }else if(player.momY < -10){
                 player.momY = -10;
@@ -208,9 +241,18 @@
                 }
 
                 //attacks to deal with
+                    ctx.clearRect(0, 0, 500, 500);
+                    let newArr = []; //builds new array
                 for(let i = 0; i < attackArr.length; i++){
-                    //cycle through to subtract frames from attacks
+                    attackArr[i].put();//this is the function that puts the attack on screen an subtracts frames
+
+                    if(attackArr[i].exist){
+                        newArr.push(attackArr[i]); //this adds relevant frames to the new array
+                    }
+
                 }
+                attackArr = newArr; //finally, we change the attackArr to the new array. No irrelevant or non-existant attacks!
+
                 canMove = false;
                 if(timer){
                     clearTimeout(timer);
@@ -218,9 +260,9 @@
                 timer = setTimeout(() => {
                     canMove = true;
                 }, 1000 / fps);
-            }
         player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
         player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
+            }
             requestAnimationFrame(gameLoop);
         };
 
