@@ -148,7 +148,9 @@
         player.x = 225;
         player.y = 225;
         canMove = false;
-        timer.clearTimeout();
+        if(timer){
+        clearTimeout(timer);
+        }
         timer = setTimeout(() => {
         canMove = true;
         }, 1000);
@@ -209,6 +211,9 @@
                     //cycle through to subtract frames from attacks
                 }
                 canMove = false;
+                if(timer){
+                    clearTimeout(timer);
+                }
                 timer = setTimeout(() => {
                     canMove = true;
                 }, 1000 / fps);
