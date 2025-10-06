@@ -38,6 +38,7 @@
         const pixelSize = window.innerHeight / 1000;
         const widthSize = window.innerWidth / 1000;
         let timer;
+        let isDead = false;
         const canvas = document.getElementById("game");
         let boss = document.getElementById('boss');
         boss.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:0;`
@@ -147,17 +148,17 @@
         player.momY = 0;
         player.x = 225;
         player.y = 225;
-        canMove = false;
+        isDead = true;
         if(timer){
         clearTimeout(timer);
         }
         timer = setTimeout(() => {
-        canMove = true;
+        isDead = false;
         }, 1000);
         }
         function gameLoop(){
         
-        if (canMove) {
+        if (canMove && !isDead) {
             player.momY++;//Gravity exists, no?
 
             if(player.leftJet){
