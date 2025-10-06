@@ -144,6 +144,7 @@
         function startGameLoop(){
         requestAnimationFrame(gameLoop);
         }
+
         function attack(frames, x, y, width, height, momX, momY, framesTill){
             this.x = x;
             this.y = y;
@@ -165,7 +166,7 @@
                     this.x += this.momX;
                     this.y += this.momY;
                     this.frames--;
-                    if(frames == 0){
+                    if(this.frames == 0){
                         this.exist = false;
                     }
                 }
@@ -191,8 +192,10 @@
         }, 1000);
         }
 
-        attackArr.push(new attack(180, 0, 0, 500, 10, 0, 2, 20));
+        attackArr.push(new attack(180, 0, 0, 500, 10, 0, 1, 20));
         attackArr.push(new attack(180, 490, 0, 10, 500, -1, 0, 20));
+        attackArr.push(new attack(180, 0, 0, 10, 500, 1, 0, 20));
+        attackArr.push(new attack(180, 0, 490, 500, 10, 0, -1, 20));
 
         function gameLoop(){
         
@@ -277,5 +280,7 @@
     </script>
 
 </body>
+
+</html>
 
 </html>
