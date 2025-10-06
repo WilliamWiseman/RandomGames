@@ -151,6 +151,7 @@
             this.height = height;
             this.momX = momX;
             this.momY = momY;
+            this.frames = frames;
             this.framesTill = framesTill;
             this.exist = true;
             attack.prototype.put = function(){
@@ -179,6 +180,7 @@
         player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
         player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
         isDead = true;
+        attackArr = [];
         document.body.style.backgroundColor = "darkred";
         if(timer2){
         clearTimeout(timer2);
@@ -188,6 +190,9 @@
         document.body.style.backgroundColor = "rgb(99, 186, 99)";
         }, 1000);
         }
+
+        attackArr.push(new attack(180, 0, 0, 500, 10, 0, 2, 20));
+        attackArr.push(new attack(180, 490, 0, 10, 500, -1, 0, 20));
 
         function gameLoop(){
         
