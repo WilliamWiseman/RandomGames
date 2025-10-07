@@ -28,17 +28,33 @@
             left:0;
             top:0;
         }
+        .loader {
+            display:none;
+        }
+        .button {
+            display:none;
+            z-index:2;
+            position:absolute;
+            left:0;
+            top:0;
+        }
     </style>
     
     <div id="add" class="gameArea"></div>
     <img id="boss" src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif">
     <canvas id="game" width="500" height="500"></canvas>
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif" class="loader">
     
     <script>
         const pixelSize = window.innerHeight / 1000;
         const widthSize = window.innerWidth / 1000;
         let timer;
         let timer2;
+        let timer3;
         let isDead = false;
         const canvas = document.getElementById("game");
         let boss = document.getElementById('boss');
@@ -158,7 +174,7 @@
             attack.prototype.put = function(){
                 if(this.framesTill > 0){
                     this.framesTill--;
-                    ctx.fillStyle = "rgb(0, 255, 0)";
+                    ctx.fillStyle = "rgb(0, 255, 100)";
                     ctx.fillRect(this.x, this.y, this.width, this.height);
                 }else if(this.exist){
                     ctx.fillStyle = "rgb(255, 0, 0)";
@@ -191,17 +207,75 @@
         document.body.style.backgroundColor = "rgb(99, 186, 99)";
         }, 1000);
         }
-        let attacks = {
-            center: function (){
-                attackArr.push(new attack(180, 0, 0, 500, 10, 0, 1, 20));
-                attackArr.push(new attack(180, 490, 0, 10, 500, -1, 0, 20));
-                attackArr.push(new attack(180, 0, 0, 10, 500, 1, 0, 20));
-                attackArr.push(new attack(180, 0, 490, 500, 10, 0, -1, 20));
-            },
-            idk:0
+
+        function hurtButton(){
+            this.x = 0;
+            this.y = 0;
+            this.width = 60;
+            this.height = 60;
+            this.exist = false;
+            //initialize the DOM object
+                this.img = document.createElement('img');
+                this.img.className = "button";
+                this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif";
+                this.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (this.y * pixelSize)}px`;
+                this.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (this.x * pixelSize)}px`;
+                this.img.style.width = `${this.width * pixelSize}px`;
+                this.img.style.height = `${this.height * pixelSize}px`;
+            document.body.appendChild(this.img);
+            //added to the DOM
+
+            hurtButton.prototype.put = function(x, y) {
+                this.x = x;
+                this.y = y; //update position
+
+                this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif";
+                this.img.style.display = "block";
+                this.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (this.y * pixelSize)}px`;
+                this.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (this.x * pixelSize)}px`;//change DOM
+
+                this.exist = true; // makes it so it checks if it is colliding with player
+            }
+
+            hurtButton.prototype.press = function() {
+                this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif";
+                //play click sound
+                //hurt boss
+                boss.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif"
+                this.exist = false;
+                if(timer3){
+                    clearTimeout(timer3);
+                }
+                timer3 = setTimeout(() => {
+                    boss.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif"
+                    this.img.style.display = "none";
+                }, 1000);
+
+            }
         }
 
-        attacks.center();
+        let btn = new hurtButton();
+
+        let attacks = {
+            center: function (){
+                attackArr.push(new attack(160, 0, 0, 500, 10, 0, 1, 20));
+                attackArr.push(new attack(160, 490, 0, 10, 500, -1, 0, 20));
+                attackArr.push(new attack(160, 0, 0, 10, 500, 1, 0, 20));
+                attackArr.push(new attack(160, 0, 490, 500, 10, 0, -1, 20));
+            },
+            left: function (){
+                attackArr.push(new attack(40, 0, 0, 250, 500, 0, 0, 30));
+            },
+            right: function (){
+                attackArr.push(new attack(40, 250, 0, 250, 500, 0, 0, 30));
+            },
+            freeDMG: function (){
+                btn.put(400, 50);
+            }
+        }
+
+        attacks.left();
+        attacks.freeDMG();
 
         function gameLoop(){
         
@@ -230,7 +304,11 @@
             }
 
             //player.momX = Math.floor(player.momX - (player.momX / 5)); //Air resistance? quite choppy atm
-
+            if(btn.exist){
+                if(collision(btn, player)){
+                    btn.press();
+                }
+            }
                 player.x += player.momX;
                 if (
                     getColor(player.x, player.y) !== 0 ||
