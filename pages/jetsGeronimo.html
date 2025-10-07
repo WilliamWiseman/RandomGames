@@ -191,11 +191,17 @@
         document.body.style.backgroundColor = "rgb(99, 186, 99)";
         }, 1000);
         }
+        let attacks = {
+            center: function (){
+                attackArr.push(new attack(180, 0, 0, 500, 10, 0, 1, 20));
+                attackArr.push(new attack(180, 490, 0, 10, 500, -1, 0, 20));
+                attackArr.push(new attack(180, 0, 0, 10, 500, 1, 0, 20));
+                attackArr.push(new attack(180, 0, 490, 500, 10, 0, -1, 20));
+            },
+            idk:0
+        }
 
-        attackArr.push(new attack(180, 0, 0, 500, 10, 0, 1, 20));
-        attackArr.push(new attack(180, 490, 0, 10, 500, -1, 0, 20));
-        attackArr.push(new attack(180, 0, 0, 10, 500, 1, 0, 20));
-        attackArr.push(new attack(180, 0, 490, 500, 10, 0, -1, 20));
+        attacks.center();
 
         function gameLoop(){
         
@@ -280,7 +286,5 @@
     </script>
 
 </body>
-
-</html>
 
 </html>
