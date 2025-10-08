@@ -198,6 +198,7 @@
         player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
         isDead = true;
         attackArr = [];
+        btn.disappear();
         document.body.style.backgroundColor = "darkred";
         if(timer2){
         clearTimeout(timer2);
@@ -252,6 +253,11 @@
                 }, 1000);
 
             }
+
+            hurtButton.prototype.disappear = function() {
+                this.img.style.display = "none";
+                this.exist = false;
+            }
         }
 
         let btn = new hurtButton();
@@ -273,9 +279,6 @@
                 btn.put(400, 50);
             }
         }
-
-        attacks.left();
-        attacks.freeDMG();
 
         function gameLoop(){
         
