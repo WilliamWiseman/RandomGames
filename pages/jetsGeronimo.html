@@ -42,12 +42,15 @@
     
     <div id="add" class="gameArea"></div>
     <img id="boss" src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif">
+    <img id="bar" src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HealthBar.gif">
+    <img id="name"src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/William.gif">
     <canvas id="game" width="500" height="500"></canvas>
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif" class="loader">
+    
     
     <script>
         const pixelSize = window.innerHeight / 1000;
@@ -58,7 +61,11 @@
         let isDead = false;
         const canvas = document.getElementById("game");
         let boss = document.getElementById('boss');
-        boss.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:0;filter: brightness(1.2);`
+        boss.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:0;filter: brightness(1.2);`;
+        let bar = document.getElementById('bar');
+        bar.style = `position:absolute;z-index:1;width:${pixelSize * 500}px;height:${pixelSize * 120}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:${800 * pixelSize}px;`;
+        let name = document.getElementById('name');
+        name.style = `position:absolute;z-index:3;width:${pixelSize * 500}px;height:${pixelSize * 120}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:${800 * pixelSize}px;`;
         canvas.style = `z-index: 1;background-color:white;border:3px solid black;position:absolute;width:${pixelSize * 500}px;height:${pixelSize * 500}px;`;
         canvas.style.left = ((window.innerWidth / 2) - (250 * pixelSize)) + "px";
         canvas.style.top = 300 * pixelSize + "px";
