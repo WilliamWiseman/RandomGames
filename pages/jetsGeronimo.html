@@ -44,6 +44,7 @@
     <img id="boss" src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif">
     <img id="bar" src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HealthBar.gif">
     <img id="name"src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/William.gif">
+    <div id="health"></div>
     <canvas id="game" width="500" height="500"></canvas>
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif" class="loader">
@@ -59,13 +60,30 @@
         let timer2;
         let timer3;
         let isDead = false;
+
         const canvas = document.getElementById("game");
-        let boss = document.getElementById('boss');
-        boss.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:0;filter: brightness(1.2);`;
+        let boss = {
+            img:document.getElementById('boss'),
+            hp:10,
+            bar:document.getElementById('health'),
+            finished:0,
+            hurt:function() {
+                this.hp--;
+                //play hurt sound
+                this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif";
+                this.bar.style.width = `${pixelSize * (44 * boss.hp)}px`;
+            }
+        }
+        boss.img.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize) + 2}px;top:0;filter: brightness(1.2);`;
+
+        boss.bar.style = `position:absolute;z-index:1;background-color:blue;width:${pixelSize * (44 * boss.hp)}px;height:${pixelSize * 90}px;left:${(window.innerWidth / 2) - (220 * pixelSize)}px;top:${815 * pixelSize}px;`;
+
         let bar = document.getElementById('bar');
         bar.style = `position:absolute;z-index:1;width:${pixelSize * 500}px;height:${pixelSize * 120}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:${800 * pixelSize}px;`;
+
         let name = document.getElementById('name');
         name.style = `position:absolute;z-index:3;width:${pixelSize * 500}px;height:${pixelSize * 120}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:${800 * pixelSize}px;`;
+
         canvas.style = `z-index: 1;background-color:white;border:3px solid black;position:absolute;width:${pixelSize * 500}px;height:${pixelSize * 500}px;`;
         canvas.style.left = ((window.innerWidth / 2) - (250 * pixelSize)) + "px";
         canvas.style.top = 300 * pixelSize + "px";
@@ -190,6 +208,7 @@
                     this.y += this.momY;
                     this.frames--;
                     if(this.frames == 0){
+                        boss.finished++;
                         this.exist = false;
                     }
                 }
@@ -248,15 +267,14 @@
             hurtButton.prototype.press = function() {
                 this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif";
                 //play click sound
-                //hurt boss
-                boss.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif"
+                boss.hurt();
                 this.exist = false;
                 if(timer3){
                     clearTimeout(timer3);
                 }
                 timer3 = setTimeout(() => {
-                    boss.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif"
                     this.img.style.display = "none";
+                    boss.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif";
                 }, 1000);
 
             }
@@ -269,7 +287,7 @@
 
         let btn = new hurtButton();
 
-        let attacks = {
+        boss.attacks = {
             center: function (){
                 attackArr.push(new attack(160, 0, 0, 500, 10, 0, 1, 20));
                 attackArr.push(new attack(160, 490, 0, 10, 500, -1, 0, 20));
@@ -286,6 +304,8 @@
                 btn.put(400, 50);
             }
         }
+        
+        boss.attacks.freeDMG();
 
         function gameLoop(){
         
