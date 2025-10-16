@@ -51,6 +51,10 @@
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif" class="loader">
     
     
     <script>
@@ -67,14 +71,24 @@
             hp:10,
             bar:document.getElementById('health'),
             finished:0,
+            req:0,
+            can:true,
+            timer:null,
             hurt:function() {
                 this.hp--;
                 //play hurt sound
                 this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif";
                 this.bar.style.width = `${pixelSize * (44 * boss.hp)}px`;
+            },
+            think:function() {
+                    if(this.can){
+                    let atk = Math.floor(Math.random * this.attackArr.length);
+                    this.attacks[atk]();
+                    this.can = false;
+                    }
             }
         }
-        boss.img.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize) + 2}px;top:0;filter: brightness(1.2);`;
+        boss.img.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize) + 3}px;top:0;filter: brightness(1.2);`;
 
         boss.bar.style = `position:absolute;z-index:1;background-color:blue;width:${pixelSize * (44 * boss.hp)}px;height:${pixelSize * 90}px;left:${(window.innerWidth / 2) - (220 * pixelSize)}px;top:${815 * pixelSize}px;`;
 
@@ -94,8 +108,8 @@
         let player = {
             x:225,
             y:225,
-            width:50,
-            height:50,
+            width:60,
+            height:60,
             momX:0,
             momY:0,
             leftJet:false,
@@ -104,7 +118,7 @@
         };
         player.img = document.createElement('img');
         player.img.className = "entity";
-        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif";
+        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
         player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
         player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
         player.img.style.width = `${player.width * pixelSize}px`;
@@ -126,19 +140,35 @@
             switch (key) {
                 case "a":
                     player.leftJet = true;
-                    //check/change sprite
+                    if(player.rightJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";
+                    }
                     break;
                 case "d":
                     player.rightJet = true;
-                    //check/change sprite
+                    if(player.leftJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif";
+                    }
                     break;
                 case "arrowleft":
                     player.leftJet = true;
-                    //check/change sprite
+                    if(player.rightJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";
+                    }
                     break;
                 case "arrowright":
                     player.rightJet = true;
-                    //check/change sprite
+                    if(player.leftJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif";
+                    }
                     break;
             }
         });
@@ -150,19 +180,35 @@
             switch (key) {
                 case "a":
                     player.leftJet = false;
-                    //check/change sprite
+                    if(player.rightJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                    }
                     break;
                 case "d":
                     player.rightJet = false;
-                    //check/change sprite
+                    if(player.leftJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                    }
                     break;
                 case "arrowleft":
                     player.leftJet = false;
-                    //check/change sprite
+                    if(player.rightJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                    }
                     break;
                 case "arrowright":
                     player.rightJet = false;
-                    //check/change sprite
+                    if(player.leftJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                    }
                     break;
             }
         });
@@ -183,6 +229,7 @@
         };
         
         function startGameLoop(){
+
         requestAnimationFrame(gameLoop);
         }
 
@@ -210,7 +257,17 @@
                     if(this.frames == 0){
                         boss.finished++;
                         this.exist = false;
+                        if(boss.finished == boss.req){
+                            boss.finished = 0;
+                            boss.req = 1;
+                        if(boss.timer){
+                            clearTimeout(boss.timer);
+                        }
+                        boss.timer = setTimeout(() => {
+                            boss.can = true;
+                    }, 5000);
                     }
+                }
                 }
                 }
             }
@@ -268,6 +325,7 @@
                 this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif";
                 //play click sound
                 boss.hurt();
+                attackArr = [];
                 this.exist = false;
                 if(timer3){
                     clearTimeout(timer3);
@@ -276,6 +334,15 @@
                     this.img.style.display = "none";
                     boss.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif";
                 }, 1000);
+
+                boss.finished = 0;
+                boss.req = 1;
+                        if(boss.timer){
+                            clearTimeout(boss.timer);
+                        }
+                        boss.timer = setTimeout(() => {
+                            boss.can = true;
+                    }, 2000);
 
             }
 
@@ -289,23 +356,26 @@
 
         boss.attacks = {
             center: function (){
+                boss.req = 4;
                 attackArr.push(new attack(160, 0, 0, 500, 10, 0, 1, 20));
                 attackArr.push(new attack(160, 490, 0, 10, 500, -1, 0, 20));
                 attackArr.push(new attack(160, 0, 0, 10, 500, 1, 0, 20));
                 attackArr.push(new attack(160, 0, 490, 500, 10, 0, -1, 20));
             },
             left: function (){
+                boss.req = 1;
                 attackArr.push(new attack(40, 0, 0, 250, 500, 0, 0, 30));
             },
             right: function (){
+                boss.req = 1;
                 attackArr.push(new attack(40, 250, 0, 250, 500, 0, 0, 30));
             },
             freeDMG: function (){
                 btn.put(400, 50);
             }
         }
-        
-        boss.attacks.freeDMG();
+
+    boss.attackArr = ['center', 'left', 'right'];
 
         function gameLoop(){
         
@@ -382,6 +452,7 @@
                 timer = setTimeout(() => {
                     canMove = true;
                 }, 1000 / fps);
+                boss.think();
         player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
         player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
             }
