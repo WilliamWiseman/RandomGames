@@ -58,6 +58,10 @@
     
     
     <script>
+        //SOUNDS
+            const WillHurt = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/WillHurt.mp3');
+
+        //SOUNDS
         const pixelSize = window.innerHeight / 1000;
         const widthSize = window.innerWidth / 1000;
         let timer;
@@ -76,14 +80,16 @@
             timer:null,
             hurt:function() {
                 this.hp--;
-                //play hurt sound
+                WillHurt.currentTime = 0;
+                WillHurt.play();
                 this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif";
                 this.bar.style.width = `${pixelSize * (44 * boss.hp)}px`;
             },
             think:function() {
                     if(this.can){
                     let atk = this.attackArr[Math.floor(Math.random() * this.attackArr.length)];
-                    this.attacks[atk]();
+                    //this.attacks[atk]();
+                    this.attacks.freeDMG();
                     this.can = false;
                     }
             }
@@ -290,6 +296,15 @@
         isDead = false;
         document.body.style.backgroundColor = "rgb(99, 186, 99)";
         }, 1000);
+
+        boss.finished = 0;
+                boss.req = 1;
+                        if(boss.timer){
+                            clearTimeout(boss.timer);
+                        }
+                        boss.timer = setTimeout(() => {
+                            boss.can = true;
+                    }, 3000);
         }
 
         function hurtButton(){
@@ -364,18 +379,26 @@
             },
             left: function (){
                 boss.req = 1;
-                attackArr.push(new attack(40, 0, 0, 250, 500, 0, 0, 30));
+                attackArr.push(new attack(40, 0, 0, 250, 500, 0, 0, 40));
             },
             right: function (){
                 boss.req = 1;
-                attackArr.push(new attack(40, 250, 0, 250, 500, 0, 0, 30));
+                attackArr.push(new attack(40, 250, 0, 250, 500, 0, 0, 40));
             },
             freeDMG: function (){
                 btn.put(400, 50);
+            },
+            top: function (){
+                boss.req = 1;
+                attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 40));
+            },
+            bottom: function (){
+                boss.req = 1;
+                attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 40));
             }
         }
 
-    boss.attackArr = ['center', 'left', 'right', 'freeDMG'];
+    boss.attackArr = ['center', 'left', 'right', 'freeDMG', 'top', 'bottom'];
 
         function gameLoop(){
         
@@ -453,6 +476,7 @@
                     canMove = true;
                 }, 1000 / fps);
                 boss.think();
+
         player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
         player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
             }
