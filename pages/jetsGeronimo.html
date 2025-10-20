@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 
 <html>
+    <head>
+        <title>Jets Geronimo!</title>
+    </head>
 
 <body>
     <style>
@@ -51,6 +54,7 @@
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HeartPop.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif" class="loader">
@@ -67,7 +71,9 @@
         let timer;
         let timer2;
         let timer3;
+        let timer4;
         let isDead = false;
+        let canDie = true;
 
         const canvas = document.getElementById("game");
         let boss = {
@@ -88,8 +94,7 @@
             think:function() {
                     if(this.can){
                     let atk = this.attackArr[Math.floor(Math.random() * this.attackArr.length)];
-                    //this.attacks[atk]();
-                    this.attacks.freeDMG();
+                    this.attacks[atk]();
                     this.can = false;
                     }
             }
@@ -111,6 +116,7 @@
         let attackArr = [];
     	let fps = 60; //how many times things move a second, not render
         let canMove = true;
+
         let player = {
             x:225,
             y:225,
@@ -120,8 +126,25 @@
             momY:0,
             leftJet:false,
             rightJet:false,
-            img:false
+            img:false,
+            hp:5
         };
+        function makeHearts(){
+        for(let i = 0; i < player.hp; i++){
+            let heart = document.createElement('img');
+            heart.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif";
+            heart.style = `z-index: 10;position:absolute;width:${pixelSize * 50}px;height:${pixelSize * 50}px;top:${15 * pixelSize}px;left:${(50 * pixelSize * i) + 5 * pixelSize}px`;
+            heart.id = "heart" + i;
+            let oldHeart = document.getElementById("heart" + i);
+                if (oldHeart){
+                    let parent = oldHeart.parentNode;
+                    parent.removeChild(oldHeart);
+                }
+            document.body.appendChild(heart);
+        }
+    }
+    makeHearts();
+
         player.img = document.createElement('img');
         player.img.className = "entity";
         player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
@@ -277,15 +300,64 @@
                 }
                 }
             }
+
+            function laser(frames, startx, starty, endx, endy, framesTill){
+                this.startx = startx;
+                this.starty = starty;
+                this.endx = endx;
+                this.endy = endy;
+                this.frames = frames;
+                this.framesTill = framesTill;
+                this.exist = true;
+            laser.prototype.put = function(){
+                if(this.framesTill > 0){
+                    this.framesTill--;
+                    ctx.strokeStyle = "rgb(0, 255, 100)";
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(this.startx, this.starty);
+                    ctx.lineTo(this.endx, this.endy);
+                }else if(this.exist){
+                    ctx.strokeStyle = "rgb(255, 0, 0)";
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(this.startx, this.starty);
+                    ctx.lineTo(this.endx, this.endy);
+                    this.frames--;
+
+                    if(this.frames == 0){
+                        boss.finished++;
+                        this.exist = false;
+                        if(boss.finished == boss.req){
+                            boss.finished = 0;
+                            boss.req = 1;
+                        if(boss.timer){
+                            clearTimeout(boss.timer);
+                        }
+                        boss.timer = setTimeout(() => {
+                            boss.can = true;
+                    }, 2000);
+                    }
+                }
+                }
+                }
+            }
         
         function die(){
+        isDead = true;
+        canDie = false;
         player.momX = 0;
         player.momY = 0;
         player.x = 225;
         player.y = 225;
         player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
         player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
-        isDead = true;
+        player.hp--;
+        document.getElementById('heart' + player.hp).src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HeartPop.gif";
+        if(player.hp == 0){
+            //play defeat voiceline and end screen
+            return;
+        }
         attackArr = [];
         btn.disappear();
         document.body.style.backgroundColor = "darkred";
@@ -295,7 +367,13 @@
         timer2 = setTimeout(() => {
         isDead = false;
         document.body.style.backgroundColor = "rgb(99, 186, 99)";
-        }, 1000);
+        let oldHeart = document.getElementById("heart" + player.hp);
+                if (oldHeart){
+                    let parent = oldHeart.parentNode;
+                    parent.removeChild(oldHeart);
+                }
+        canDie = true;
+        }, 1500);
 
         boss.finished = 0;
                 boss.req = 1;
@@ -395,10 +473,16 @@
             bottom: function (){
                 boss.req = 1;
                 attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 40));
+            },
+            triangle: function (){
+                boss.req = 3;
+                attackArr.push(new laser(20, 500, 220, 60, 500, 50));
+                attackArr.push(new laser(20, 300, 500, 0, 10, 50));
+                attackArr.push(new laser(20, 0, 300, 500, 30, 50));
             }
         }
 
-    boss.attackArr = ['center', 'left', 'right', 'freeDMG', 'top', 'bottom'];
+    boss.attackArr = ['center', 'left', 'right', 'freeDMG', 'top', 'bottom', 'triangle'];
 
         function gameLoop(){
         
@@ -441,7 +525,9 @@
                     player.x < 0 ||
                     player.x + player.width > canvas.width
                 ) {
+                    if(canDie){
                     die();
+                    }
                 }
                 player.y += player.momY;
                 if (
@@ -452,7 +538,9 @@
                     player.y < 0 ||
                     player.y + player.height > canvas.height
                 ) {
+                    if(canDie){
                     die();
+                    }
                 }
 
                 //attacks to deal with
