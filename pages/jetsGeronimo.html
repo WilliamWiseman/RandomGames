@@ -15,6 +15,7 @@
             text-align: center;
             background-color: rgb(99, 186, 99);
             height:100%;
+            overflow:hidden;
         }
 
         .gameArea {
@@ -41,6 +42,41 @@
             left:0;
             top:0;
         }
+        .start {
+            z-index:12;
+            background-color:black;
+            color:white;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:110%;
+        }
+        .begin {
+            width:35%;
+            height:15%;
+            position:absolute;
+            left:32.5%;
+            top:45%;
+            background-color:green;
+            border: 6px solid white;
+            color:white;
+            font-weight:bolder;
+            font-size: 200%;
+        }
+        .title {
+            font-family: Georgia, 'Times New Roman', Times, 'serif';
+            width:60%;
+            height:15%;
+            position:absolute;
+            left:20%;
+            top:10%;
+            color:white;
+            font-weight:bold;
+            font-size: 600%;
+            text-align:center;
+        }
     </style>
     
     <div id="add" class="gameArea"></div>
@@ -49,6 +85,14 @@
     <img id="name"src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/William.gif">
     <div id="health"></div>
     <canvas id="game" width="500" height="500"></canvas>
+    <div id="startScreen" class="start">
+        <p class="title">Jets Geronimo</p>
+        <button onclick="startGameLoop()" class="begin">START</button>
+    </div>
+    <div id="endScreen" class="start" style="display:none">
+
+    </div>
+
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif" class="loader">
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif" class="loader">
@@ -64,6 +108,15 @@
     <script>
         //SOUNDS
             const WillHurt = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/WillHurt.mp3');
+            const titleMusic = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/TitleMusic.mp3');
+            const bossMusic = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/BossMusic.mp3');
+            bossMusic.loop = true;
+            titleMusic.loop = true;
+            const woosh = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/JetSound.mp3');
+            woosh.loop = true;
+            document.onLoad = function(){
+                titleMusic.play();
+            }
 
         //SOUNDS
         const pixelSize = window.innerHeight / 1000;
@@ -118,9 +171,9 @@
         let canMove = true;
 
         let player = {
-            x:225,
-            y:225,
-            width:60,
+            x:220,
+            y:220,
+            width:45,
             height:60,
             momX:0,
             momY:0,
@@ -129,6 +182,7 @@
             img:false,
             hp:5
         };
+
         function makeHearts(){
         for(let i = 0; i < player.hp; i++){
             let heart = document.createElement('img');
@@ -143,6 +197,7 @@
             document.body.appendChild(heart);
         }
     }
+
     makeHearts();
 
         player.img = document.createElement('img');
@@ -151,7 +206,7 @@
         player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
         player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
         player.img.style.width = `${player.width * pixelSize}px`;
-        player.img.style.height = `${player.height * pixelSize}px`;
+        player.img.style.height = `${player.height * pixelSize}px`; 
         document.body.appendChild(player.img);
         
         function hitbox(x, y, width, height) {
@@ -166,6 +221,8 @@
             event.preventDefault();
             let key = event.key;
             key = key.toLowerCase();
+            woosh.currentTime = 1;
+            woosh.play();
             switch (key) {
                 case "a":
                     player.leftJet = true;
@@ -213,6 +270,7 @@
                         player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif";
                     }else{
                         player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                        woosh.pause();
                     }
                     break;
                 case "d":
@@ -221,6 +279,7 @@
                         player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";
                     }else{
                         player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                        woosh.pause();
                     }
                     break;
                 case "arrowleft":
@@ -229,6 +288,7 @@
                         player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif";
                     }else{
                         player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                        woosh.pause();
                     }
                     break;
                 case "arrowright":
@@ -237,6 +297,7 @@
                         player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";
                     }else{
                         player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                        woosh.pause();
                     }
                     break;
             }
@@ -258,7 +319,9 @@
         };
         
         function startGameLoop(){
-
+        document.getElementById('startScreen').style.display = "none";
+        titleMusic.pause();
+        bossMusic.play();
         requestAnimationFrame(gameLoop);
         }
 
@@ -313,16 +376,18 @@
                 if(this.framesTill > 0){
                     this.framesTill--;
                     ctx.strokeStyle = "rgb(0, 255, 100)";
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = 10;
                     ctx.beginPath();
                     ctx.moveTo(this.startx, this.starty);
                     ctx.lineTo(this.endx, this.endy);
+                    ctx.stroke();
                 }else if(this.exist){
                     ctx.strokeStyle = "rgb(255, 0, 0)";
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = 10;
                     ctx.beginPath();
                     ctx.moveTo(this.startx, this.starty);
                     ctx.lineTo(this.endx, this.endy);
+                    ctx.stroke();
                     this.frames--;
 
                     if(this.frames == 0){
@@ -348,8 +413,8 @@
         canDie = false;
         player.momX = 0;
         player.momY = 0;
-        player.x = 225;
-        player.y = 225;
+        player.x = 220;
+        player.y = 220;
         player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
         player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
         player.hp--;
@@ -474,15 +539,16 @@
                 boss.req = 1;
                 attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 40));
             },
-            triangle: function (){
+            mesh: function (){
                 boss.req = 3;
                 attackArr.push(new laser(20, 500, 220, 60, 500, 50));
                 attackArr.push(new laser(20, 300, 500, 0, 10, 50));
                 attackArr.push(new laser(20, 0, 300, 500, 30, 50));
+                attackArr.push(new laser(20, 250, 0, 500, 500, 50));
             }
         }
 
-    boss.attackArr = ['center', 'left', 'right', 'freeDMG', 'top', 'bottom', 'triangle'];
+    boss.attackArr = ['center', 'left', 'right', 'freeDMG', 'top', 'bottom', 'mesh'];
 
         function gameLoop(){
         
@@ -571,9 +637,6 @@
             requestAnimationFrame(gameLoop);
         };
 
-        requestAnimationFrame(gameLoop);
-
-        
     </script>
 
 </body>
