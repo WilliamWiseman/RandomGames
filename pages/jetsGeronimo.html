@@ -90,7 +90,7 @@
         <button onclick="startGameLoop()" class="begin">START</button>
     </div>
     <div id="endScreen" class="start" style="display:none">
-
+        <p class="title">GAME OVER</p>
     </div>
 
     <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif" class="loader">
@@ -110,9 +110,15 @@
             const WillHurt = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/WillHurt.mp3');
             const titleMusic = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/TitleMusic.mp3');
             const bossMusic = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/BossMusic.mp3');
+            const down = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Low.mp3');
+            const high = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/High.mp3');
+            const side = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Side.mp3');
             bossMusic.loop = true;
+            bossMusic.volume = 0.3;
+            titleMusic.volume = 0.3;
             titleMusic.loop = true;
             const woosh = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/JetSound.mp3');
+            woosh.volume = 0;
             woosh.loop = true;
             document.onLoad = function(){
                 titleMusic.play();
@@ -320,6 +326,7 @@
         
         function startGameLoop(){
         document.getElementById('startScreen').style.display = "none";
+        woosh.volume = 0.8;
         titleMusic.pause();
         bossMusic.play();
         requestAnimationFrame(gameLoop);
@@ -420,7 +427,11 @@
         player.hp--;
         document.getElementById('heart' + player.hp).src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HeartPop.gif";
         if(player.hp == 0){
-            //play defeat voiceline and end screen
+        titleMusic.play();
+        //play a defeat voiceline
+        document.getElementById('endScreen').style.display = "block";
+        bossMusic.volume = 0;
+        woosh.volume = 0;
             return;
         }
         attackArr = [];
@@ -456,6 +467,7 @@
             this.width = 60;
             this.height = 60;
             this.exist = false;
+            this.clear = true;
             //initialize the DOM object
                 this.img = document.createElement('img');
                 this.img.className = "button";
@@ -467,9 +479,10 @@
             document.body.appendChild(this.img);
             //added to the DOM
 
-            hurtButton.prototype.put = function(x, y) {
+            hurtButton.prototype.put = function(x, y, clear) {
                 this.x = x;
                 this.y = y; //update position
+                this.clear = clear;
 
                 this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif";
                 this.img.style.display = "block";
@@ -483,7 +496,9 @@
                 this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif";
                 //play click sound
                 boss.hurt();
+                if(this.clear){
                 attackArr = [];
+                }
                 this.exist = false;
                 if(timer3){
                     clearTimeout(timer3);
@@ -511,6 +526,23 @@
         }
 
         let btn = new hurtButton();
+        let setSave = {
+            x:0,
+            y:0,
+            frames:0,
+            countFrames:0
+        }
+        function set(frames, x, y){
+            if(frames !== undefined){
+                setSave.x = x;
+                setSave.y = y;
+                setSave.frames = frames;
+                setSave.countFrames = 0;
+            }else if(countFrames == frames){
+                btn.put(setSave.x, setSave.y);
+                countFrames++;
+            }
+        }
 
         boss.attacks = {
             center: function (){
@@ -521,21 +553,25 @@
                 attackArr.push(new attack(160, 0, 490, 500, 10, 0, -1, 20));
             },
             left: function (){
+                side.play();
                 boss.req = 1;
                 attackArr.push(new attack(40, 0, 0, 250, 500, 0, 0, 40));
             },
             right: function (){
+                side.play();
                 boss.req = 1;
                 attackArr.push(new attack(40, 250, 0, 250, 500, 0, 0, 40));
             },
             freeDMG: function (){
-                btn.put(400, 50);
+                btn.put(400, 50, true);
             },
             top: function (){
+                down.play();
                 boss.req = 1;
                 attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 40));
             },
             bottom: function (){
+                high.play();
                 boss.req = 1;
                 attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 40));
             },
@@ -545,10 +581,22 @@
                 attackArr.push(new laser(20, 300, 500, 0, 10, 50));
                 attackArr.push(new laser(20, 0, 300, 500, 30, 50));
                 attackArr.push(new laser(20, 250, 0, 500, 500, 50));
+            },
+            outer: function (){
+                boss.req = 1;
+                attackArr.push(new attack(120, 150, 150, 200, 200, 0, 0, 30));
+                btn.put(220, 220, false);
+            },
+            quad: function (){
+                boss.req = 4;
+                attackArr.push(new attack(100, 0, 0, 10, 500, 3, 0, 10));
+                attackArr.push(new attack(100, 0, 0, 500, 10, 0, 2, 110));
+                attackArr.push(new attack(100, 490, 0, 10, 500, -3, 0, 210));
+                attackArr.push(new attack(100, 0, 490, 500, 10, 0, -3, 310));
             }
         }
 
-    boss.attackArr = ['center', 'left', 'right', 'freeDMG', 'top', 'bottom', 'mesh'];
+    boss.attackArr = ['center', 'left', 'right', 'freeDMG', 'top', 'bottom', 'mesh', 'outer', 'quad'];
 
         function gameLoop(){
         
@@ -633,6 +681,8 @@
 
         player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
         player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
+        setSave.countFrames++;
+        set();
             }
             requestAnimationFrame(gameLoop);
         };
