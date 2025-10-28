@@ -25,6 +25,9 @@
             z-index: 1;
             background-color:white;
             border:2px solid black;
+            background-image: url("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/SkyParallax.gif");
+            background-repeat:none;
+            background-size:cover;
         }
         .entity {
             z-index: 3;
@@ -114,8 +117,8 @@
             const high = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/High.mp3');
             const side = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Side.mp3');
             bossMusic.loop = true;
-            bossMusic.volume = 0.3;
-            titleMusic.volume = 0.3;
+            bossMusic.volume = 0.4;
+            titleMusic.volume = 0.5;
             titleMusic.loop = true;
             const woosh = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/JetSound.mp3');
             woosh.volume = 0;
@@ -131,7 +134,7 @@
         let timer2;
         let timer3;
         let timer4;
-        let isDead = false;
+        let isDead = true;
         let canDie = true;
 
         const canvas = document.getElementById("game");
@@ -149,6 +152,12 @@
                 WillHurt.play();
                 this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif";
                 this.bar.style.width = `${pixelSize * (44 * boss.hp)}px`;
+            if(this.hp == 8){
+                boss.attackArr = ['bottom', 'outer', 'top', 'left', 'right', 'mesh', 'topLeft', 'bottomRight', 'dvdRight', 'ticTacToe', 'jones'];
+            }
+            if(this.hp == 5){
+                boss.attackArr = ['bottom', 'outer', 'top', 'left', 'right', 'mesh', 'bottomLeft', 'bottomRight', 'quad', 'dvdLeft', 'dvdRight', 'x', 'plus', 'TicTacToe', 'jones'];
+            }
             },
             think:function() {
                     if(this.can){
@@ -224,6 +233,7 @@
         }
         
         document.addEventListener("keydown", function (event) {
+            if(!isDead){
             event.preventDefault();
             let key = event.key;
             key = key.toLowerCase();
@@ -262,10 +272,12 @@
                         player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif";
                     }
                     break;
+                }
             }
         });
         
         document.addEventListener("keyup", function (event) {
+            if(!isDead){
             event.preventDefault();
             let key = event.key;
             key = key.toLowerCase();
@@ -306,6 +318,7 @@
                         woosh.pause();
                     }
                     break;
+                }
             }
         });
         
@@ -324,12 +337,13 @@
             return red;
         };
         
-        function startGameLoop(){
-        document.getElementById('startScreen').style.display = "none";
-        woosh.volume = 0.8;
-        titleMusic.pause();
-        bossMusic.play();
-        requestAnimationFrame(gameLoop);
+        function startGameLoop(){           //START GAME LOOP HEEEEEEEEEEEEEEEEEEREEEEEEEEEE
+            document.getElementById('startScreen').style.display = "none";
+            woosh.volume = 0.2;
+            titleMusic.pause();
+            bossMusic.play();
+            requestAnimationFrame(gameLoop);
+            isDead = false;
         }
 
         function attack(frames, x, y, width, height, momX, momY, framesTill){
@@ -345,7 +359,7 @@
             attack.prototype.put = function(){
                 if(this.framesTill > 0){
                     this.framesTill--;
-                    ctx.fillStyle = "rgb(0, 255, 100)";
+                    ctx.fillStyle = "rgba(0, 255, 100, 0.5)";
                     ctx.fillRect(this.x, this.y, this.width, this.height);
                 }else if(this.exist){
                     ctx.fillStyle = "rgb(255, 0, 0)";
@@ -382,7 +396,7 @@
             laser.prototype.put = function(){
                 if(this.framesTill > 0){
                     this.framesTill--;
-                    ctx.strokeStyle = "rgb(0, 255, 100)";
+                    ctx.strokeStyle = "rgba(0, 255, 100, 0.5)";
                     ctx.lineWidth = 10;
                     ctx.beginPath();
                     ctx.moveTo(this.startx, this.starty);
@@ -413,11 +427,63 @@
                 }
                 }
                 }
+            };
+
+            function dvdLogo(frames, x, y, width, height, momX, momY, framesTill){
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.momX = momX;
+            this.momY = momY;
+            this.frames = frames;
+            this.framesTill = framesTill;
+            this.exist = true;
+            dvdLogo.prototype.put = function(){
+                if(this.framesTill > 0){
+                    this.framesTill--;
+                    ctx.fillStyle = "rgba(0, 255, 100, 0.5)";
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }else if(this.exist){
+                    ctx.fillStyle = "rgb(255, 0, 0)";
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                    this.x += this.momX;
+                    this.y += this.momY;
+
+                    if(this.x + this.width > 500 || this.x < 0){
+                        this.momX = this.momX * -1;
+                    }
+                    if(this.y + this.height > 500 || this.y < 0){
+                        this.momY = this.momY * -1;
+                    }
+
+                    this.frames--;
+                    if(this.frames == 0){
+                        boss.finished++;
+                        this.exist = false;
+                        if(boss.finished == boss.req){
+                            boss.finished = 0;
+                            boss.req = 1;
+                        if(boss.timer){
+                            clearTimeout(boss.timer);
+                        }
+                        boss.timer = setTimeout(() => {
+                            boss.can = true;
+                    }, 2000);
+                    }
+                }
+                }
+                }
             }
         
         function die(){
+        setSave.frames = 0;
+        player.leftJet = false;
+        player.rightJet = false;
         isDead = true;
         canDie = false;
+        woosh.pause();
+        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
         player.momX = 0;
         player.momY = 0;
         player.x = 220;
@@ -437,12 +503,14 @@
         attackArr = [];
         btn.disappear();
         document.body.style.backgroundColor = "darkred";
+        bossMusic.pause();
         if(timer2){
         clearTimeout(timer2);
         }
         timer2 = setTimeout(() => {
         isDead = false;
         document.body.style.backgroundColor = "rgb(99, 186, 99)";
+        bossMusic.play();
         let oldHeart = document.getElementById("heart" + player.hp);
                 if (oldHeart){
                     let parent = oldHeart.parentNode;
@@ -452,7 +520,7 @@
         }, 1500);
 
         boss.finished = 0;
-                boss.req = 1;
+        boss.req = 1;
                         if(boss.timer){
                             clearTimeout(boss.timer);
                         }
@@ -487,7 +555,7 @@
                 this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif";
                 this.img.style.display = "block";
                 this.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (this.y * pixelSize)}px`;
-                this.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (this.x * pixelSize)}px`;//change DOM
+                this.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (this.x * pixelSize)}px`; //change DOM
 
                 this.exist = true; // makes it so it checks if it is colliding with player
             }
@@ -538,9 +606,9 @@
                 setSave.y = y;
                 setSave.frames = frames;
                 setSave.countFrames = 0;
-            }else if(countFrames == frames){
+            }else if(setSave.frames > 0 && setSave.countFrames == setSave.frames){
                 btn.put(setSave.x, setSave.y);
-                countFrames++;
+                setSave.countFrames++;
             }
         }
 
@@ -555,12 +623,14 @@
             left: function (){
                 side.play();
                 boss.req = 1;
-                attackArr.push(new attack(40, 0, 0, 250, 500, 0, 0, 40));
+                attackArr.push(new attack(40, 0, 0, 250, 500, 0, 0, 50));
+                side.play();
             },
             right: function (){
                 side.play();
                 boss.req = 1;
-                attackArr.push(new attack(40, 250, 0, 250, 500, 0, 0, 40));
+                attackArr.push(new attack(40, 250, 0, 250, 500, 0, 0, 50));
+                side.play();
             },
             freeDMG: function (){
                 btn.put(400, 50, true);
@@ -568,35 +638,93 @@
             top: function (){
                 down.play();
                 boss.req = 1;
-                attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 40));
+                attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 50));
+                down.play();
             },
             bottom: function (){
                 high.play();
                 boss.req = 1;
-                attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 40));
+                attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 50));
+                high.play();
             },
             mesh: function (){
                 boss.req = 3;
-                attackArr.push(new laser(20, 500, 220, 60, 500, 50));
-                attackArr.push(new laser(20, 300, 500, 0, 10, 50));
-                attackArr.push(new laser(20, 0, 300, 500, 30, 50));
-                attackArr.push(new laser(20, 250, 0, 500, 500, 50));
+                attackArr.push(new laser(20, 500, 220, 60, 500, 70));
+                attackArr.push(new laser(20, 300, 500, 0, 10, 70));
+                attackArr.push(new laser(20, 0, 300, 500, 30, 70));
+                attackArr.push(new laser(20, 250, 0, 500, 500, 70));
             },
             outer: function (){
-                boss.req = 1;
-                attackArr.push(new attack(120, 150, 150, 200, 200, 0, 0, 30));
-                btn.put(220, 220, false);
+                boss.req = 2;
+                attackArr.push(new attack(120, 150, 150, 200, 200, 0, 0, 50));
+                set(50, 220, 220);
             },
             quad: function (){
-                boss.req = 4;
+                boss.req = 5;
                 attackArr.push(new attack(100, 0, 0, 10, 500, 3, 0, 10));
                 attackArr.push(new attack(100, 0, 0, 500, 10, 0, 2, 110));
                 attackArr.push(new attack(100, 490, 0, 10, 500, -3, 0, 210));
                 attackArr.push(new attack(100, 0, 490, 500, 10, 0, -3, 310));
+                set(400, 220, 220);
+            },
+            topLeft: function (){
+                boss.req = 3;
+                attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 40));
+                attackArr.push(new attack(40, 250, 0, 250, 250, 0, 0, 40));
+                set(60, 410, 410);
+            },
+            topRight: function(){
+                boss.req = 3;
+                attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 40));
+                attackArr.push(new attack(40, 0, 0, 250, 250, 0, 0, 40));
+                set(60, 30, 410);
+            },
+            bottomLeft: function (){
+                boss.req = 3;
+                attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 40));
+                attackArr.push(new attack(40, 250, 250, 250, 250, 0, 0, 40));
+                set(60, 410, 30);
+            },
+            bottomRight: function(){
+                boss.req = 3;
+                attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 40));
+                attackArr.push(new attack(40, 0, 250, 250, 250, 0, 0, 40));
+                set(60, 30, 30);
+            },
+            dvdLeft: function(){
+                boss.req = 1;
+                attackArr.push(new dvdLogo(300, 10, 170, 160, 90, -3, 3, 50));
+            },
+            dvdRight: function(){
+                boss.req = 1;
+                attackArr.push(new dvdLogo(300, 300, 170, 160, 90, -3, -3, 50));
+            },
+            x: function(){
+                boss.req = 2;
+                attackArr.push(new laser(60, 0, 0, 500, 500, 50));
+                attackArr.push(new laser(60, 0, 500, 500, 0, 50));
+            },
+            plus: function(){
+                boss.req = 2;
+                attackArr.push(new laser(60, 0, 250, 500, 250, 50));
+                attackArr.push(new laser(60, 250, 0, 250, 500, 50));
+            },
+            ticTacToe: function(){
+                boss.req = 4;
+                attackArr.push(new laser(40, 166, 0, 166, 500, 50));
+                attackArr.push(new laser(40, 332, 0, 332, 500, 50));
+                attackArr.push(new laser(40, 0, 166, 500, 166, 50));
+                attackArr.push(new laser(40, 0, 332, 500, 332, 50));
+            },
+            jones: function(){
+                boss.req = 3;
+                attackArr.push(new dvdLogo(450, 0, 0, 250, 150, 0, 3, 60));
+                attackArr.push(new dvdLogo(450, 250, 350, 250, 150, 0, -3, 60));
+                attackArr.push(new laser(450, 0, 250, 500, 250, 60));
             }
         }
 
-    boss.attackArr = ['center', 'left', 'right', 'freeDMG', 'top', 'bottom', 'mesh', 'outer', 'quad'];
+    boss.attackArr = ['top', 'left', 'right', 'bottom', 'plus', 'x', 'dvdLeft', 'quad', 'outer', 'freeDMG'];
 
         function gameLoop(){
         
