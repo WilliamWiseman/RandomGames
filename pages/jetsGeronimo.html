@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Jets Geronimo!</title>
+    </head>
+
+<body>
+    <style>
+    	html {
+        	height:100%;
+        }
+        
+        body {
+            text-align: center;
+            background-color: rgb(99, 186, 99);
+            height:100%;
+            overflow:hidden;
+        }
+
+        .gameArea {
+            text-align: center;
+        }
+        canvas {
+            z-index: 1;
+            background-color:white;
+            border:2px solid black;
+            background-image: url("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/SkyParallax.gif");
+            background-repeat:none;
+            background-size:cover;
+        }
+        .entity {
+            z-index: 3;
+            position:absolute;
+            left:0;
+            top:0;
+        }
+        .loader {
+            display:none;
+        }
+        .button {
+            display:none;
+            z-index:2;
+            position:absolute;
+            left:0;
+            top:0;
+        }
+        .start {
+            z-index:12;
+            background-color:black;
+            color:white;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:110%;
+        }
+        .begin {
+            width:35%;
+            height:15%;
+            position:absolute;
+            left:32.5%;
+            top:45%;
+            background-color:green;
+            border: 6px solid white;
+            color:white;
+            font-weight:bolder;
+            font-size: 200%;
+        }
+        .title {
+            font-family: Georgia, 'Times New Roman', Times, 'serif';
+            width:60%;
+            height:15%;
+            position:absolute;
+            left:20%;
+            top:10%;
+            color:white;
+            font-weight:bold;
+            font-size: 600%;
+            text-align:center;
+        }
+    </style>
+    
+    <div id="add" class="gameArea"></div>
+    <img id="boss" src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif">
+    <img id="bar" src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HealthBar.gif">
+    <img id="name"src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/William.gif">
+    <div id="health"></div>
+    <canvas id="game" width="500" height="500"></canvas>
+    <div id="startScreen" class="start">
+        <p class="title">Jets Geronimo</p>
+        <button onclick="startGameLoop()" class="begin">START</button>
+    </div>
+    <div id="endScreen" class="start" style="display:none">
+        <p class="title">GAME OVER</p>
+    </div>
+
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HeartPop.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossAngry.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossSad.gif" class="loader">
+    <img src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeSmug.gif" class="loader">
+    
+    
+    <script>
+        //SOUNDS
+            const WillHurt = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/WillHurt.mp3');
+            const titleMusic = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/TitleMusic.mp3');
+            const bossMusic = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/BossMusic.mp3');
+            const down = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Low.mp3');
+            const high = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/High.mp3');
+            const side = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Side.mp3');
+            const click = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Click.mp3');
+            bossMusic.loop = true;
+            bossMusic.volume = 0.4;
+            titleMusic.volume = 0.5;
+            titleMusic.loop = true;
+            const woosh = new Audio('https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/JetSound.mp3');
+            woosh.volume = 0;
+            woosh.loop = true;
+            document.onLoad = function(){
+                titleMusic.play();
+            }
+
+        //SOUNDS
+        const pixelSize = window.innerHeight / 1000;
+        const widthSize = window.innerWidth / 1000;
+        let timer;
+        let timer2;
+        let timer3;
+        let timer4;
+        let isDead = true;
+        let canDie = true;
+
+        const canvas = document.getElementById("game");
+        let boss = {
+            img:document.getElementById('boss'),
+            hp:10,
+            bar:document.getElementById('health'),
+            finished:0,
+            phase:1,
+            phases:2,
+            req:0,
+            can:true,
+            timer:null,
+            hurt:function() {
+                this.hp--;
+                WillHurt.currentTime = 0;
+                WillHurt.play();
+                this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif";
+                this.bar.style.width = `${pixelSize * (44 * boss.hp)}px`;
+            if(this.hp == 8 && this.phase == 1){
+                boss.attackArr = ['bottom', 'outer', 'top', 'left', 'right', 'mesh', 'topLeft', 'bottomRight', 'dvdRight', 'ticTacToe', 'jones'];
+            }
+            if(this.hp == 5 && this.phase == 1){
+                boss.attackArr = ['bottom', 'outer', 'top', 'left', 'right', 'mesh', 'bottomLeft', 'bottomRight', 'quad', 'dvdLeft', 'dvdRight', 'x', 'plus', 'TicTacToe', 'jones', 'web'];
+            }
+            if(this.hp == 0){
+                if(this.phase < this.phases){
+                    this.phase++;
+                    this.hp = 10;
+                    bossMusic.pause();
+                    player.x = 220;
+                    player.y = 220;
+                    woosh.volume = 0;
+                    woosh.pause();
+                    player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
+                    player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
+                    isDead = true;
+                    player.leftJet = false;
+                    player.rightJet = false;
+                    player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                    this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossSad.gif";
+                    //No, how!? How did you beat me?
+                    if(timer4){
+                        clearTimeout(timer4);
+                    }
+                    timer4 = setTimeout(() => {
+                        this.bar.style.width = `${pixelSize * (44 * boss.hp)}px`;
+                        this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossAngry.gif";
+                        // NO! I won't be beaten! I'm unstoppable!
+                        if(timer4){
+                        clearTimeout(timer4);
+                    }
+                    timer4 = setTimeout(() => {
+                        this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif";
+                        //Oh wait. I made this game! I can just run the heal function!
+                    if(timer4){
+                        clearTimeout(timer4);
+                    }
+                    timer4 = setTimeout(() => {
+                        this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossSmug.gif";
+                        isDead = false;
+                        player.hp+= 3;
+                        makeHearts();
+                        woosh.volume = 0.2;
+                        bossMusic.playbackRate = 1.5;
+                        bossMusic.play();
+                    }, 2000);
+
+                    }, 2000);
+                    
+                    }, 2000);
+                }else{
+                    //boss rant then win screen, good job player
+                }
+            }
+            },
+
+            think:function() {
+                    if(this.can){
+                    let atk = this.attackArr[Math.floor(Math.random() * this.attackArr.length)];
+                    this.attacks[atk]();
+                    this.can = false;
+                    }
+            }
+        }
+        boss.img.style = `position:absolute;z-index:2;width:${pixelSize * 500}px;height:${pixelSize * 300}px;left:${(window.innerWidth / 2) - (250 * pixelSize) + 3}px;top:0;filter: brightness(1.2);`;
+
+        boss.bar.style = `position:absolute;z-index:1;background-color:blue;width:${pixelSize * (44 * boss.hp)}px;height:${pixelSize * 90}px;left:${(window.innerWidth / 2) - (220 * pixelSize)}px;top:${815 * pixelSize}px;`;
+
+        let bar = document.getElementById('bar');
+        bar.style = `position:absolute;z-index:1;width:${pixelSize * 500}px;height:${pixelSize * 120}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:${800 * pixelSize}px;`;
+
+        let name = document.getElementById('name');
+        name.style = `position:absolute;z-index:3;width:${pixelSize * 500}px;height:${pixelSize * 120}px;left:${(window.innerWidth / 2) - (250 * pixelSize)}px;top:${800 * pixelSize}px;`;
+
+        canvas.style = `z-index: 1;background-color:white;border:3px solid black;position:absolute;width:${pixelSize * 500}px;height:${pixelSize * 500}px;`;
+        canvas.style.left = ((window.innerWidth / 2) - (250 * pixelSize)) + "px";
+        canvas.style.top = 300 * pixelSize + "px";
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        let attackArr = [];
+    	let fps = 60; //how many times things move a second, not render
+        let canMove = true;
+
+        let player = {
+            x:220,
+            y:220,
+            width:45,
+            height:60,
+            momX:0,
+            momY:0,
+            leftJet:false,
+            rightJet:false,
+            img:false,
+            hp:5
+        };
+
+        function makeHearts(){
+        for(let i = 0; i < player.hp; i++){
+            let heart = document.createElement('img');
+            heart.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif";
+            heart.style = `z-index: 10;position:absolute;width:${pixelSize * 50}px;height:${pixelSize * 50}px;top:${15 * pixelSize}px;left:${(50 * pixelSize * i) + 5 * pixelSize}px`;
+            heart.id = "heart" + i;
+            let oldHeart = document.getElementById("heart" + i);
+                if (oldHeart){
+                    let parent = oldHeart.parentNode;
+                    parent.removeChild(oldHeart);
+                }
+            document.body.appendChild(heart);
+        }
+    }
+
+    makeHearts();
+
+        player.img = document.createElement('img');
+        player.img.className = "entity";
+        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+        player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
+        player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
+        player.img.style.width = `${player.width * pixelSize}px`;
+        player.img.style.height = `${player.height * pixelSize}px`; 
+        document.body.appendChild(player.img);
+        
+        function hitbox(x, y, width, height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            return this;
+        }
+        
+        document.addEventListener("keydown", function (event) {
+            if(!isDead){
+            event.preventDefault();
+            let key = event.key;
+            key = key.toLowerCase();
+            woosh.currentTime = 1;
+            woosh.play();
+            switch (key) {
+                case "a":
+                    player.leftJet = true;
+                    if(player.rightJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";
+                    }
+                    break;
+                case "d":
+                    player.rightJet = true;
+                    if(player.leftJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif";
+                    }
+                    break;
+                case "arrowleft":
+                    player.leftJet = true;
+                    if(player.rightJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";
+                    }
+                    break;
+                case "arrowright":
+                    player.rightJet = true;
+                    if(player.leftJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif";
+                    }
+                    break;
+                }
+            }
+        });
+        
+        document.addEventListener("keyup", function (event) {
+            if(!isDead){
+            event.preventDefault();
+            let key = event.key;
+            key = key.toLowerCase();
+            switch (key) {
+                case "a":
+                    player.leftJet = false;
+                    if(player.rightJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                        woosh.pause();
+                    }
+                    break;
+                case "d":
+                    player.rightJet = false;
+                    if(player.leftJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                        woosh.pause();
+                    }
+                    break;
+                case "arrowleft":
+                    player.leftJet = false;
+                    if(player.rightJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                        woosh.pause();
+                    }
+                    break;
+                case "arrowright":
+                    player.rightJet = false;
+                    if(player.leftJet){
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";
+                    }else{
+                        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+                        woosh.pause();
+                    }
+                    break;
+                }
+            }
+        });
+        
+        function collision(a, b) {
+            return !(
+                ((a.y + a.height) < (b.y)) || //checks if a is higher than b's y
+                (a.y > (b.y + b.height)) || // checks if b is lower  than a's y
+                ((a.x + a.width) < b.x) || // checks if a is more left than b 
+                (a.x > (b.x + b.width))// checks if a is more right than b
+            );
+        };
+        
+        function getColor(x, y) {
+            const imgdata = ctx.getImageData(x, y, 1, 1);
+            const red = imgdata.data[0];
+            return red;
+        };
+        
+        function startGameLoop(){           //START GAME LOOP HEEEEEEEEEEEEEEEEEEREEEEEEEEEE
+            click.currentTime = 0;
+            click.play();
+            document.getElementById('startScreen').style.display = "none";
+            woosh.volume = 0.2;
+            titleMusic.pause();
+            bossMusic.play();
+            requestAnimationFrame(gameLoop);
+            isDead = false;
+        }
+
+        function attack(frames, x, y, width, height, momX, momY, framesTill){
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.momX = momX;
+            this.momY = momY;
+            this.frames = frames;
+            this.framesTill = framesTill;
+            this.exist = true;
+            attack.prototype.put = function(){
+                if(this.framesTill > 0){
+                    this.framesTill--;
+                    ctx.fillStyle = "rgba(0, 255, 100, 0.5)";
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }else if(this.exist){
+                    ctx.fillStyle = "rgb(255, 0, 0)";
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                    this.x += this.momX;
+                    this.y += this.momY;
+                    this.frames--;
+                    if(this.frames == 0){
+                        boss.finished++;
+                        this.exist = false;
+                        if(boss.finished == boss.req){
+                            boss.finished = 0;
+                            boss.req = 1;
+                        if(boss.timer){
+                            clearTimeout(boss.timer);
+                        }
+                        boss.timer = setTimeout(() => {
+                            boss.can = true;
+                    }, 2000);
+                    }
+                }
+                }
+                }
+            }
+
+            function laser(frames, startx, starty, endx, endy, framesTill){
+                this.startx = startx;
+                this.starty = starty;
+                this.endx = endx;
+                this.endy = endy;
+                this.frames = frames;
+                this.framesTill = framesTill;
+                this.exist = true;
+            laser.prototype.put = function(){
+                if(this.framesTill > 0){
+                    this.framesTill--;
+                    ctx.strokeStyle = "rgba(0, 255, 100, 0.5)";
+                    ctx.lineWidth = 10;
+                    ctx.beginPath();
+                    ctx.moveTo(this.startx, this.starty);
+                    ctx.lineTo(this.endx, this.endy);
+                    ctx.stroke();
+                }else if(this.exist){
+                    ctx.strokeStyle = "rgb(255, 0, 0)";
+                    ctx.lineWidth = 10;
+                    ctx.beginPath();
+                    ctx.moveTo(this.startx, this.starty);
+                    ctx.lineTo(this.endx, this.endy);
+                    ctx.stroke();
+                    this.frames--;
+
+                    if(this.frames == 0){
+                        boss.finished++;
+                        this.exist = false;
+                        if(boss.finished == boss.req){
+                            boss.finished = 0;
+                            boss.req = 1;
+                        if(boss.timer){
+                            clearTimeout(boss.timer);
+                        }
+                        boss.timer = setTimeout(() => {
+                            boss.can = true;
+                    }, 2000);
+                    }
+                }
+                }
+                }
+            };
+
+            function dvdLogo(frames, x, y, width, height, momX, momY, framesTill){
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.momX = momX;
+            this.momY = momY;
+            this.frames = frames;
+            this.framesTill = framesTill;
+            this.exist = true;
+            dvdLogo.prototype.put = function(){
+                if(this.framesTill > 0){
+                    this.framesTill--;
+                    ctx.fillStyle = "rgba(0, 255, 100, 0.5)";
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }else if(this.exist){
+                    ctx.fillStyle = "rgb(255, 0, 0)";
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                    this.x += this.momX;
+                    this.y += this.momY;
+
+                    if(this.x + this.width > 500 || this.x < 0){
+                        this.momX = this.momX * -1;
+                    }
+                    if(this.y + this.height > 500 || this.y < 0){
+                        this.momY = this.momY * -1;
+                    }
+
+                    this.frames--;
+                    if(this.frames == 0){
+                        boss.finished++;
+                        this.exist = false;
+                        if(boss.finished == boss.req){
+                            boss.finished = 0;
+                            boss.req = 1;
+                        if(boss.timer){
+                            clearTimeout(boss.timer);
+                        }
+                        boss.timer = setTimeout(() => {
+                            boss.can = true;
+                    }, 2000);
+                    }
+                }
+                }
+                }
+            }
+        
+        function die(){
+        setSave.frames = 0;
+        player.leftJet = false;
+        player.rightJet = false;
+        isDead = true;
+        canDie = false;
+        woosh.pause();
+        player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif";
+        player.momX = 0;
+        player.momY = 0;
+        player.x = 220;
+        player.y = 220;
+        player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
+        player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
+        player.hp--;
+        document.getElementById('heart' + player.hp).src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HeartPop.gif";
+        if(player.hp == 0){
+        titleMusic.play();
+        //play a defeat voiceline
+        document.getElementById('endScreen').style.display = "block";
+        bossMusic.volume = 0;
+        woosh.volume = 0;
+            return;
+        }
+        attackArr = [];
+        btn.disappear();
+        document.body.style.backgroundColor = "darkred";
+        bossMusic.pause();
+        if(timer2){
+        clearTimeout(timer2);
+        }
+        timer2 = setTimeout(() => {
+        isDead = false;
+        document.body.style.backgroundColor = "rgb(99, 186, 99)";
+        bossMusic.play();
+        let oldHeart = document.getElementById("heart" + player.hp);
+                if (oldHeart){
+                    let parent = oldHeart.parentNode;
+                    parent.removeChild(oldHeart);
+                }
+        canDie = true;
+        }, 1500);
+
+        boss.finished = 0;
+        boss.req = 1;
+                        if(boss.timer){
+                            clearTimeout(boss.timer);
+                        }
+                        boss.timer = setTimeout(() => {
+                            boss.can = true;
+                    }, 3000);
+        }
+
+        function hurtButton(){
+            this.x = 0;
+            this.y = 0;
+            this.width = 60;
+            this.height = 60;
+            this.exist = false;
+            this.clear = true;
+            //initialize the DOM object
+                this.img = document.createElement('img');
+                this.img.className = "button";
+                this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif";
+                this.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (this.y * pixelSize)}px`;
+                this.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (this.x * pixelSize)}px`;
+                this.img.style.width = `${this.width * pixelSize}px`;
+                this.img.style.height = `${this.height * pixelSize}px`;
+            document.body.appendChild(this.img);
+            //added to the DOM
+
+            hurtButton.prototype.put = function(x, y, clear) {
+                this.x = x;
+                this.y = y; //update position
+                this.clear = clear;
+
+                this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif";
+                this.img.style.display = "block";
+                this.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (this.y * pixelSize)}px`;
+                this.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (this.x * pixelSize)}px`; //change DOM
+
+                this.exist = true; // makes it so it checks if it is colliding with player
+            }
+
+            hurtButton.prototype.press = function() {
+                this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif";
+                click.currentTime = 0;
+                click.play();
+                boss.hurt();
+                if(this.clear){
+                attackArr = [];
+                }
+                this.exist = false;
+                if(timer3){
+                    clearTimeout(timer3);
+                }
+                timer3 = setTimeout(() => {
+                    this.img.style.display = "none";
+                    if(boss.phase == 1){
+                    boss.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif";
+                    }else{
+                    boss.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossSmug.gif";
+                    }
+                }, 1000);
+
+                boss.finished = 0;
+                boss.req = 1;
+                        if(boss.timer){
+                            clearTimeout(boss.timer);
+                        }
+                        boss.timer = setTimeout(() => {
+                            boss.can = true;
+                    }, 2000);
+
+            }
+
+            hurtButton.prototype.disappear = function() {
+                this.img.style.display = "none";
+                this.exist = false;
+            }
+        }
+
+        let btn = new hurtButton();
+        let setSave = {
+            x:0,
+            y:0,
+            frames:0,
+            countFrames:0
+        }
+        function set(frames, x, y){
+            if(frames !== undefined){
+                setSave.x = x;
+                setSave.y = y;
+                setSave.frames = frames;
+                setSave.countFrames = 0;
+            }else if(setSave.frames > 0 && setSave.countFrames == setSave.frames){
+                btn.put(setSave.x, setSave.y);
+                setSave.countFrames++;
+            }
+        }
+
+        boss.attacks = {
+            center: function (){
+                boss.req = 4;
+                attackArr.push(new attack(160, 0, 0, 500, 10, 0, 1, 20));
+                attackArr.push(new attack(160, 490, 0, 10, 500, -1, 0, 20));
+                attackArr.push(new attack(160, 0, 0, 10, 500, 1, 0, 20));
+                attackArr.push(new attack(160, 0, 490, 500, 10, 0, -1, 20));
+            },
+            left: function (){
+                side.play();
+                boss.req = 1;
+                attackArr.push(new attack(40, 0, 0, 250, 500, 0, 0, 50));
+                side.play();
+            },
+            right: function (){
+                side.play();
+                boss.req = 1;
+                attackArr.push(new attack(40, 250, 0, 250, 500, 0, 0, 50));
+                side.play();
+            },
+            freeDMG: function (){
+                btn.put(400, 50, true);
+            },
+            top: function (){
+                down.play();
+                boss.req = 1;
+                attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 50));
+                down.play();
+            },
+            bottom: function (){
+                high.play();
+                boss.req = 1;
+                attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 50));
+                high.play();
+            },
+            mesh: function (){
+                boss.req = 3;
+                attackArr.push(new laser(20, 500, 220, 60, 500, 70));
+                attackArr.push(new laser(20, 300, 500, 0, 10, 70));
+                attackArr.push(new laser(20, 0, 300, 500, 30, 70));
+                attackArr.push(new laser(20, 250, 0, 500, 500, 70));
+            },
+            outer: function (){
+                boss.req = 2;
+                attackArr.push(new attack(120, 150, 150, 200, 200, 0, 0, 50));
+                set(50, 220, 220);
+            },
+            quad: function (){
+                boss.req = 5;
+                attackArr.push(new attack(100, 0, 0, 10, 500, 3, 0, 10));
+                attackArr.push(new attack(100, 0, 0, 500, 10, 0, 3, 110));
+                attackArr.push(new attack(100, 490, 0, 10, 500, -3, 0, 210));
+                attackArr.push(new attack(100, 0, 490, 500, 10, 0, -3, 310));
+                set(400, 220, 220);
+            },
+            topLeft: function (){
+                boss.req = 3;
+                attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 40));
+                attackArr.push(new attack(40, 250, 0, 250, 250, 0, 0, 40));
+                set(60, 410, 410);
+            },
+            topRight: function(){
+                boss.req = 3;
+                attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 40));
+                attackArr.push(new attack(40, 0, 0, 250, 250, 0, 0, 40));
+                set(60, 30, 410);
+            },
+            bottomLeft: function (){
+                boss.req = 3;
+                attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 40));
+                attackArr.push(new attack(40, 250, 250, 250, 250, 0, 0, 40));
+                set(60, 410, 30);
+            },
+            bottomRight: function(){
+                boss.req = 3;
+                attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 40));
+                attackArr.push(new attack(40, 0, 250, 250, 250, 0, 0, 40));
+                set(60, 30, 30);
+            },
+            dvdLeft: function(){
+                boss.req = 1;
+                attackArr.push(new dvdLogo(300, 10, 170, 160, 90, -3, 3, 50));
+            },
+            dvdRight: function(){
+                boss.req = 1;
+                attackArr.push(new dvdLogo(300, 300, 170, 160, 90, -3, -3, 50));
+            },
+            x: function(){
+                boss.req = 2;
+                attackArr.push(new laser(60, 0, 0, 500, 500, 50));
+                attackArr.push(new laser(60, 0, 500, 500, 0, 50));
+            },
+            plus: function(){
+                boss.req = 2;
+                attackArr.push(new laser(60, 0, 250, 500, 250, 50));
+                attackArr.push(new laser(60, 250, 0, 250, 500, 50));
+            },
+            ticTacToe: function(){
+                boss.req = 4;
+                attackArr.push(new laser(40, 166, 0, 166, 500, 50));
+                attackArr.push(new laser(40, 332, 0, 332, 500, 50));
+                attackArr.push(new laser(40, 0, 166, 500, 166, 50));
+                attackArr.push(new laser(40, 0, 332, 500, 332, 50));
+            },
+            jones: function(){
+                boss.req = 3;
+                attackArr.push(new dvdLogo(450, 0, 0, 250, 150, 0, 3, 60));
+                attackArr.push(new dvdLogo(450, 250, 350, 250, 150, 0, -3, 60));
+                attackArr.push(new laser(450, 0, 250, 500, 250, 60));
+            },
+            web: function(){
+                boss.req = 8;
+                attackArr.push(new laser(60, 0, 0, 500, 500, 50));
+                attackArr.push(new laser(60, 0, 500, 500, 0, 50));
+                attackArr.push(new laser(60, 0, 250, 500, 250, 50));
+                attackArr.push(new laser(60, 250, 0, 250, 500, 50));
+                attackArr.push(new laser(60, 150, 150, 350, 150, 50));
+                attackArr.push(new laser(60, 150, 150, 150, 350, 50));
+                attackArr.push(new laser(60, 150, 350, 350, 350, 50));
+                attackArr.push(new laser(60, 350, 150, 350, 350, 50));
+            }
+        }
+
+    boss.attackArr = ['bottom', 'outer', 'top', 'left', 'right', 'dvdLeft', 'freeDMG', 'quad'];
+
+        function gameLoop(){
+        
+        if (canMove && !isDead) {
+            player.momY++;//Gravity exists, no?
+
+            if(player.leftJet){
+                player.momX+=1;
+                player.momY-=1.5;
+            }
+            if(player.rightJet){
+                player.momX-=1;
+                player.momY-=1.5;
+            }
+            player.momX = Math.floor(player.momX);
+            if(player.momX > 15){  //We NEED a speed limit
+                player.momX = 15;
+            }else if(player.momX < -15){
+                player.momX = -15;
+            }
+            player.momY = Math.floor(player.momY);
+            if(player.momY > 15){  //We NEED a speed limit
+                player.momY = 15;
+            }else if(player.momY < -10){
+                player.momY = -10;
+            }
+
+            //player.momX = Math.floor(player.momX - (player.momX / 5)); //Air resistance? quite choppy atm
+            if(btn.exist){
+                if(collision(btn, player)){
+                    btn.press();
+                }
+            }
+                player.x += player.momX;
+                if (
+                    getColor(player.x, player.y) !== 0 ||
+                    getColor(player.x + player.width -1, player.y) !== 0 ||
+                    getColor(player.x, player.y + player.height -1) !== 0 ||
+                    getColor(player.x + player.width -1, player.y + player.height -1) !== 0 ||
+                    player.x < 0 ||
+                    player.x + player.width > canvas.width
+                ) {
+                    if(canDie){
+                    die();
+                    }
+                }
+                player.y += player.momY;
+                if (
+                    getColor(player.x, player.y) !== 0 ||
+                    getColor(player.x + player.width -1, player.y) !== 0 ||
+                    getColor(player.x, player.y + player.height -1) !== 0 ||
+                    getColor(player.x + player.width -1, player.y + player.height -1) !== 0 ||
+                    player.y < 0 ||
+                    player.y + player.height > canvas.height
+                ) {
+                    if(canDie){
+                    die();
+                    }
+                }
+
+                //attacks to deal with
+                    ctx.clearRect(0, 0, 500, 500);
+                    let newArr = []; //builds new array
+                for(let i = 0; i < attackArr.length; i++){
+                    attackArr[i].put();//this is the function that puts the attack on screen an subtracts frames
+
+                    if(attackArr[i].exist){
+                        newArr.push(attackArr[i]); //this adds relevant frames to the new array
+                    }
+
+                }
+                attackArr = newArr; //finally, we change the attackArr to the new array. No irrelevant or non-existant attacks!
+
+                canMove = false;
+                if(timer){
+                    clearTimeout(timer);
+                }
+                timer = setTimeout(() => {
+                    canMove = true;
+                }, 1000 / fps);
+                boss.think();
+
+        player.img.style.top = `${(canvas.style.top.replace('px', '') * 1) + (player.y * pixelSize)}px`;
+        player.img.style.left = `${(canvas.style.left.replace('px', '') * 1) + (player.x * pixelSize)}px`;
+        setSave.countFrames++;
+        set();
+            }
+            requestAnimationFrame(gameLoop);
+        };
+
+    </script>
+
+</body>
+
+</html>
