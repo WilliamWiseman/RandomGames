@@ -1,3 +1,370 @@
 <!doctype html>
-<html><head><title>Jets Geronimo!</title></head><body><style>body,html{height:100%}.button,.loader{display:none}.button,.entity,.start{position:absolute;top:0;left:0}.gameArea,.title,body{text-align:center}body{background-color:#63ba63;overflow:hidden}canvas{z-index:1;background-color:#fff;border:2px solid #000;background-image:url("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/SkyParallax.gif");background-repeat:none;background-size:cover}.entity{z-index:3}.button{z-index:2}.start{z-index:12;background-color:#000;color:#fff;font-family:'Franklin Gothic Medium','Arial Narrow',Arial,sans-serif;width:100%;height:110%}.begin,.title{height:15%;position:absolute;color:#fff}.begin{width:35%;left:32.5%;top:45%;background-color:green;border:6px solid #fff;font-weight:bolder;font-size:200%}.title{font-family:Georgia,'Times New Roman',Times,'serif';width:60%;left:20%;top:10%;font-weight:700;font-size:600%}</style><div id=add class=gameArea></div><img id=boss src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif><img id=bar src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HealthBar.gif><img id=name src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/William.gif><div id=health></div><canvas id=game width=500 height=500></canvas><div id=startScreen class=start><p class=title>Jets Geronimo</p><button onclick=startGameLoop() class=begin>START</button></div><div id=endScreen class=start style=display:none><p class=title id=endText>GAME OVER</p></div><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif class=loader>
-<img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HeartPop.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossAngry.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossSad.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeSmug.gif class=loader><script>const WillHurt=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/WillHurt.mp3"),titleMusic=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/TitleMusic.mp3"),bossMusic=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/BossMusic.mp3"),down=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Low.mp3"),high=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/High.mp3"),side=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Side.mp3"),click=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Click.mp3"),how=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/how.mp3"),unstoppable=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/unstoppable.mp3"),heal=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/healFunction.mp3"),bested=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/bested.mp3"),fun=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/hadFun.mp3");bossMusic.loop=!0,bossMusic.volume=.4,titleMusic.volume=.5,titleMusic.loop=!0;const woosh=new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/JetSound.mp3");woosh.volume=0,woosh.loop=!0,document.onLoad=function(){titleMusic.play()};const pixelSize=window.innerHeight/1e3,widthSize=window.innerWidth/1e3;let timer,timer2,timer3,timer4,isDead=!0,canDie=!0;const canvas=document.getElementById("game");let boss={img:document.getElementById("boss"),hp:10,bar:document.getElementById("health"),finished:0,phase:1,phases:2,req:0,cutscene:!1,can:!0,timer:null,hurt:function(){this.hp--,WillHurt.currentTime=0,0!==this.hp&&WillHurt.play(),this.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif",this.bar.style.width=pixelSize*(44*boss.hp)+"px",8==this.hp&&1==this.phase&&(boss.attackArr=["bottom","outer","top","left","right","mesh","topLeft","bottomRight","dvdRight","ticTacToe","jones"]),5==this.hp&&1==this.phase&&(boss.attackArr=["bottom","outer","top","left","right","mesh","bottomLeft","bottomRight","quad","dvdLeft","dvdRight","x","plus","TicTacToe","jones","web"]),0==this.hp&&(this.phase<this.phases?(this.cutscene=!0,this.phase++,this.hp=10,bossMusic.pause(),player.x=220,player.y=220,player.momX=0,player.momY=0,woosh.volume=0,woosh.pause(),player.img.style.top=1*canvas.style.top.replace("px","")+player.y*pixelSize+"px",player.img.style.left=1*canvas.style.left.replace("px","")+player.x*pixelSize+"px",isDead=!0,player.leftJet=!1,player.rightJet=!1,player.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif",this.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossSad.gif",how.play(),timer4&&clearTimeout(timer4),timer4=setTimeout((()=>{this.bar.style.width=pixelSize*(44*boss.hp)+"px",this.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossAngry.gif",unstoppable.play(),timer4&&clearTimeout(timer4),timer4=setTimeout((()=>{this.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif",heal.play(),timer4&&clearTimeout(timer4),timer4=setTimeout((()=>{this.cutscene=!1,isDead=!1,player.hp+=3,makeHearts(),woosh.volume=.2,bossMusic.playbackRate=1.5,bossMusic.play()}),2e3)}),2e3)}),2500)):(this.cutscene=!0,isDead=!0,woosh.volume=0,bossMusic.pause(),this.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossSad.gif",bested.play(),timer4&&clearTimeout(timer4),timer4=setTimeout((()=>{fun.play(),document.getElementById("endScreen").style.display="block",document.getElementById("endText").innerText="YOU WIN!",titleMusic.play()}),3e3)))},think:function(){if(this.can){let e=this.attackArr[Math.floor(Math.random()*this.attackArr.length)];this.attacks[e](),this.can=!1}}};boss.img.style=`position:absolute;z-index:2;width:${500*pixelSize}px;height:${300*pixelSize}px;left:${window.innerWidth/2-250*pixelSize+3}px;top:0;filter: brightness(1.2);`,boss.bar.style=`position:absolute;z-index:1;background-color:blue;width:${pixelSize*(44*boss.hp)}px;height:${90*pixelSize}px;left:${window.innerWidth/2-220*pixelSize}px;top:${815*pixelSize}px;`;let bar=document.getElementById("bar");bar.style=`position:absolute;z-index:1;width:${500*pixelSize}px;height:${120*pixelSize}px;left:${window.innerWidth/2-250*pixelSize}px;top:${800*pixelSize}px;`;let name=document.getElementById("name");name.style=`position:absolute;z-index:3;width:${500*pixelSize}px;height:${120*pixelSize}px;left:${window.innerWidth/2-250*pixelSize}px;top:${800*pixelSize}px;`,canvas.style=`z-index: 1;background-color:white;border:3px solid black;position:absolute;width:${500*pixelSize}px;height:${500*pixelSize}px;`,canvas.style.left=window.innerWidth/2-250*pixelSize+"px",canvas.style.top=300*pixelSize+"px";const ctx=canvas.getContext("2d",{willReadFrequently:!0});let attackArr=[],fps=60,canMove=!0,player={x:220,y:220,width:45,height:60,momX:0,momY:0,leftJet:!1,rightJet:!1,img:!1,hp:5};function makeHearts(){for(let e=0;e<player.hp;e++){let t=document.createElement("img");t.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif",t.style=`z-index: 10;position:absolute;width:${50*pixelSize}px;height:${50*pixelSize}px;top:${15*pixelSize}px;left:${50*pixelSize*e+5*pixelSize}px`,t.id="heart"+e;let i=document.getElementById("heart"+e);i&&i.parentNode.removeChild(i),document.body.appendChild(t)}}function hitbox(e,t,i,s){return this.x=e,this.y=t,this.width=i,this.height=s,this}function collision(e,t){return!(e.y+e.height<t.y||e.y>t.y+t.height||e.x+e.width<t.x||e.x>t.x+t.width)}function getColor(e,t){return ctx.getImageData(e,t,1,1).data[0]}function startGameLoop(){click.currentTime=0,click.play(),document.getElementById("startScreen").style.display="none",woosh.volume=.2,titleMusic.pause(),bossMusic.play(),requestAnimationFrame(gameLoop),isDead=!1}function attack(e,t,i,s,a,r,o,l){this.x=t,this.y=i,this.width=s,this.height=a,this.momX=r,this.momY=o,this.frames=e,this.framesTill=l,this.exist=!0,attack.prototype.put=function(){this.framesTill>0?(this.framesTill--,ctx.fillStyle="rgba(0, 255, 100, 0.5)",ctx.fillRect(this.x,this.y,this.width,this.height)):this.exist&&(ctx.fillStyle="rgb(255, 0, 0)",ctx.fillRect(this.x,this.y,this.width,this.height),this.x+=this.momX,this.y+=this.momY,this.frames--,0==this.frames&&(boss.finished++,this.exist=!1,boss.finished==boss.req&&(boss.finished=0,boss.req=1,boss.timer&&clearTimeout(boss.timer),boss.timer=setTimeout((()=>{boss.can=!0}),2e3))))}}function laser(e,t,i,s,a,r){this.startx=t,this.starty=i,this.endx=s,this.endy=a,this.frames=e,this.framesTill=r,this.exist=!0,laser.prototype.put=function(){this.framesTill>0?(this.framesTill--,ctx.strokeStyle="rgba(0, 255, 100, 0.5)",ctx.lineWidth=10,ctx.beginPath(),ctx.moveTo(this.startx,this.starty),ctx.lineTo(this.endx,this.endy),ctx.stroke()):this.exist&&(ctx.strokeStyle="rgb(255, 0, 0)",ctx.lineWidth=10,ctx.beginPath(),ctx.moveTo(this.startx,this.starty),ctx.lineTo(this.endx,this.endy),ctx.stroke(),this.frames--,0==this.frames&&(boss.finished++,this.exist=!1,boss.finished==boss.req&&(boss.finished=0,boss.req=1,boss.timer&&clearTimeout(boss.timer),boss.timer=setTimeout((()=>{boss.can=!0}),2e3))))}}function dvdLogo(e,t,i,s,a,r,o,l){this.x=t,this.y=i,this.width=s,this.height=a,this.momX=r,this.momY=o,this.frames=e,this.framesTill=l,this.exist=!0,dvdLogo.prototype.put=function(){this.framesTill>0?(this.framesTill--,ctx.fillStyle="rgba(0, 255, 100, 0.5)",ctx.fillRect(this.x,this.y,this.width,this.height)):this.exist&&(ctx.fillStyle="rgb(255, 0, 0)",ctx.fillRect(this.x,this.y,this.width,this.height),this.x+=this.momX,this.y+=this.momY,(this.x+this.width>500||this.x<0)&&(this.momX=-1*this.momX),(this.y+this.height>500||this.y<0)&&(this.momY=-1*this.momY),this.frames--,0==this.frames&&(boss.finished++,this.exist=!1,boss.finished==boss.req&&(boss.finished=0,boss.req=1,boss.timer&&clearTimeout(boss.timer),boss.timer=setTimeout((()=>{boss.can=!0}),2e3))))}}function die(){if(setSave.frames=0,player.leftJet=!1,player.rightJet=!1,isDead=!0,canDie=!1,woosh.pause(),player.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif",player.momX=0,player.momY=0,player.x=220,player.y=220,player.img.style.top=1*canvas.style.top.replace("px","")+player.y*pixelSize+"px",player.img.style.left=1*canvas.style.left.replace("px","")+player.x*pixelSize+"px",player.hp--,document.getElementById("heart"+player.hp).src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HeartPop.gif",0==player.hp)return titleMusic.play(),document.getElementById("endScreen").style.display="block",bossMusic.volume=0,void(woosh.volume=0);attackArr=[],btn.disappear(),document.body.style.backgroundColor="darkred",bossMusic.pause(),timer2&&clearTimeout(timer2),timer2=setTimeout((()=>{isDead=!1,document.body.style.backgroundColor="rgb(99, 186, 99)",bossMusic.play();let e=document.getElementById("heart"+player.hp);e&&e.parentNode.removeChild(e),canDie=!0}),1500),boss.finished=0,boss.req=1,boss.timer&&clearTimeout(boss.timer),boss.timer=setTimeout((()=>{boss.can=!0}),3e3)}function hurtButton(){this.x=0,this.y=0,this.width=60,this.height=60,this.exist=!1,this.clear=!0,this.img=document.createElement("img"),this.img.className="button",this.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif",this.img.style.top=1*canvas.style.top.replace("px","")+this.y*pixelSize+"px",this.img.style.left=1*canvas.style.left.replace("px","")+this.x*pixelSize+"px",this.img.style.width=this.width*pixelSize+"px",this.img.style.height=this.height*pixelSize+"px",document.body.appendChild(this.img),hurtButton.prototype.put=function(e,t,i){this.x=e,this.y=t,this.clear=i,this.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif",this.img.style.display="block",this.img.style.top=1*canvas.style.top.replace("px","")+this.y*pixelSize+"px",this.img.style.left=1*canvas.style.left.replace("px","")+this.x*pixelSize+"px",this.exist=!0},hurtButton.prototype.press=function(){this.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif",click.currentTime=0,click.play(),boss.hurt(),this.clear&&(attackArr=[]),this.exist=!1,timer3&&clearTimeout(timer3),timer3=setTimeout((()=>{this.img.style.display="none",1==boss.phase&&(boss.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif")}),1e3),boss.finished=0,boss.req=1,boss.timer&&clearTimeout(boss.timer),boss.timer=setTimeout((()=>{boss.can=!0}),2e3)},hurtButton.prototype.disappear=function(){this.img.style.display="none",this.exist=!1}}makeHearts(),player.img=document.createElement("img"),player.img.className="entity",player.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif",player.img.style.top=1*canvas.style.top.replace("px","")+player.y*pixelSize+"px",player.img.style.left=1*canvas.style.left.replace("px","")+player.x*pixelSize+"px",player.img.style.width=player.width*pixelSize+"px",player.img.style.height=player.height*pixelSize+"px",document.body.appendChild(player.img),document.addEventListener("keydown",(function(e){if(!isDead){e.preventDefault();let t=e.key;switch(t=t.toLowerCase(),woosh.currentTime=1,woosh.play(),t){case"a":case"arrowleft":player.leftJet=!0,player.rightJet?player.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif":player.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";break;case"d":case"arrowright":player.rightJet=!0,player.leftJet?player.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif":player.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif"}}})),document.addEventListener("keyup",(function(e){if(!isDead){e.preventDefault();let t=e.key;switch(t=t.toLowerCase()){case"a":case"arrowleft":player.leftJet=!1,player.rightJet?player.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif":(player.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif",woosh.pause());break;case"d":case"arrowright":player.rightJet=!1,player.leftJet?player.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif":(player.img.src="https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif",woosh.pause())}}}));let btn=new hurtButton,setSave={x:0,y:0,frames:0,countFrames:0};function set(e,t,i){void 0!==e?(setSave.x=t,setSave.y=i,setSave.frames=e,setSave.countFrames=0):setSave.frames>0&&setSave.countFrames==setSave.frames&&(btn.put(setSave.x,setSave.y),setSave.countFrames++)}function gameLoop(){if(canMove&&!isDead){player.momY++,player.leftJet&&(player.momX+=1,player.momY-=1.5),player.rightJet&&(player.momX-=1,player.momY-=1.5),player.momX=Math.floor(player.momX),player.momX>15?player.momX=15:player.momX<-15&&(player.momX=-15),player.momY=Math.floor(player.momY),player.momY>15?player.momY=15:player.momY<-10&&(player.momY=-10),btn.exist&&collision(btn,player)&&btn.press(),player.x+=player.momX,(0!==getColor(player.x,player.y)||0!==getColor(player.x+player.width-1,player.y)||0!==getColor(player.x,player.y+player.height-1)||0!==getColor(player.x+player.width-1,player.y+player.height-1)||player.x<0||player.x+player.width>canvas.width)&&canDie&&die(),player.y+=player.momY,(0!==getColor(player.x,player.y)||0!==getColor(player.x+player.width-1,player.y)||0!==getColor(player.x,player.y+player.height-1)||0!==getColor(player.x+player.width-1,player.y+player.height-1)||player.y<0||player.y+player.height>canvas.height)&&canDie&&die(),ctx.clearRect(0,0,500,500);let e=[];for(let t=0;t<attackArr.length;t++)attackArr[t].put(),attackArr[t].exist&&e.push(attackArr[t]);attackArr=e,canMove=!1,timer&&clearTimeout(timer),timer=setTimeout((()=>{canMove=!0}),1e3/fps),boss.think(),player.img.style.top=1*canvas.style.top.replace("px","")+player.y*pixelSize+"px",player.img.style.left=1*canvas.style.left.replace("px","")+player.x*pixelSize+"px",setSave.countFrames++,set()}requestAnimationFrame(gameLoop)}boss.attacks={center:function(){boss.req=4,attackArr.push(new attack(160,0,0,500,10,0,1,20)),attackArr.push(new attack(160,490,0,10,500,-1,0,20)),attackArr.push(new attack(160,0,0,10,500,1,0,20)),attackArr.push(new attack(160,0,490,500,10,0,-1,20))},left:function(){side.play(),boss.req=1,attackArr.push(new attack(40,0,0,250,500,0,0,50)),side.play()},right:function(){side.play(),boss.req=1,attackArr.push(new attack(40,250,0,250,500,0,0,50)),side.play()},freeDMG:function(){btn.put(400,50,!0)},top:function(){down.play(),boss.req=1,attackArr.push(new attack(40,0,0,500,250,0,0,50)),down.play()},bottom:function(){high.play(),boss.req=1,attackArr.push(new attack(40,0,250,500,250,0,0,50)),high.play()},mesh:function(){boss.req=3,attackArr.push(new laser(20,500,220,60,500,70)),attackArr.push(new laser(20,300,500,0,10,70)),attackArr.push(new laser(20,0,300,500,30,70)),attackArr.push(new laser(20,250,0,500,500,70))},outer:function(){boss.req=2,attackArr.push(new attack(120,150,150,200,200,0,0,50)),set(50,220,220)},quad:function(){boss.req=5,attackArr.push(new attack(100,0,0,10,500,3,0,10)),attackArr.push(new attack(100,0,0,500,10,0,3,110)),attackArr.push(new attack(100,490,0,10,500,-3,0,210)),attackArr.push(new attack(100,0,490,500,10,0,-3,310)),set(400,220,220)},topLeft:function(){boss.req=3,attackArr.push(new attack(40,0,250,500,250,0,0,40)),attackArr.push(new attack(40,250,0,250,250,0,0,40)),set(60,410,410)},topRight:function(){boss.req=3,attackArr.push(new attack(40,0,250,500,250,0,0,40)),attackArr.push(new attack(40,0,0,250,250,0,0,40)),set(60,30,410)},bottomLeft:function(){boss.req=3,attackArr.push(new attack(40,0,0,500,250,0,0,40)),attackArr.push(new attack(40,250,250,250,250,0,0,40)),set(60,410,30)},bottomRight:function(){boss.req=3,attackArr.push(new attack(40,0,0,500,250,0,0,40)),attackArr.push(new attack(40,0,250,250,250,0,0,40)),set(60,30,30)},dvdLeft:function(){boss.req=1,attackArr.push(new dvdLogo(300,10,170,160,90,-3,3,50))},dvdRight:function(){boss.req=1,attackArr.push(new dvdLogo(300,300,170,160,90,-3,-3,50))},x:function(){boss.req=2,attackArr.push(new laser(60,0,0,500,500,50)),attackArr.push(new laser(60,0,500,500,0,50))},plus:function(){boss.req=2,attackArr.push(new laser(60,0,250,500,250,50)),attackArr.push(new laser(60,250,0,250,500,50))},ticTacToe:function(){boss.req=4,attackArr.push(new laser(40,166,0,166,500,50)),attackArr.push(new laser(40,332,0,332,500,50)),attackArr.push(new laser(40,0,166,500,166,50)),attackArr.push(new laser(40,0,332,500,332,50))},jones:function(){boss.req=3,attackArr.push(new dvdLogo(450,0,0,250,150,0,3,60)),attackArr.push(new dvdLogo(450,250,350,250,150,0,-3,60)),attackArr.push(new laser(450,0,250,500,250,60))},web:function(){boss.req=8,attackArr.push(new laser(60,0,0,500,500,50)),attackArr.push(new laser(60,0,500,500,0,50)),attackArr.push(new laser(60,0,250,500,250,50)),attackArr.push(new laser(60,250,0,250,500,50)),attackArr.push(new laser(60,150,150,350,150,50)),attackArr.push(new laser(60,150,150,150,350,50)),attackArr.push(new laser(60,150,350,350,350,50)),attackArr.push(new laser(60,350,150,350,350,50))}},boss.attackArr=["bottom","outer","top","left","right","dvdLeft","freeDMG","quad"]</script></body></html>
+<html>
+
+<head>
+    <title>Jets Geronimo!</title>
+</head>
+
+<body>
+    <style>
+        body,
+        html {
+            height: 100%
+        }
+
+        .button,
+        .loader {
+            display: none
+        }
+
+        .button,
+        .entity,
+        .start {
+            position: absolute;
+            top: 0;
+            left: 0
+        }
+
+        .gameArea,
+        .title,
+        body {
+            text-align: center
+        }
+
+        body {
+            background-color: #63ba63;
+            overflow: hidden
+        }
+
+        canvas {
+            z-index: 1;
+            background-color: #fff;
+            border: 2px solid #000;
+            background-image: url("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/SkyParallax.gif");
+            background-repeat: none;
+            background-size: cover
+        }
+
+        .entity {
+            z-index: 3
+        }
+
+        .button {
+            z-index: 2
+        }
+
+        .start {
+            z-index: 12;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            width: 100%;
+            height: 110%
+        }
+
+        .begin,
+        .title {
+            height: 15%;
+            position: absolute;
+            color: #fff
+        }
+
+        .begin {
+            width: 35%;
+            left: 32.5%;
+            top: 45%;
+            background-color: green;
+            border: 6px solid #fff;
+            font-weight: bolder;
+            font-size: 200%
+        }
+
+        .title {
+            font-family: Georgia, 'Times New Roman', Times, 'serif';
+            width: 60%;
+            left: 20%;
+            top: 10%;
+            font-weight: 700;
+            font-size: 600%
+        }
+    </style>
+    <div id=add class=gameArea></div><img id=boss src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif><img id=bar src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HealthBar.gif><img id=name src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/William.gif>
+    <div id=health></div><canvas id=game width=500 height=500></canvas>
+    <div id=startScreen class=start>
+        <p class=title>Jets Geronimo</p><button onclick=startGameLoop() class=begin>START</button>
+    </div>
+    <div id=endScreen class=start style=display:none>
+        <p class=title id=endText>GAME OVER</p>
+    </div><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif
+        class=loader>
+    <img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HeartPop.gif
+        class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif
+        class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossAngry.gif class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossSad.gif
+        class=loader><img src=https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeSmug.gif class=loader>
+    <script>
+        const WillHurt = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/WillHurt.mp3"),
+            titleMusic = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/TitleMusic.mp3"),
+            bossMusic = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/BossMusic.mp3"),
+            down = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Low.mp3"),
+            high = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/High.mp3"),
+            side = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Side.mp3"),
+            click = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/Click.mp3"),
+            how = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/how.mp3"),
+            unstoppable = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/unstoppable.mp3"),
+            heal = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/healFunction.mp3"),
+            bested = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/bested.mp3"),
+            fun = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/hadFun.mp3");
+        bossMusic.loop = !0, bossMusic.volume = .4, titleMusic.volume = .5, titleMusic.loop = !0;
+        const woosh = new Audio("https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/audio/JetSound.mp3");
+        woosh.volume = 0, woosh.loop = !0, document.onLoad = function() {
+            titleMusic.play()
+        };
+        const pixelSize = window.innerHeight / 1e3,
+            widthSize = window.innerWidth / 1e3;
+        let timer, timer2, timer3, timer4, isDead = !0,
+            canDie = !0;
+        const canvas = document.getElementById("game");
+        let boss = {
+            img: document.getElementById("boss"),
+            hp: 10,
+            bar: document.getElementById("health"),
+            finished: 0,
+            phase: 1,
+            phases: 2,
+            req: 0,
+            cutscene: !1,
+            can: !0,
+            timer: null,
+            hurt: function() {
+                this.hp--, WillHurt.currentTime = 0, 0 !== this.hp && WillHurt.play(), this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossHurt.gif", this.bar.style.width = pixelSize * (44 * boss.hp) + "px", 8 == this.hp && 1 == this.phase && (boss.attackArr = ["bottom", "outer", "top", "left", "right", "mesh", "topLeft", "bottomRight", "dvdRight", "ticTacToe", "jones"]), 5 == this.hp && 1 == this.phase && (boss.attackArr = ["bottom", "outer", "top", "left", "right", "mesh", "bottomLeft", "bottomRight", "quad", "dvdLeft", "dvdRight", "x", "plus", "TicTacToe", "jones", "web"]), 0 == this.hp && (this.phase < this.phases ? (this.cutscene = !0, this.phase++, this.hp = 10, bossMusic.pause(), player.x = 220, player.y = 220, player.momX = 0, player.momY = 0, woosh.volume = 0, woosh.pause(), player.img.style.top = 1 * canvas.style.top.replace("px", "") + player.y * pixelSize + "px", player.img.style.left = 1 * canvas.style.left.replace("px", "") + player.x * pixelSize + "px", isDead = !0, player.leftJet = !1, player.rightJet = !1, player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif", this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossSad.gif", how.play(), timer4 && clearTimeout(timer4), timer4 = setTimeout((() => {
+                    this.bar.style.width = pixelSize * (44 * boss.hp) + "px", this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossAngry.gif", unstoppable.play(), timer4 && clearTimeout(timer4), timer4 = setTimeout((() => {
+                        this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif", heal.play(), timer4 && clearTimeout(timer4), timer4 = setTimeout((() => {
+                            this.cutscene = !1, isDead = !1, player.hp += 3, makeHearts(), woosh.volume = .2, bossMusic.playbackRate = 1.5, bossMusic.play()
+                        }), 2e3)
+                    }), 2e3)
+                }), 2500)) : (this.cutscene = !0, isDead = !0, woosh.volume = 0, bossMusic.pause(), this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBossSad.gif", bested.play(), timer4 && clearTimeout(timer4), timer4 = setTimeout((() => {
+                    fun.play(), document.getElementById("endScreen").style.display = "block", document.getElementById("endText").innerText = "YOU WIN!", titleMusic.play()
+                }), 3e3)))
+            },
+            think: function() {
+                if (this.can) {
+                    let e = this.attackArr[Math.floor(Math.random() * this.attackArr.length)];
+                    this.attacks[e](), this.can = !1
+                }
+            }
+        };
+        boss.img.style = `position:absolute;z-index:2;width:${500 * pixelSize}px;height:${300 * pixelSize}px;left:${window.innerWidth / 2 - 250 * pixelSize + 3}px;top:0;filter: brightness(1.2);`, boss.bar.style = `position:absolute;z-index:1;background-color:blue;width:${pixelSize * (44 * boss.hp)}px;height:${90 * pixelSize}px;left:${window.innerWidth / 2 - 220 * pixelSize}px;top:${815 * pixelSize}px;`;
+        let bar = document.getElementById("bar");
+        bar.style = `position:absolute;z-index:1;width:${500 * pixelSize}px;height:${120 * pixelSize}px;left:${window.innerWidth / 2 - 250 * pixelSize}px;top:${800 * pixelSize}px;`;
+        let name = document.getElementById("name");
+        name.style = `position:absolute;z-index:3;width:${500 * pixelSize}px;height:${120 * pixelSize}px;left:${window.innerWidth / 2 - 250 * pixelSize}px;top:${800 * pixelSize}px;`, canvas.style = `z-index: 1;background-color:white;border:3px solid black;position:absolute;width:${500 * pixelSize}px;height:${500 * pixelSize}px;`, canvas.style.left = window.innerWidth / 2 - 250 * pixelSize + "px", canvas.style.top = 300 * pixelSize + "px";
+        const ctx = canvas.getContext("2d", {
+            willReadFrequently: !0
+        });
+        let attackArr = [],
+            fps = 60,
+            canMove = !0,
+            player = {
+                x: 220,
+                y: 220,
+                width: 45,
+                height: 60,
+                momX: 0,
+                momY: 0,
+                leftJet: !1,
+                rightJet: !1,
+                img: !1,
+                hp: 5
+            };
+
+        function makeHearts() {
+            for (let e = 0; e < player.hp; e++) {
+                let t = document.createElement("img");
+                t.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/Heart.gif", t.style = `z-index: 10;position:absolute;width:${50 * pixelSize}px;height:${50 * pixelSize}px;top:${15 * pixelSize}px;left:${50 * pixelSize * e + 5 * pixelSize}px`, t.id = "heart" + e;
+                let i = document.getElementById("heart" + e);
+                i && i.parentNode.removeChild(i), document.body.appendChild(t)
+            }
+        }
+
+        function hitbox(e, t, i, s) {
+            return this.x = e, this.y = t, this.width = i, this.height = s, this
+        }
+
+        function collision(e, t) {
+            return !(e.y + e.height < t.y || e.y > t.y + t.height || e.x + e.width < t.x || e.x > t.x + t.width)
+        }
+
+        function getColor(e, t) {
+            return ctx.getImageData(e, t, 1, 1).data[0]
+        }
+
+        function startGameLoop() {
+            click.currentTime = 0, click.play(), document.getElementById("startScreen").style.display = "none", woosh.volume = .2, titleMusic.pause(), bossMusic.play(), requestAnimationFrame(gameLoop), isDead = !1
+        }
+
+        function attack(e, t, i, s, a, r, o, l) {
+            this.x = t, this.y = i, this.width = s, this.height = a, this.momX = r, this.momY = o, this.frames = e, this.framesTill = l, this.exist = !0, attack.prototype.put = function() {
+                this.framesTill > 0 ? (this.framesTill--, ctx.fillStyle = "rgba(0, 255, 100, 0.5)", ctx.fillRect(this.x, this.y, this.width, this.height)) : this.exist && (ctx.fillStyle = "rgb(255, 0, 0)", ctx.fillRect(this.x, this.y, this.width, this.height), this.x += this.momX, this.y += this.momY, this.frames--, 0 == this.frames && (boss.finished++, this.exist = !1, boss.finished == boss.req && (boss.finished = 0, boss.req = 1, boss.timer && clearTimeout(boss.timer), boss.timer = setTimeout((() => {
+                    boss.can = !0
+                }), 2e3))))
+            }
+        }
+
+        function laser(e, t, i, s, a, r) {
+            this.startx = t, this.starty = i, this.endx = s, this.endy = a, this.frames = e, this.framesTill = r, this.exist = !0, laser.prototype.put = function() {
+                this.framesTill > 0 ? (this.framesTill--, ctx.strokeStyle = "rgba(0, 255, 100, 0.5)", ctx.lineWidth = 10, ctx.beginPath(), ctx.moveTo(this.startx, this.starty), ctx.lineTo(this.endx, this.endy), ctx.stroke()) : this.exist && (ctx.strokeStyle = "rgb(255, 0, 0)", ctx.lineWidth = 10, ctx.beginPath(), ctx.moveTo(this.startx, this.starty), ctx.lineTo(this.endx, this.endy), ctx.stroke(), this.frames--, 0 == this.frames && (boss.finished++, this.exist = !1, boss.finished == boss.req && (boss.finished = 0, boss.req = 1, boss.timer && clearTimeout(boss.timer), boss.timer = setTimeout((() => {
+                    boss.can = !0
+                }), 2e3))))
+            }
+        }
+
+        function dvdLogo(e, t, i, s, a, r, o, l) {
+            this.x = t, this.y = i, this.width = s, this.height = a, this.momX = r, this.momY = o, this.frames = e, this.framesTill = l, this.exist = !0, dvdLogo.prototype.put = function() {
+                this.framesTill > 0 ? (this.framesTill--, ctx.fillStyle = "rgba(0, 255, 100, 0.5)", ctx.fillRect(this.x, this.y, this.width, this.height)) : this.exist && (ctx.fillStyle = "rgb(255, 0, 0)", ctx.fillRect(this.x, this.y, this.width, this.height), this.x += this.momX, this.y += this.momY, (this.x + this.width > 500 || this.x < 0) && (this.momX = -1 * this.momX), (this.y + this.height > 500 || this.y < 0) && (this.momY = -1 * this.momY), this.frames--, 0 == this.frames && (boss.finished++, this.exist = !1, boss.finished == boss.req && (boss.finished = 0, boss.req = 1, boss.timer && clearTimeout(boss.timer), boss.timer = setTimeout((() => {
+                    boss.can = !0
+                }), 2e3))))
+            }
+        }
+
+        function die() {
+            if (setSave.frames = 0, player.leftJet = !1, player.rightJet = !1, isDead = !0, canDie = !1, woosh.pause(), player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif", player.momX = 0, player.momY = 0, player.x = 220, player.y = 220, player.img.style.top = 1 * canvas.style.top.replace("px", "") + player.y * pixelSize + "px", player.img.style.left = 1 * canvas.style.left.replace("px", "") + player.x * pixelSize + "px", player.hp--, document.getElementById("heart" + player.hp).src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HeartPop.gif", 0 == player.hp) return titleMusic.play(), document.getElementById("endScreen").style.display = "block", bossMusic.volume = 0, void(woosh.volume = 0);
+            attackArr = [], btn.disappear(), document.body.style.backgroundColor = "darkred", bossMusic.pause(), timer2 && clearTimeout(timer2), timer2 = setTimeout((() => {
+                isDead = !1, document.body.style.backgroundColor = "rgb(99, 186, 99)", bossMusic.play();
+                let e = document.getElementById("heart" + player.hp);
+                e && e.parentNode.removeChild(e), canDie = !0
+            }), 1500), boss.finished = 0, boss.req = 1, boss.timer && clearTimeout(boss.timer), boss.timer = setTimeout((() => {
+                boss.can = !0
+            }), 3e3)
+        }
+
+        function hurtButton() {
+            this.x = 0, this.y = 0, this.width = 60, this.height = 60, this.exist = !1, this.clear = !0, this.img = document.createElement("img"), this.img.className = "button", this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif", this.img.style.top = 1 * canvas.style.top.replace("px", "") + this.y * pixelSize + "px", this.img.style.left = 1 * canvas.style.left.replace("px", "") + this.x * pixelSize + "px", this.img.style.width = this.width * pixelSize + "px", this.img.style.height = this.height * pixelSize + "px", document.body.appendChild(this.img), hurtButton.prototype.put = function(e, t, i) {
+                this.x = e, this.y = t, this.clear = i, this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButton.gif", this.img.style.display = "block", this.img.style.top = 1 * canvas.style.top.replace("px", "") + this.y * pixelSize + "px", this.img.style.left = 1 * canvas.style.left.replace("px", "") + this.x * pixelSize + "px", this.exist = !0
+            }, hurtButton.prototype.press = function() {
+                this.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/HurtButtonPress.gif", click.currentTime = 0, click.play(), boss.hurt(), this.clear && (attackArr = []), this.exist = !1, timer3 && clearTimeout(timer3), timer3 = setTimeout((() => {
+                    this.img.style.display = "none", 1 == boss.phase && (boss.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/WillBoss.gif")
+                }), 1e3), boss.finished = 0, boss.req = 1, boss.timer && clearTimeout(boss.timer), boss.timer = setTimeout((() => {
+                    boss.can = !0
+                }), 2e3)
+            }, hurtButton.prototype.disappear = function() {
+                this.img.style.display = "none", this.exist = !1
+            }
+        }
+        makeHearts(), player.img = document.createElement("img"), player.img.className = "entity", player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif", player.img.style.top = 1 * canvas.style.top.replace("px", "") + player.y * pixelSize + "px", player.img.style.left = 1 * canvas.style.left.replace("px", "") + player.x * pixelSize + "px", player.img.style.width = player.width * pixelSize + "px", player.img.style.height = player.height * pixelSize + "px", document.body.appendChild(player.img), document.addEventListener("keydown", (function(e) {
+            if (!isDead) {
+                e.preventDefault();
+                let t = e.key;
+                switch (t = t.toLowerCase(), woosh.currentTime = 1, woosh.play(), t) {
+                    case "a":
+                    case "arrowleft":
+                        player.leftJet = !0, player.rightJet ? player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif" : player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif";
+                        break;
+                    case "d":
+                    case "arrowright":
+                        player.rightJet = !0, player.leftJet ? player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeBoth.gif" : player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif"
+                }
+            }
+        })), document.addEventListener("keyup", (function(e) {
+            if (!isDead) {
+                e.preventDefault();
+                let t = e.key;
+                switch (t = t.toLowerCase()) {
+                    case "a":
+                    case "arrowleft":
+                        player.leftJet = !1, player.rightJet ? player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeRight.gif" : (player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif", woosh.pause());
+                        break;
+                    case "d":
+                    case "arrowright":
+                        player.rightJet = !1, player.leftJet ? player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDudeLeft.gif" : (player.img.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/JetDude.gif", woosh.pause())
+                }
+            }
+        }));
+        let btn = new hurtButton,
+            setSave = {
+                x: 0,
+                y: 0,
+                frames: 0,
+                countFrames: 0
+            };
+
+        function set(e, t, i) {
+            void 0 !== e ? (setSave.x = t, setSave.y = i, setSave.frames = e, setSave.countFrames = 0) : setSave.frames > 0 && setSave.countFrames == setSave.frames && (btn.put(setSave.x, setSave.y), setSave.countFrames++)
+        }
+
+        function gameLoop() {
+            if (canMove && !isDead) {
+                player.momY++, player.leftJet && (player.momX += 1, player.momY -= 1.5), player.rightJet && (player.momX -= 1, player.momY -= 1.5), player.momX = Math.floor(player.momX), player.momX > 15 ? player.momX = 15 : player.momX < -15 && (player.momX = -15), player.momY = Math.floor(player.momY), player.momY > 15 ? player.momY = 15 : player.momY < -10 && (player.momY = -10), btn.exist && collision(btn, player) && btn.press(), player.x += player.momX, (0 !== getColor(player.x, player.y) || 0 !== getColor(player.x + player.width - 1, player.y) || 0 !== getColor(player.x, player.y + player.height - 1) || 0 !== getColor(player.x + player.width - 1, player.y + player.height - 1) || player.x < 0 || player.x + player.width > canvas.width) && canDie && die(), player.y += player.momY, (0 !== getColor(player.x, player.y) || 0 !== getColor(player.x + player.width - 1, player.y) || 0 !== getColor(player.x, player.y + player.height - 1) || 0 !== getColor(player.x + player.width - 1, player.y + player.height - 1) || player.y < 0 || player.y + player.height > canvas.height) && canDie && die(), ctx.clearRect(0, 0, 500, 500);
+                let e = [];
+                for (let t = 0; t < attackArr.length; t++) attackArr[t].put(), attackArr[t].exist && e.push(attackArr[t]);
+                attackArr = e, canMove = !1, timer && clearTimeout(timer), timer = setTimeout((() => {
+                    canMove = !0
+                }), 1e3 / fps), boss.think(), player.img.style.top = 1 * canvas.style.top.replace("px", "") + player.y * pixelSize + "px", player.img.style.left = 1 * canvas.style.left.replace("px", "") + player.x * pixelSize + "px", setSave.countFrames++, set()
+            }
+            requestAnimationFrame(gameLoop)
+        }
+        boss.attacks = {
+            center: function() {
+                boss.req = 4, attackArr.push(new attack(160, 0, 0, 500, 10, 0, 1, 20)), attackArr.push(new attack(160, 490, 0, 10, 500, -1, 0, 20)), attackArr.push(new attack(160, 0, 0, 10, 500, 1, 0, 20)), attackArr.push(new attack(160, 0, 490, 500, 10, 0, -1, 20))
+            },
+            left: function() {
+                side.play(), boss.req = 1, attackArr.push(new attack(40, 0, 0, 250, 500, 0, 0, 50)), side.play()
+            },
+            right: function() {
+                side.play(), boss.req = 1, attackArr.push(new attack(40, 250, 0, 250, 500, 0, 0, 50)), side.play()
+            },
+            freeDMG: function() {
+                btn.put(400, 50, !0)
+            },
+            top: function() {
+                down.play(), boss.req = 1, attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 50)), down.play()
+            },
+            bottom: function() {
+                high.play(), boss.req = 1, attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 50)), high.play()
+            },
+            mesh: function() {
+                boss.req = 3, attackArr.push(new laser(20, 500, 220, 60, 500, 70)), attackArr.push(new laser(20, 300, 500, 0, 10, 70)), attackArr.push(new laser(20, 0, 300, 500, 30, 70)), attackArr.push(new laser(20, 250, 0, 500, 500, 70))
+            },
+            outer: function() {
+                boss.req = 2, attackArr.push(new attack(120, 150, 150, 200, 200, 0, 0, 50)), set(50, 220, 220)
+            },
+            quad: function() {
+                boss.req = 5, attackArr.push(new attack(100, 0, 0, 10, 500, 3, 0, 10)), attackArr.push(new attack(100, 0, 0, 500, 10, 0, 3, 110)), attackArr.push(new attack(100, 490, 0, 10, 500, -3, 0, 210)), attackArr.push(new attack(100, 0, 490, 500, 10, 0, -3, 310)), set(400, 220, 220)
+            },
+            topLeft: function() {
+                boss.req = 3, attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 40)), attackArr.push(new attack(40, 250, 0, 250, 250, 0, 0, 40)), set(60, 410, 410)
+            },
+            topRight: function() {
+                boss.req = 3, attackArr.push(new attack(40, 0, 250, 500, 250, 0, 0, 40)), attackArr.push(new attack(40, 0, 0, 250, 250, 0, 0, 40)), set(60, 30, 410)
+            },
+            bottomLeft: function() {
+                boss.req = 3, attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 40)), attackArr.push(new attack(40, 250, 250, 250, 250, 0, 0, 40)), set(60, 410, 30)
+            },
+            bottomRight: function() {
+                boss.req = 3, attackArr.push(new attack(40, 0, 0, 500, 250, 0, 0, 40)), attackArr.push(new attack(40, 0, 250, 250, 250, 0, 0, 40)), set(60, 30, 30)
+            },
+            dvdLeft: function() {
+                boss.req = 1, attackArr.push(new dvdLogo(300, 10, 170, 160, 90, -3, 3, 50))
+            },
+            dvdRight: function() {
+                boss.req = 1, attackArr.push(new dvdLogo(300, 300, 170, 160, 90, -3, -3, 50))
+            },
+            x: function() {
+                boss.req = 2, attackArr.push(new laser(60, 0, 0, 500, 500, 50)), attackArr.push(new laser(60, 0, 500, 500, 0, 50))
+            },
+            plus: function() {
+                boss.req = 2, attackArr.push(new laser(60, 0, 250, 500, 250, 50)), attackArr.push(new laser(60, 250, 0, 250, 500, 50))
+            },
+            ticTacToe: function() {
+                boss.req = 4, attackArr.push(new laser(40, 166, 0, 166, 500, 50)), attackArr.push(new laser(40, 332, 0, 332, 500, 50)), attackArr.push(new laser(40, 0, 166, 500, 166, 50)), attackArr.push(new laser(40, 0, 332, 500, 332, 50))
+            },
+            jones: function() {
+                boss.req = 3, attackArr.push(new dvdLogo(450, 0, 0, 250, 150, 0, 3, 60)), attackArr.push(new dvdLogo(450, 250, 350, 250, 150, 0, -3, 60)), attackArr.push(new laser(450, 0, 250, 500, 250, 60))
+            },
+            web: function() {
+                boss.req = 8, attackArr.push(new laser(60, 0, 0, 500, 500, 50)), attackArr.push(new laser(60, 0, 500, 500, 0, 50)), attackArr.push(new laser(60, 0, 250, 500, 250, 50)), attackArr.push(new laser(60, 250, 0, 250, 500, 50)), attackArr.push(new laser(60, 150, 150, 350, 150, 50)), attackArr.push(new laser(60, 150, 150, 150, 350, 50)), attackArr.push(new laser(60, 150, 350, 350, 350, 50)), attackArr.push(new laser(60, 350, 150, 350, 350, 50))
+            }
+        }, boss.attackArr = ["bottom", "outer", "top", "left", "right", "dvdLeft", "freeDMG", "quad"]
+    </script>
+</body>
+
+</html>
