@@ -48,7 +48,11 @@
                 this.y+= this.momY;
                 this.x+= this.momX;
                 for(let i = 0; i < this.height / 2; i++){
-                    if(getColor(this.x + (this.width / 2), this.y + this.height / 2 + i)){
+                    if(getColor(this.x + Math.floor((this.width / 3)), this.y + this.height / 2 + i)){
+                        this.y-= (this.height / 2) - i;
+                        this.momY = 0;
+                        this.canJump = true;
+                    }else if(getColor(this.x + Math.floor((this.width / 3) * 2), this.y + this.height / 2 + i)){
                         this.y-= (this.height / 2) - i;
                         this.momY = 0;
                         this.canJump = true;
@@ -111,7 +115,7 @@
                     break;
                 case " ":
                     if(box.canJump){
-                    box.momY = -10;
+                    box.momY = -15;
                     box.canJump = false;
                     }
                     break;
@@ -139,9 +143,11 @@
             ctx.fillStyle = "red";
             ctx.fillRect(0, 550, 1024, 26);
             ctx.beginPath();
-            ctx.moveTo(500, 550);
-            ctx.LineTo(600, 500);
+            ctx.moveTo(480, 570);
+            ctx.lineTo(600, 500);
+            ctx.lineTo(700, 570);
             ctx.strokeStyle = 'red';
+            ctx.lineWidth = 10;
             ctx.stroke();
             
             box.momY++;
