@@ -22,18 +22,18 @@
 
         </style>
 
-    <canvas id="game" width="1024" height="448"></canvas>
+    <canvas id="game" width="1024" height="576"></canvas>
 
         <script>
             const pixelSize = window.innerWidth / 1024;
             const canvas = document.getElementById("game");
-            canvas.style.height = `${pixelSize * 448}px`;
+            canvas.style.height = `${pixelSize * 576}px`;
             const ctx = canvas.getContext("2d", { willReadFrequently: true });
             let canMove = true;
             let timer;
-            let fps = 30;
+            let fps = 60;
             ctx.fillStyle = "red";
-            ctx.fillRect(0, 400, 1024, 48);
+            ctx.fillRect(0, 550, 1024, 26);
 
         function creature(x, y, width, height){
             this.x = x;
@@ -42,17 +42,21 @@
             this.height = height;
             this.momX = 0;
             this.momY = 0;
+            this.canJump = false;
+
             creature.prototype.move = function(){
-                this.y += this.momY;
+                this.y+= this.momY;
+                this.x+= this.momX;
                 for(let i = 0; i < this.height / 2; i++){
                     if(getColor(this.x + (this.width / 2), this.y + this.height / 2 + i)){
-                        this.y-= i;
+                        this.y-= (this.height / 2) - i;
                         this.momY = 0;
+                        this.canJump = true;
                     }
-
-                        ctx.fillStyle = 'blue';
-                        ctx.fillRect(this.x, this.y, this.width, this.height);
                 }
+
+                ctx.fillStyle = 'blue';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
             }
         }
 
@@ -64,12 +68,52 @@
             key = key.toLowerCase();
             switch (key) {
                 case "a":
+                case "leftarrow":
+                box.momX = -10;
                     break;
                 case "d":
+                case "rightarrow":
+                box.momX = 10;
                     break;
                 case "w":
                     break;
                 case "s":
+                    break;
+                case " ":
+                    if(box.canJump){
+                    box.momY = -10;
+                    box.canJump = false;
+                    }
+                    break;
+            }
+        });
+
+        document.addEventListener("keyup", function (event) {
+            event.preventDefault();
+            let key = event.key;
+            key = key.toLowerCase();
+            switch (key) {
+                case "a":
+                case "leftarrow":
+                    if(box.momX < 0){
+                box.momX = 0;
+                    }
+                    break;
+                case "d":
+                case "rightarrow":
+                    if(box.momX > 0){
+                box.momX = 0;
+                    }
+                    break;
+                case "w":
+                    break;
+                case "s":
+                    break;
+                case " ":
+                    if(box.canJump){
+                    box.momY = -10;
+                    box.canJump = false;
+                    }
                     break;
             }
         });
@@ -91,12 +135,17 @@
 
         function gameLoop(){
             if(canMove){
-            ctx.clearRect(0, 0, 1024, 448);
+            ctx.clearRect(0, 0, 1024, 576);
             ctx.fillStyle = "red";
-            ctx.fillRect(0, 400, 1024, 48);
+            ctx.fillRect(0, 550, 1024, 26);
+            ctx.beginPath();
+            ctx.moveTo(500, 550);
+            ctx.LineTo(600, 500);
+            ctx.strokeStyle = 'red';
+            ctx.stroke();
+            
             box.momY++;
             box.move();
-            requestAnimationFrame(gameLoop);
             canMove = false;
             if(timer){
                 clearTimeout(timer);
@@ -105,6 +154,7 @@
                 canMove = true;
             }, 1000 / fps);
             }
+            requestAnimationFrame(gameLoop);
         }
         requestAnimationFrame(gameLoop);
         </script>
