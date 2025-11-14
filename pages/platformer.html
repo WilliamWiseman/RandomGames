@@ -48,9 +48,10 @@
                     if(getColor(this.x + (this.width / 2), this.y + this.height / 2 + i)){
                         this.y-= i;
                         this.momY = 0;
+                    }
+
                         ctx.fillStyle = 'blue';
                         ctx.fillRect(this.x, this.y, this.width, this.height);
-                    }
                 }
             }
         }
