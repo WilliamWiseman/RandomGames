@@ -35,7 +35,7 @@
             ctx.fillStyle = "red";
             ctx.fillRect(0, 550, 1024, 26);
 
-        function creature(x, y, width, height){
+        function creature(x, y, width, height, jumpForce){
             this.x = x;
             this.y = y;
             this.width = width;
@@ -44,13 +44,28 @@
             this.momY = 0;
             this.canJump = false;
             this.collided = false;
+            this.wantJump = false;
+            this.time = 0;
+            this.jumpForce = jumpForce;
+            
+            creature.prototype.jump = function(){
+                if(this.canJump && this.wantJump){
+                    this.momY = jumpForce;
+                    this.wantJump = false;
+                    this.time-= Math.ceil(100 * dt);
+                    if(this.time <= 0){
+                        this.wantJump = false;
+                    }
+
+                }
+            }
 
             creature.prototype.move = function(){
                 this.collided = false;
                 this.y+= Math.trunc(this.momY * dt);
                 this.x+= Math.trunc(this.momX * dt);
                 
-                for(let i = 0; i < this.height / 2; i++){
+                for(let i = 0; i < this.height / 2 + 1; i++){
                     if(getColor(this.x + Math.floor((this.width / 3)), this.y + this.height / 2 + i)){
                         this.y-= (this.height / 2) - i;
                         this.momY = 0;
@@ -68,6 +83,7 @@
                 if(!this.collided){
                     this.canJump = false;
                 }
+                this.jump();
 
 
                 ctx.fillStyle = 'blue';
@@ -75,7 +91,7 @@
             }
         }
 
-        let box = new creature(50, 10, 50, 50);
+        let box = new creature(50, 10, 50, 50, -400);
             
         document.addEventListener("keydown", function (event) {
             event.preventDefault();
@@ -94,10 +110,8 @@
                     break;
                 case " ":
                 case "w":
-                    if(box.canJump){
-                    box.momY = -400;
-                    box.canJump = false;
-                    }
+                    box.wantJump = true;
+                    box.time = 50;
                     break;
             }
         });
@@ -124,10 +138,7 @@
                 case "s":
                     break;
                 case " ":
-                    if(box.canJump){
-                    box.momY = -15;
-                    box.canJump = false;
-                    }
+
                     break;
             }
         });
@@ -167,13 +178,18 @@
             ctx.lineWidth = 10;
             ctx.stroke();
             
-            box.momY+= 10;
+            box.momY+= Math.ceil(400 * dt);
             box.move();
             canMove = false;
 
             lastTime = now; //do this after it draws everything. Might make a little difference
             requestAnimationFrame(gameLoop);
         }
+        requestAnimationFrame(gameLoop);
+        </script>
+    </body>
+</html>
+
         requestAnimationFrame(gameLoop);
         </script>
     </body>
