@@ -36,7 +36,6 @@
             ctx.fillRect(0, 550, 1024, 26);
 
         function creature(x, y, width, height){
-            this.t = false;
             this.x = x;
             this.y = y;
             this.width = width;
@@ -44,25 +43,32 @@
             this.momX = 0;
             this.momY = 0;
             this.canJump = false;
+            this.collided = false;
 
             creature.prototype.move = function(){
-                this.y+= Math.floor(this.momY * dt);
-                if(this.t){
-                    this.x+= Math.ceil(this.momX * dt);
-                }else{
-                    this.x+= Math.floor(this.momX * dt);
-                }
+                this.collided = false;
+                this.y+= Math.trunc(this.momY * dt);
+                this.x+= Math.trunc(this.momX * dt);
+                
                 for(let i = 0; i < this.height / 2; i++){
                     if(getColor(this.x + Math.floor((this.width / 3)), this.y + this.height / 2 + i)){
                         this.y-= (this.height / 2) - i;
                         this.momY = 0;
                         this.canJump = true;
+                        this.collided = true;
+                        break;
                     }else if(getColor(this.x + Math.floor((this.width / 3) * 2), this.y + this.height / 2 + i)){
                         this.y-= (this.height / 2) - i;
                         this.momY = 0;
                         this.canJump = true;
+                        this.collided = true;
+                        break;
                     }
                 }
+                if(!this.collided){
+                    this.canJump = false;
+                }
+
 
                 ctx.fillStyle = 'blue';
                 ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -84,13 +90,12 @@
                 case "arrowright":
                 box.momX = 300;
                     break;
-                case "w":
-                    break;
                 case "s":
                     break;
                 case " ":
+                case "w":
                     if(box.canJump){
-                    box.momY = -200;
+                    box.momY = -400;
                     box.canJump = false;
                     }
                     break;
@@ -106,14 +111,12 @@
                 case "arrowleft":
                     if(box.momX < 0){
                 box.momX = 0;
-                box.t = false;
                     }
                     break;
                 case "d":
                 case "arrowright":
                     if(box.momX > 0){
                 box.momX = 0;
-                box.t = true;
                     }
                     break;
                 case "w":
@@ -149,8 +152,8 @@
 
         function gameLoop(now){
             dt = (now - lastTime) / 1000;
-            lastTime = now;
-            dt = Math.min(dt, 0.1);
+            
+            //dt = Math.min(dt, 0.1);
             
             
             ctx.clearRect(0, 0, 1024, 576);
@@ -167,7 +170,8 @@
             box.momY+= 10;
             box.move();
             canMove = false;
-            
+
+            lastTime = now; //do this after it draws everything. Might make a little difference
             requestAnimationFrame(gameLoop);
         }
         requestAnimationFrame(gameLoop);
