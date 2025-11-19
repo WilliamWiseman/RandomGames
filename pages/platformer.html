@@ -36,6 +36,7 @@
             ctx.fillRect(0, 550, 1024, 26);
 
         function creature(x, y, width, height){
+            this.t = false;
             this.x = x;
             this.y = y;
             this.width = width;
@@ -45,8 +46,12 @@
             this.canJump = false;
 
             creature.prototype.move = function(){
-                this.y+= this.momY;
-                this.x+= this.momX;
+                this.y+= Math.floor(this.momY * dt);
+                if(this.t){
+                    this.x+= Math.ceil(this.momX * dt);
+                }else{
+                    this.x+= Math.floor(this.momX * dt);
+                }
                 for(let i = 0; i < this.height / 2; i++){
                     if(getColor(this.x + Math.floor((this.width / 3)), this.y + this.height / 2 + i)){
                         this.y-= (this.height / 2) - i;
@@ -72,12 +77,12 @@
             key = key.toLowerCase();
             switch (key) {
                 case "a":
-                case "leftarrow":
-                box.momX = -10;
+                case "arrowleft":
+                box.momX = -300;
                     break;
                 case "d":
-                case "rightarrow":
-                box.momX = 10;
+                case "arrowright":
+                box.momX = 300;
                     break;
                 case "w":
                     break;
@@ -85,7 +90,7 @@
                     break;
                 case " ":
                     if(box.canJump){
-                    box.momY = -10;
+                    box.momY = -200;
                     box.canJump = false;
                     }
                     break;
@@ -98,15 +103,17 @@
             key = key.toLowerCase();
             switch (key) {
                 case "a":
-                case "leftarrow":
+                case "arrowleft":
                     if(box.momX < 0){
                 box.momX = 0;
+                box.t = false;
                     }
                     break;
                 case "d":
-                case "rightarrow":
+                case "arrowright":
                     if(box.momX > 0){
                 box.momX = 0;
+                box.t = true;
                     }
                     break;
                 case "w":
@@ -137,8 +144,15 @@
             return red;
         };
 
-        function gameLoop(){
-            if(canMove){
+        let lastTime = performance.now();
+        let dt;
+
+        function gameLoop(now){
+            dt = (now - lastTime) / 1000;
+            lastTime = now;
+            dt = Math.min(dt, 0.1);
+            
+            
             ctx.clearRect(0, 0, 1024, 576);
             ctx.fillStyle = "red";
             ctx.fillRect(0, 550, 1024, 26);
@@ -150,16 +164,10 @@
             ctx.lineWidth = 10;
             ctx.stroke();
             
-            box.momY++;
+            box.momY+= 10;
             box.move();
             canMove = false;
-            if(timer){
-                clearTimeout(timer);
-            }
-            timer = setTimeout(function(){
-                canMove = true;
-            }, 1000 / fps);
-            }
+            
             requestAnimationFrame(gameLoop);
         }
         requestAnimationFrame(gameLoop);
