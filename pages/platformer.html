@@ -34,6 +34,20 @@
             let fps = 60;
             ctx.fillStyle = "red";
             ctx.fillRect(0, 550, 1024, 26);
+        
+        function frame(image, length, power){
+            this.image = image;
+            this.length = length;
+            this.power = power;
+            frame.prototype.time = function(){
+                this.length -= dt;
+                if(this.length <= 0){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
 
         function creature(x, y, width, height, jumpForce){
             this.x = x;
@@ -47,15 +61,16 @@
             this.wantJump = false;
             this.time = 0;
             this.jumpForce = jumpForce;
+            this.animation = []; //for when we have a spritesheet
             
             creature.prototype.jump = function(){
-                if(this.canJump && this.wantJump){
-                    this.momY = jumpForce;
-                    this.wantJump = false;
                     this.time-= Math.ceil(100 * dt);
                     if(this.time <= 0){
                         this.wantJump = false;
                     }
+                if(this.canJump && this.wantJump){
+                    this.momY = jumpForce;
+                    this.wantJump = false;
 
                 }
             }
@@ -91,7 +106,7 @@
             }
         }
 
-        let box = new creature(50, 10, 50, 50, -400);
+        let box = new creature(50, 10, 80, 150, -400);
             
         document.addEventListener("keydown", function (event) {
             event.preventDefault();
@@ -103,16 +118,19 @@
                 box.momX = -300;
                     break;
                 case "d":
-                case "arrowright":
                 box.momX = 300;
                     break;
                 case "s":
                     break;
-                case " ":
                 case "w":
-                    box.wantJump = true;
-                    box.time = 50;
+
                     break;
+                case "arrowright":
+                    break;
+                case "shift":
+                    box.wantJump = true;
+                    box.time = 10;
+                break;
             }
         });
 
@@ -164,7 +182,7 @@
         function gameLoop(now){
             dt = (now - lastTime) / 1000;
             
-            //dt = Math.min(dt, 0.1);
+            dt = Math.min(dt, 0.5);
             
             
             ctx.clearRect(0, 0, 1024, 576);
@@ -189,8 +207,6 @@
         </script>
     </body>
 </html>
-
-        requestAnimationFrame(gameLoop);
         </script>
     </body>
 </html>
