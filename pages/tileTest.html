@@ -20,18 +20,56 @@
             }
         </style>
 
-        <img id="1" class="tile" src="C:\Users\willi\.vscode\RandomGames\images\GrassTile.gif">
-        <img id="2" class="tile" src="C:\Users\willi\.vscode\RandomGames\images\GrassTile.gif">
-        <img id="3" class="tile" src="C:\Users\willi\.vscode\RandomGames\images\GrassTile.gif">
-        <img id="4" class="tile" src="C:\Users\willi\.vscode\RandomGames\images\GrassTile.gif">
-        <img id="5" class="tile" src="C:\Users\willi\.vscode\RandomGames\images\GrassTile.gif">
-
         <script>
-            document.getElementById('1').style = "left:100px;top:100px;";
-            document.getElementById('2').style = "left:236px;top:100px;";
-            document.getElementById('3').style = "left:100px;top:60px;";
-            document.getElementById('4').style = "left:169px;top:120px;";
-            document.getElementById('5').style = "left:305px;top:120px;";
+            let lastTile = {
+                x:0, y:0, is:false
+            }
+            let tileHeight = 80;
+            let tileWidth = 138;
+            let grid = [
+            [1],
+            [1, 1],
+            [1, 1, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1],
+            [1, 1],
+            [1]
+            ];
+
+            function build(){
+                let origin = (window.innerWidth / 2 - tileWidth / 2);
+                let rowHeight;
+                let top = window.innerHeight / 2 - ( (grid.length / 2 - 1) * tileHeight / 2);
+                for(let y = 0; y < grid.length; y++){
+                    rowHeight = top + (y * (tileHeight - 4) / 4);
+                    if(y){
+                    origin-= (tileWidth / 2) * (grid[y].length - grid[y - 1].length);
+                    }
+                    for(let x = 0; x < grid[y].length; x++){
+                        let tile = document.createElement('img');
+                        tile.src = "https://raw.githubusercontent.com/WilliamWiseman/RandomGames/main/images/GrassTile.gif";
+                        tile.classList.add('tile');
+                        tile.style = `left:${origin + (x * tileWidth)}px;top:${rowHeight}px`;
+                        tile.onmouseup = function(){bump(x, y)};
+                        grid[y][x] = tile;
+                        document.body.appendChild(tile);
+                    }
+                }
+            }
+            function bump(x, y){
+                if(lastTile.is){
+                    grid[lastTile.y][lastTile.x].style.marginTop = "0px";
+                }
+                grid[y][x].style.marginTop = "-10px";
+                lastTile.x = x;
+                lastTile.y = y;
+                lastTile.is = true;
+            }
+            build();
         </script>
 
     </body>
