@@ -24,6 +24,9 @@
             let lastTile = {
                 x:0, y:0, is:false
             }
+            let mouse = {
+                x:0, y:0
+            }
             let tileHeight = 80;
             let tileWidth = 138;
             let grid = [
@@ -39,6 +42,11 @@
                  [1, 1],
                   [1]
             ];
+            document.addEventListener("mousemove", updMouse);
+            function updMouse(event) {
+                mouse.x = event.pageX;
+                mouse.y = event.pageY;
+            }
 
             function build(){
                 let origin = (window.innerWidth / 2 - tileWidth / 2);
